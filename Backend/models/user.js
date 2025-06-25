@@ -16,6 +16,12 @@ const UserSchema = new Schema({
     required: true,
     minLength: 6,
   },
+  expense: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Expense",
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", UserSchema);

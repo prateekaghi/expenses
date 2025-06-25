@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const userRoutes = require("./routes/user-routes");
+const expenseRoutes = require("./routes/expense-routes");
 
 const dotenv = require("dotenv").config();
 
@@ -11,6 +12,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/expenses", expenseRoutes);
 
 //error handling middleware
 app.use((error, req, res, next) => {

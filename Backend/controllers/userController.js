@@ -1,5 +1,3 @@
-const { v4 } = require("uuid");
-
 const errorModel = require("../models/error");
 const User = require("../models/user");
 
@@ -42,7 +40,7 @@ const signup = async (req, res, next) => {
   }
 
   //create user variable and save user if email address does not exist
-  const createUser = new User({ email, name, password });
+  const createUser = new User({ email, name, password, expense: [] });
 
   try {
     await createUser.save();
