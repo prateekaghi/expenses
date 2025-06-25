@@ -53,7 +53,37 @@ const signup = async (req, res, next) => {
   res.status(201).json(createUser.toObject({ getters: true }));
 };
 const getUserById = (req, res, next) => {};
-const login = (req, res, next) => {};
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+  //check if user exists with email
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (error) {
+    const err = new errorModel(
+      "Error occured while verifying the user email.",
+      500
+    );
+    return next(err);
+  }
+  //throw error if the user with the email does not exist
+  if (!existingUser || existingUser.length === 0) {
+    const err = new errorModel(
+      "No user found with the provided email address.",
+      404
+    );
+    return next(err);
+  }
+  //check if password matches the user password and throw error
+  if (!password || existingUser.password !== password) {
+    const err = new errorModel("Invalid credentials", 401);
+    return next(err);
+  }
+
+  res.json({
+    message: "User logged in!",
+  });
+};
 
 module.exports = {
   signup,
