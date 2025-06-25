@@ -1,0 +1,30 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+
+const userRoutes = require("./routes/user-routes");
+
+const dotenv = require("dotenv").config();
+
+const app = express();
+
+app.use(bodyParser.json());
+
+app.use("/api/users", userRoutes);
+
+//error handling middleware
+app.use((error, req, res, next) => {
+  if (res.headerSent) {
+    return next(error);
+  }
+  res
+    .status(error.code || 500)
+    .json({ message: error.message || "Something went wrong!" });
+});
+
+mongoose
+  .connect(`${process.env.MONGO_URI}${process.env.MONGO_DB}`)
+  .then(() => {
+    app.listen(4000);
+  })
+  .catch((err) => console.error(err));
