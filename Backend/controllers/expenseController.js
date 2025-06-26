@@ -53,7 +53,53 @@ const addExpense = async (req, res, next) => {
   res.status(203).json(newExpense);
 };
 
-const updateExpense = async (req, res, next) => {};
+const updateExpense = async (req, res, next) => {
+  const { eid } = req.params;
+  const { user_id, title, category, amount } = req.body;
+  let expense;
+
+  //find expense
+  try {
+    expense = await Expense.findById(eid);
+  } catch (error) {
+    const err = new errorModel("Error finding the expense.", 500);
+    return next(err);
+  }
+
+  //throw error if expense not found
+  if (!expense) {
+    const err = new errorModel("Expense not found!", 404);
+    return next(err);
+  }
+
+  //check user id from payload to see if it corresponds with the userid of the expense
+  //throw error if payload user id does not match with the expense user id
+
+  if (!user_id || !expense.user.equals(user_id)) {
+    const err = new errorModel(
+      "You are not authorised to updated the expense.",
+      401
+    );
+    return next(err);
+  }
+
+  //update expense
+  expense.title = title || expense.title;
+  expense.category = category || expense.category;
+  expense.amount = amount || expense.amount;
+  expense.date_updated = new Date().toISOString();
+
+  //save expense
+
+  try {
+    await expense.save();
+  } catch (error) {
+    const err = new errorModel("Error updating the expense.", 500);
+    return next(err);
+  }
+
+  res.json(expense.toObject({ getters: true }));
+};
 
 const deleteExpense = async (req, res, next) => {
   const { eid } = req.params;

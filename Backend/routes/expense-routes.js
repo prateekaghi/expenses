@@ -7,4 +7,8 @@ router.get("/", expenseController.getExpenses);
 
 router.post("/", expenseController.addExpense);
 
+router.patch("/:eid", expenseController.updateExpense);
+
+router.delete("/:eid", expenseController.deleteExpense);
+
 module.exports = router;
