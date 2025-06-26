@@ -42,7 +42,63 @@ const addExpense = async (req, res, next) => {
   res.status(203).json(newExpense);
 };
 
+const updateExpense = async (req, res, next) => {};
+
+const deleteExpense = async (req, res, next) => {
+  const { eid } = req.params;
+  let expense;
+  //Find expense by id
+  try {
+    expense = await Expense.findById(eid);
+  } catch (error) {
+    const err = new errorModel("Error finding the expense.", 500);
+    return next(err);
+  }
+
+  //throw error if expense not found by id
+
+  if (!expense) {
+    const err = new errorModel("Expense not found!", 404);
+    return next(err);
+  }
+
+  //check if the user connected to the expense exists
+  let user;
+  try {
+    user = await User.findById(expense.user);
+  } catch (error) {
+    const err = new errorModel("Something went wrong!", 500);
+    return next(err);
+  }
+
+  if (!user) {
+    const err = new errorModel("User not found!", 404);
+    return next(err);
+  }
+
+  try {
+    //start transaction
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    //remove expense from expense collection
+    await expense.deleteOne({ session: sess });
+    //remove expense from user collection
+    user.expense.pop(expense);
+    //save user
+    await user.save();
+    //commit transaction
+    await sess.commitTransaction();
+  } catch (error) {
+    const err = new errorModel("Error while deleting the expense", 500);
+    return next(err);
+  }
+
+  res.json({ message: "Deleted" });
+};
+
 module.exports = {
-  getExpenses,
   addExpense,
+  getExpenses,
+  updateExpense,
+  deleteExpense,
 };
