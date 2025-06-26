@@ -24,7 +24,14 @@ const addExpense = async (req, res, next) => {
     const err = new errorModel("User does not exist", 400);
     return next(err);
   }
-  const newExpense = new Expense({ amount, category, date, title, user });
+  const newExpense = new Expense({
+    amount,
+    category,
+    date,
+    title,
+    user,
+    last_updated: date,
+  });
 
   try {
     const sess = await mongoose.startSession();

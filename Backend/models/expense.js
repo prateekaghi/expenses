@@ -24,6 +24,10 @@ const ExpenseSchema = new Schema({
     required: true,
     ref: "User",
   },
+  last_updated: {
+    type: Date,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("Expense", ExpenseSchema);
