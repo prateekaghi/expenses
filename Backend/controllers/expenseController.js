@@ -24,13 +24,17 @@ const addExpense = async (req, res, next) => {
     const err = new errorModel("User does not exist", 400);
     return next(err);
   }
+
+  const currentDate = new Date().toISOString();
+
   const newExpense = new Expense({
     amount,
     category,
     date,
     title,
     user,
-    last_updated: date,
+    date_created: currentDate,
+    date_updated: currentDate,
   });
 
   try {

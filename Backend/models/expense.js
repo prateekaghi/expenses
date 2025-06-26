@@ -24,7 +24,11 @@ const ExpenseSchema = new Schema({
     required: true,
     ref: "User",
   },
-  last_updated: {
+  date_created: {
+    type: Date,
+    required: false,
+  },
+  date_updated: {
     type: Date,
     required: false,
   },
