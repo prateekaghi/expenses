@@ -6,7 +6,7 @@ const Home = () => {
   const fetchUsers = async () => {
     try {
       const data = await getUser();
-      setUsers(data); // already parsed data
+      setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -15,7 +15,15 @@ const Home = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-  return <div>{JSON.stringify(users)}</div>;
+  return (
+    <div>
+      {users.length > 0
+        ? users.map((user) => {
+            return <div>{user.email}</div>;
+          })
+        : "No users found"}
+    </div>
+  );
 };
 
 export default Home;
