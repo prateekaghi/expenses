@@ -4,7 +4,7 @@ const User = require("../models/user");
 const getUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find({ isActive: true }, "-password");
+    users = await User.find({ Display: true }, "-password");
     if (!users) {
       const err = new errorModel("No users found!", 404);
       return next(err);
