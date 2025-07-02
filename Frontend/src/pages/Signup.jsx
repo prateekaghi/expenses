@@ -39,14 +39,14 @@ const Signup = () => {
     },
     password: {
       label: "Password",
-      input_type: "text",
+      input_type: "password",
       value: "",
       error: "",
       autoComplete: "new-password",
     },
     confirm_password: {
       label: "Confirm Password",
-      input_type: "text",
+      input_type: "password",
       value: "",
       error: "",
       autoComplete: "new-password",
