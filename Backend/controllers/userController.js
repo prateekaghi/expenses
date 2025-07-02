@@ -22,6 +22,10 @@ const getUsers = async (req, res, next) => {
 const signup = async (req, res, next) => {
   const { first_name, last_name, email, password } = req.body;
   let existingUser;
+  if (!first_name || !last_name || !email || !password) {
+    const err = new errorModel("Missing required payload data.", 500);
+    return next(err);
+  }
 
   try {
     //check if user email already exists
