@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   Box,
   Button,
@@ -8,17 +8,151 @@ import {
   Divider,
   Link,
   Stack,
-  Grid,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
+import { signupUser } from "../api/authApi";
 
 const Signup = () => {
+  const [userForm, setUserForm] = useState({
+    first_name: {
+      label: "First Name",
+      input_type: "text",
+      value: "",
+      error: "",
+      autoComplete: "given-name",
+    },
+    last_name: {
+      label: "Last Name",
+      input_type: "text",
+      value: "",
+      error: "",
+      autoComplete: "family-name",
+    },
+    email: {
+      label: "Email Address",
+      input_type: "email",
+      value: "",
+      error: "",
+      autoComplete: "email",
+    },
+    password: {
+      label: "Password",
+      input_type: "text",
+      value: "",
+      error: "",
+      autoComplete: "new-password",
+    },
+    confirm_password: {
+      label: "Confirm Password",
+      input_type: "text",
+      value: "",
+      error: "",
+      autoComplete: "new-password",
+    },
+  });
+
+  const debouncedUpdate = useCallback(
+    debounce((key, value) => {
+      setUserForm((prevForm) => ({
+        ...prevForm,
+        [key]: {
+          ...prevForm[key],
+          value,
+        },
+      }));
+    }, 300),
+    []
+  );
+
+  const handleInput = (e, key) => {
+    const { value } = e.target;
+    debouncedUpdate(key, value);
+  };
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Handle signup logic
+  const validate = () => {
+    let isValid = true;
+
+    const updatedForm = { ...userForm };
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    Object.entries(userForm).forEach(([key, field]) => {
+      const value = field.value.trim();
+
+      // Start with no error
+      updatedForm[key].error = "";
+
+      // Check for empty
+      if (!value) {
+        updatedForm[key].error = `${field.label} is required`;
+        isValid = false;
+      }
+
+      // Email format
+      if (key === "email" && value && !emailRegex.test(value)) {
+        updatedForm[key].error = "Please enter a valid email address";
+        isValid = false;
+      }
+
+      // Password match
+      if (
+        key === "confirm_password" &&
+        value &&
+        value !== userForm["password"].value.trim()
+      ) {
+        updatedForm[key].error = "Passwords do not match";
+        isValid = false;
+      }
+
+      // If there's an error, clear it after 3s
+      if (updatedForm[key].error) {
+        setTimeout(() => {
+          setUserForm((prev) => ({
+            ...prev,
+            [key]: {
+              ...prev[key],
+              error: "",
+            },
+          }));
+        }, 3000);
+      }
+    });
+
+    setUserForm(updatedForm);
+    return isValid;
+  };
+
+  const signUpHandler = async () => {
+    syncBeforeSubmit();
+    const validForm = validate();
+    if (validForm) {
+      const { email, first_name, last_name, password } = userForm;
+      const response = await signupUser({
+        email: email.value,
+        first_name: first_name.value,
+        last_name: last_name.value,
+        password: password.value,
+      });
+    }
+  };
+
+  const syncBeforeSubmit = () => {
+    const synced = { ...userForm };
+    [
+      "first_name",
+      "last_name",
+      "email",
+      "password",
+      "confirm_password",
+    ].forEach((key) => {
+      const el = document.querySelector(`input[name="${key}"]`);
+      if (el && el.value && synced[key].value !== el.value) {
+        synced[key].value = el.value;
+      }
+    });
+    setUserForm(synced);
   };
 
   const handleGoogleSignup = () => {
@@ -42,35 +176,26 @@ const Signup = () => {
           Create a New Account
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="First Name" margin="normal" required />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Last Name" margin="normal" required />
-          </Grid>
-
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Password"
-            type="password"
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Confirm Password"
-            type="password"
-            margin="normal"
-            required
-          />
+        <Box sx={{ mt: 2 }}>
+          {Object.entries(userForm).map(([key, value]) => {
+            return (
+              <TextField
+                size="small"
+                name={key}
+                key={key}
+                fullWidth
+                label={value.label}
+                required
+                error={value.error}
+                helperText={value.error}
+                margin="normal"
+                type={value.input_type}
+                onChange={(e) => handleInput(e, key)}
+                onBlur={(e) => handleInput(e, key)}
+                autoComplete={value.autoComplete}
+              />
+            );
+          })}
 
           <Button
             type="submit"
@@ -78,6 +203,7 @@ const Signup = () => {
             color="primary"
             fullWidth
             sx={{ mt: 2 }}
+            onClick={signUpHandler}
           >
             Sign Up
           </Button>
