@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  name: {
+  first_name: {
+    type: String,
+    required: true,
+  },
+  last_name: {
     type: String,
     required: true,
   },
@@ -15,6 +19,20 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     minLength: 6,
+  },
+  isActive: {
+    type: Boolean,
+  },
+  Display: {
+    type: Boolean,
+  },
+  date_created: {
+    type: Date,
+    required: false,
+  },
+  date_updated: {
+    type: Date,
+    required: false,
   },
   expense: [
     {
