@@ -4,8 +4,8 @@ const User = require("../models/user");
 const getUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find({}, "-password");
-    if (!users || users.length < 1) {
+    users = await User.find({ isActive: true }, "-password");
+    if (!users) {
       const err = new errorModel("No users found!", 404);
       return next(err);
     }
@@ -20,7 +20,7 @@ const getUsers = async (req, res, next) => {
   res.json(users.map((user) => user.toObject({ getters: true })));
 };
 const signup = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { first_name, last_name, email, password } = req.body;
   let existingUser;
 
   try {
@@ -40,7 +40,18 @@ const signup = async (req, res, next) => {
   }
 
   //create user variable and save user if email address does not exist
-  const createUser = new User({ email, name, password, expense: [] });
+  const currentDate = new Date().toISOString();
+  const createUser = new User({
+    email,
+    first_name,
+    last_name,
+    password,
+    date_created: currentDate,
+    date_updated: currentDate,
+    isActive: true,
+    Display: true,
+    expense: [],
+  });
 
   try {
     await createUser.save();
