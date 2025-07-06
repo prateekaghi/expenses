@@ -3,13 +3,50 @@ const errorModel = require("../models/error");
 const Expense = require("../models/expense");
 const User = require("../models/user");
 
-const getExpenses = (req, res, next) => {
-  console.log("trying ");
+const getExpenses = async (req, res, next) => {
+  let expenses;
+  try {
+    expenses = await Expense.find().sort({ date: -1 });
+
+    if (!expenses) {
+      const err = new errorModel("Something went wrong!", 500);
+      return next(err);
+    }
+  } catch (error) {
+    const err = new errorModel("Error fetching expenses.", 500);
+    return next(err);
+  }
+  res.json(
+    expenses.map((expense) => {
+      return expense.toObject({ getters: true });
+    })
+  );
+};
+
+const getUserExpenses = async (req, res, next) => {
+  const { userid } = req.params;
+  let user;
+  try {
+    user = await User.findById(userid)
+      .select("expense")
+      .populate("expense")
+      .lean();
+
+    if (!user) {
+      const err = new errorModel("User not found!", 404);
+      return next(err);
+    }
+  } catch (error) {
+    const err = new errorModel("Error while getting the user.", 500);
+    return next(err);
+  }
+
+  res.json(user.expense);
 };
 
 const addExpense = async (req, res, next) => {
-  const { amount, category, date, title, user } = req.body;
-  if (!amount || !category || !date || !title || !user) {
+  const { amount, category, date, title, user, currency } = req.body;
+  if (!amount || !category || !date || !title || !user || !currency) {
     const err = new errorModel("Invalid or Incomplete payload", 400);
     return next(err);
   }
@@ -33,6 +70,7 @@ const addExpense = async (req, res, next) => {
     date,
     title,
     user,
+    currency,
     date_created: currentDate,
     date_updated: currentDate,
   });
@@ -55,7 +93,7 @@ const addExpense = async (req, res, next) => {
 
 const updateExpense = async (req, res, next) => {
   const { eid } = req.params;
-  const { user_id, title, category, amount } = req.body;
+  const { user_id, title, category, amount, currency } = req.body;
   let expense;
 
   //find expense
@@ -87,6 +125,7 @@ const updateExpense = async (req, res, next) => {
   expense.title = title || expense.title;
   expense.category = category || expense.category;
   expense.amount = amount || expense.amount;
+  expense.currency = currency || expense.currency;
   expense.date_updated = new Date().toISOString();
 
   //save expense
@@ -156,6 +195,7 @@ const deleteExpense = async (req, res, next) => {
 module.exports = {
   addExpense,
   getExpenses,
+  getUserExpenses,
   updateExpense,
   deleteExpense,
 };

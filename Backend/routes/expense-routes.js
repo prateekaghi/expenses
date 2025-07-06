@@ -5,6 +5,8 @@ const expenseController = require("../controllers/expenseController");
 
 router.get("/", expenseController.getExpenses);
 
+router.get("/:userid", expenseController.getUserExpenses);
+
 router.post("/", expenseController.addExpense);
 
 router.patch("/:eid", expenseController.updateExpense);
