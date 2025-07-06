@@ -6,6 +6,7 @@ const userRoutes = require("./routes/user-routes");
 const expenseRoutes = require("./routes/expense-routes");
 const categoryRoutes = require("./routes/category-routes");
 const timezoneRoutes = require("./routes/timezone-routes");
+const currencyRoutes = require("./routes/currency-routes");
 
 const dotenv = require("dotenv").config();
 
@@ -27,6 +28,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/timezone", timezoneRoutes);
+app.use("/api/currency", currencyRoutes);
 
 //error handling middleware
 app.use((error, req, res, next) => {
