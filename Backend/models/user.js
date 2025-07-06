@@ -40,6 +40,12 @@ const UserSchema = new Schema({
       ref: "Expense",
     },
   ],
+  categories: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", UserSchema);

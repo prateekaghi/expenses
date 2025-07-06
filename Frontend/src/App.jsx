@@ -8,6 +8,9 @@ import "./index.css";
 import { Box } from "@mui/material";
 import AuthLayout from "./layouts/AuthLayout";
 import PrimaryLayout from "./layouts/PrimaryLayout";
+import ExpenseList from "./pages/Expenses/ExpenseList";
+import UserLayout from "./layouts/UserLayout";
+import AddExpense from "./pages/Expenses/AddExpense";
 
 const App = () => {
   return (
@@ -15,11 +18,15 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route element={<PrimaryLayout />}>
-            <Route path="/" element={<Home />}></Route>
+            <Route path="/" element={<Home />} />
+          </Route>
+          <Route path="/expenses" element={<UserLayout />}>
+            <Route index element={<ExpenseList />} />
+            <Route path="add" element={<AddExpense />} />
           </Route>
           <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/signup" element={<Signup />}></Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

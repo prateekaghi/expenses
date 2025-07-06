@@ -47,6 +47,7 @@ const Login = () => {
             label="Email"
             type="email"
             margin="normal"
+            size="small"
             required
           />
           <TextField
@@ -54,6 +55,7 @@ const Login = () => {
             label="Password"
             type="password"
             margin="normal"
+            size="small"
             required
           />
 

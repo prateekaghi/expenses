@@ -4,7 +4,7 @@ import ClientHeader from "../components/navigation/ClientHeader";
 import { Box, Container } from "@mui/material";
 import FooterComponent from "../components/Footer/FooterComponent";
 
-const PrimaryLayout = () => {
+const UserLayout = () => {
   return (
     <Box
       sx={{
@@ -30,4 +30,4 @@ const PrimaryLayout = () => {
   );
 };
 
-export default PrimaryLayout;
+export default UserLayout;

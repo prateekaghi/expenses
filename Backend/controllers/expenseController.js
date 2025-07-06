@@ -3,6 +3,8 @@ const errorModel = require("../models/error");
 const Expense = require("../models/expense");
 const User = require("../models/user");
 
+const { currentDate } = require("../utils/dateUtils");
+
 const getExpenses = async (req, res, next) => {
   let expenses;
   try {
@@ -52,7 +54,7 @@ const addExpense = async (req, res, next) => {
   }
   let existingUser;
   try {
-    existingUser = await User.findById(user);
+    existingUser = await User.findById(user).populate("categories");
   } catch (error) {
     const err = new errorModel("Error while checking user", 500);
     return next(err);
@@ -62,7 +64,13 @@ const addExpense = async (req, res, next) => {
     return next(err);
   }
 
-  const currentDate = new Date().toISOString();
+  const categoryExists = existingUser.categories.some((cat) => {
+    return cat._id.equals(category);
+  });
+  if (!categoryExists) {
+    const err = new errorModel("Category does not exist for the user.", 404);
+    return next(err);
+  }
 
   const newExpense = new Expense({
     amount,
@@ -71,8 +79,8 @@ const addExpense = async (req, res, next) => {
     title,
     user,
     currency,
-    date_created: currentDate,
-    date_updated: currentDate,
+    date_created: currentDate(),
+    date_updated: currentDate(),
   });
 
   try {
@@ -98,7 +106,7 @@ const updateExpense = async (req, res, next) => {
 
   //find expense
   try {
-    expense = await Expense.findById(eid);
+    expense = await Expense.findById(eid).populate("user");
   } catch (error) {
     const err = new errorModel("Error finding the expense.", 500);
     return next(err);
@@ -121,12 +129,25 @@ const updateExpense = async (req, res, next) => {
     return next(err);
   }
 
+  //check if the category exists for the user
+  if (category) {
+    const { user } = expense;
+    const categoryExists = user.categories.some((cat) => {
+      return cat.equals(category);
+    });
+
+    if (!categoryExists) {
+      const err = new errorModel("Category does not exist for the user.", 404);
+      return next(err);
+    }
+  }
+
   //update expense
   expense.title = title || expense.title;
   expense.category = category || expense.category;
   expense.amount = amount || expense.amount;
   expense.currency = currency || expense.currency;
-  expense.date_updated = new Date().toISOString();
+  expense.date_updated = currentDate();
 
   //save expense
 

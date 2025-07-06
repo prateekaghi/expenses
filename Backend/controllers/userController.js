@@ -1,5 +1,6 @@
 const errorModel = require("../models/error");
 const User = require("../models/user");
+const { currentDate } = require("../utils/dateUtils");
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -44,17 +45,18 @@ const signup = async (req, res, next) => {
   }
 
   //create user variable and save user if email address does not exist
-  const currentDate = new Date().toISOString();
+
   const createUser = new User({
     email,
     first_name,
     last_name,
     password,
-    date_created: currentDate,
-    date_updated: currentDate,
+    date_created: currentDate(),
+    date_updated: currentDate(),
     isActive: true,
     Display: true,
     expense: [],
+    categories: [],
   });
 
   try {

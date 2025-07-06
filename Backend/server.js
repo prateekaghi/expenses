@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const userRoutes = require("./routes/user-routes");
 const expenseRoutes = require("./routes/expense-routes");
+const categoryRoutes = require("./routes/category-routes");
 
 const dotenv = require("dotenv").config();
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/category", categoryRoutes);
 app.use("/api/expenses", expenseRoutes);
 
 //error handling middleware
