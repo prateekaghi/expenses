@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/user-routes");
 const expenseRoutes = require("./routes/expense-routes");
 const categoryRoutes = require("./routes/category-routes");
+const timezoneRoutes = require("./routes/timezone-routes");
 
 const dotenv = require("dotenv").config();
 
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/timezone", timezoneRoutes);
 
 //error handling middleware
 app.use((error, req, res, next) => {

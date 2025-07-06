@@ -1,4 +1,4 @@
-const errorModel = require("../models/error");
+const ErrorModel = require("../models/error");
 const Category = require("../models/category");
 const User = require("../models/user");
 const { currentDate } = require("../utils/dateUtils");
@@ -9,7 +9,7 @@ const getCategories = async (req, res, next) => {
   try {
     categories = await Category.find({});
   } catch (error) {
-    const err = new errorModel("Error while fetching.", 500);
+    const err = new ErrorModel("Error while fetching.", 500);
     return next(err);
   }
 
@@ -20,7 +20,7 @@ const addCategory = async (req, res, next) => {
   const { name, userid } = req.body;
 
   if (!userid) {
-    const err = new errorModel(
+    const err = new ErrorModel(
       "User id is required for adding the expense.",
       500
     );
@@ -28,25 +28,25 @@ const addCategory = async (req, res, next) => {
   }
 
   if (!name) {
-    const err = new errorModel("Category name is required.", 500);
+    const err = new ErrorModel("Category name is required.", 500);
     return next(err);
   }
 
   const user = await User.findById(userid);
 
   if (!user) {
-    const err = new errorModel("User not found", 404);
+    const err = new ErrorModel("User not found", 404);
     return next(err);
   }
 
   try {
     const existing = await Category.findOne({ name, user: userid });
     if (existing) {
-      const err = new errorModel("Existing category.", 409);
+      const err = new ErrorModel("Existing category.", 409);
       return next(err);
     }
   } catch (error) {
-    const err = new errorModel("Error while checking category.", 500);
+    const err = new ErrorModel("Error while checking category.", 500);
     return next(err);
   }
 
@@ -66,7 +66,7 @@ const addCategory = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (error) {
     console.error("Error creating category:", error);
-    const err = new errorModel("Error while creating category.", 500);
+    const err = new ErrorModel("Error while creating category.", 500);
     return next(err);
   }
 

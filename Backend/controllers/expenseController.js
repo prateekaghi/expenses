@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const errorModel = require("../models/error");
+const ErrorModel = require("../models/error");
 const Expense = require("../models/expense");
 const User = require("../models/user");
 
@@ -11,11 +11,11 @@ const getExpenses = async (req, res, next) => {
     expenses = await Expense.find().sort({ date: -1 });
 
     if (!expenses) {
-      const err = new errorModel("Something went wrong!", 500);
+      const err = new ErrorModel("Something went wrong!", 500);
       return next(err);
     }
   } catch (error) {
-    const err = new errorModel("Error fetching expenses.", 500);
+    const err = new ErrorModel("Error fetching expenses.", 500);
     return next(err);
   }
   res.json(
@@ -35,11 +35,11 @@ const getUserExpenses = async (req, res, next) => {
       .lean();
 
     if (!user) {
-      const err = new errorModel("User not found!", 404);
+      const err = new ErrorModel("User not found!", 404);
       return next(err);
     }
   } catch (error) {
-    const err = new errorModel("Error while getting the user.", 500);
+    const err = new ErrorModel("Error while getting the user.", 500);
     return next(err);
   }
 
@@ -49,18 +49,18 @@ const getUserExpenses = async (req, res, next) => {
 const addExpense = async (req, res, next) => {
   const { amount, category, date, title, user, currency } = req.body;
   if (!amount || !category || !date || !title || !user || !currency) {
-    const err = new errorModel("Invalid or Incomplete payload", 400);
+    const err = new ErrorModel("Invalid or Incomplete payload", 400);
     return next(err);
   }
   let existingUser;
   try {
     existingUser = await User.findById(user).populate("categories");
   } catch (error) {
-    const err = new errorModel("Error while checking user", 500);
+    const err = new ErrorModel("Error while checking user", 500);
     return next(err);
   }
   if (!existingUser) {
-    const err = new errorModel("User does not exist", 400);
+    const err = new ErrorModel("User does not exist", 400);
     return next(err);
   }
 
@@ -68,7 +68,7 @@ const addExpense = async (req, res, next) => {
     return cat._id.equals(category);
   });
   if (!categoryExists) {
-    const err = new errorModel("Category does not exist for the user.", 404);
+    const err = new ErrorModel("Category does not exist for the user.", 404);
     return next(err);
   }
 
@@ -91,8 +91,8 @@ const addExpense = async (req, res, next) => {
     await existingUser.save();
     await sess.commitTransaction();
   } catch (error) {
-    const err = new errorModel("Unable to add expense", 500);
-    console.log(error);
+    const err = new ErrorModel("Unable to add expense", 500);
+
     return next(err);
   }
 
@@ -108,13 +108,13 @@ const updateExpense = async (req, res, next) => {
   try {
     expense = await Expense.findById(eid).populate("user");
   } catch (error) {
-    const err = new errorModel("Error finding the expense.", 500);
+    const err = new ErrorModel("Error finding the expense.", 500);
     return next(err);
   }
 
   //throw error if expense not found
   if (!expense) {
-    const err = new errorModel("Expense not found!", 404);
+    const err = new ErrorModel("Expense not found!", 404);
     return next(err);
   }
 
@@ -122,7 +122,7 @@ const updateExpense = async (req, res, next) => {
   //throw error if payload user id does not match with the expense user id
 
   if (!user_id || !expense.user.equals(user_id)) {
-    const err = new errorModel(
+    const err = new ErrorModel(
       "You are not authorised to updated the expense.",
       401
     );
@@ -137,7 +137,7 @@ const updateExpense = async (req, res, next) => {
     });
 
     if (!categoryExists) {
-      const err = new errorModel("Category does not exist for the user.", 404);
+      const err = new ErrorModel("Category does not exist for the user.", 404);
       return next(err);
     }
   }
@@ -154,7 +154,7 @@ const updateExpense = async (req, res, next) => {
   try {
     await expense.save();
   } catch (error) {
-    const err = new errorModel("Error updating the expense.", 500);
+    const err = new ErrorModel("Error updating the expense.", 500);
     return next(err);
   }
 
@@ -168,14 +168,14 @@ const deleteExpense = async (req, res, next) => {
   try {
     expense = await Expense.findById(eid);
   } catch (error) {
-    const err = new errorModel("Error finding the expense.", 500);
+    const err = new ErrorModel("Error finding the expense.", 500);
     return next(err);
   }
 
   //throw error if expense not found by id
 
   if (!expense) {
-    const err = new errorModel("Expense not found!", 404);
+    const err = new ErrorModel("Expense not found!", 404);
     return next(err);
   }
 
@@ -184,12 +184,12 @@ const deleteExpense = async (req, res, next) => {
   try {
     user = await User.findById(expense.user);
   } catch (error) {
-    const err = new errorModel("Something went wrong!", 500);
+    const err = new ErrorModel("Something went wrong!", 500);
     return next(err);
   }
 
   if (!user) {
-    const err = new errorModel("User not found!", 404);
+    const err = new ErrorModel("User not found!", 404);
     return next(err);
   }
 
@@ -206,7 +206,7 @@ const deleteExpense = async (req, res, next) => {
     //commit transaction
     await sess.commitTransaction();
   } catch (error) {
-    const err = new errorModel("Error while deleting the expense", 500);
+    const err = new ErrorModel("Error while deleting the expense", 500);
     return next(err);
   }
 

@@ -34,6 +34,10 @@ const UserSchema = new Schema({
     type: Date,
     required: false,
   },
+  timezone: {
+    type: String,
+    required: true,
+  },
   expense: [
     {
       type: mongoose.Schema.Types.ObjectId,
