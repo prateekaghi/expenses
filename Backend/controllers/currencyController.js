@@ -1,7 +1,18 @@
 const ErrorModel = require("../models/error");
 const Currency = require("../models/currency");
+const Expense = require("../models/expense");
+const { currentDate } = require("../utils/dateUtils");
 
-const getCurrencies = (req, res, next) => {};
+const getCurrencies = async (req, res, next) => {
+  let currencies;
+  try {
+    currencies = await Currency.find().sort({ date_created: -1 });
+  } catch (error) {
+    const err = new ErrorModel("Error while getting currencies.", 500);
+    return next(err);
+  }
+  res.json(currencies);
+};
 
 const addCurrency = async (req, res, next) => {
   const { name, value } = req.body;
@@ -25,7 +36,12 @@ const addCurrency = async (req, res, next) => {
     return next(err);
   }
 
-  let newCurrency = new Currency({ name, value });
+  let newCurrency = new Currency({
+    name,
+    value,
+    date_created: currentDate(),
+    date_updated: currentDate(),
+  });
 
   try {
     await newCurrency.save();
@@ -39,7 +55,13 @@ const addCurrency = async (req, res, next) => {
 
 const updateCurrency = (req, res, next) => {};
 
-const deleteCurrency = (req, res, next) => {};
+const deleteCurrency = (req, res, next) => {
+  try {
+  } catch (error) {
+    const err = new ErrorModel("Error while deleting the currency.", 500);
+    return next(err);
+  }
+};
 
 module.exports = {
   getCurrencies,
