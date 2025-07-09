@@ -5,7 +5,7 @@ const currencyController = require("../controllers/currencyController");
 
 router.get("/", currencyController.getCurrencies);
 router.post("/", currencyController.addCurrency);
-router.patch("/:cid", currencyController.updateCurrency);
-router.delete("/:cid", currencyController.deleteCurrency);
+router.patch("/:id", currencyController.updateCurrency);
+router.delete("/:id", currencyController.deleteCurrency);
 
 module.exports = router;
