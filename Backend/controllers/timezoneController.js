@@ -1,6 +1,7 @@
 const ErrorModel = require("../models/error");
 const tz = require("../models/timezone");
 const User = require("../models/user");
+const { currentDate } = require("../utils/dateUtils");
 
 const getTimezones = async (req, res, next) => {
   let timezones;
@@ -47,7 +48,12 @@ const createTimezone = async (req, res, next) => {
       return next(err);
     }
 
-    newTimezone = new tz({ name, value });
+    newTimezone = new tz({
+      name,
+      value,
+      date_created: currentDate(),
+      date_updated: currentDate(),
+    });
     await newTimezone.save();
   } catch (error) {
     const err = new ErrorModel("Unable to create timezones", 500);
@@ -58,7 +64,7 @@ const createTimezone = async (req, res, next) => {
 
 const updateTimezone = async (req, res, next) => {
   // Get timezoneid , name and value
-  const { tid } = req.params;
+  const { id } = req.params;
   const { name, value } = req.body;
 
   //Throw error if name and value not available for update
@@ -74,7 +80,7 @@ const updateTimezone = async (req, res, next) => {
   // Verify if the timezone exists with the provided id.
   let timezone;
   try {
-    timezone = await tz.findById(tid);
+    timezone = await tz.findById(id);
   } catch (error) {
     const err = new ErrorModel("Unable to find timezone", 500);
     return next(err);
@@ -148,7 +154,11 @@ const updateTimezone = async (req, res, next) => {
   res.json(timezone);
 };
 
-const deleteTimezone = (req, res, next) => {};
+const deleteTimezone = (req, res, next) => {
+  const { id } = req.params;
+
+  res.json(`${id} will be deleted`);
+};
 
 module.exports = {
   getTimezones,

@@ -1,0 +1,285 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Expenses API",
+    "version": "1.0.0",
+    "description": "Expense API collection"
+  },
+  "servers": [{ "url": "http://localhost:4000" }],
+  "paths": {
+    "/api/timezone": {
+      "get": {
+        "summary": "Get all timezones",
+        "tags": ["Timezones"],
+        "responses": {
+          "200": {
+            "description": "An array of timezones.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "686ae1de5486c3d973702bc6"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Eastern Standard Time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new timezone",
+        "tags": ["Timezones"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "value"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "India Standard Time"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "IST"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Timezone created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "686ae1de5486c3d973702bc6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "India Standard Time"
+                    },
+                    "value": {
+                      "type": "string",
+                      "example": "IST"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-09T10:30:00.000Z"
+                    },
+                    "date_updated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-09T10:30:00.000Z"
+                    },
+                    "__v": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Timezone already exists or creation failed"
+          }
+        }
+      }
+    },
+    "/api/timezone/{id}/update": {
+      "patch": {
+        "summary": "Update an existing timezone",
+        "tags": ["Timezones"],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "description": "ID of the timezone to update",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Pacific Standard Time"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "PST"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Timezone updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "686ae1de5486c3d973702bc6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Pacific Standard Time"
+                    },
+                    "value": {
+                      "type": "string",
+                      "example": "PST"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-01T10:00:00.000Z"
+                    },
+                    "date_updated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-09T15:45:00.000Z"
+                    },
+                    "__v": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Timezone not found"
+          },
+          "500": {
+            "description": "Failed to update timezone"
+          }
+        }
+      }
+    },
+    "/api/timezone/{id}": {
+      "delete": {
+        "summary": "Delete a timezone by ID",
+        "tags": ["Timezones"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the timezone to delete",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Timezone deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Timezone deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Timezone not found"
+          },
+          "500": {
+            "description": "Failed to delete timezone"
+          }
+        }
+      }
+    },
+    "/api/currency": {
+      "get": {
+        "summary": "Get all currencies.",
+        "tags": ["Currencies"],
+        "responses": {
+          "200": {
+            "description": "An array of currencies.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "686ae1de5486c3d973702bc6"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "USD"
+                      },
+                      "value": {
+                        "type": "string",
+                        "example": "USD"
+                      },
+                      "date_created": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-06T21:53:10.322Z"
+                      },
+                      "date_updated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-06T21:53:10.322Z"
+                      },
+                      "__v": {
+                        "type": "integer",
+                        "example": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

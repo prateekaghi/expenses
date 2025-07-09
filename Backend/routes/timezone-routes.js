@@ -7,8 +7,8 @@ router.get("/", timezoneController.getTimezones);
 
 router.post("/", timezoneController.createTimezone);
 
-router.patch("/:tid/update", timezoneController.updateTimezone);
+router.patch("/:id/update", timezoneController.updateTimezone);
 
-router.delete("/", timezoneController.deleteTimezone);
+router.delete("/:id", timezoneController.deleteTimezone);
 
 module.exports = router;
