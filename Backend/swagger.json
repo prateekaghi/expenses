@@ -685,6 +685,126 @@
         }
       }
     },
+    "/api/category/{id}": {
+      "get": {
+        "summary": "Get all categories for a particular user id.",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to retrieve",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "686ae1de5486c3d973702bc6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Food"
+                    },
+                    "color": {
+                      "type": "string",
+                      "example": "#FF5733"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-09T12:00:00.000Z"
+                    },
+                    "date_updated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-09T12:30:00.000Z"
+                    },
+                    "__v": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Failed to retrieve category"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a category by ID",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to delete",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userid": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Failed to delete category"
+          }
+        }
+      }
+    },
     "/api/timezone": {
       "get": {
         "summary": "Get all timezones",

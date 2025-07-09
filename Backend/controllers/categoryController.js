@@ -1,6 +1,7 @@
 const ErrorModel = require("../models/error");
 const Category = require("../models/category");
 const User = require("../models/user");
+const Expense = require("../models/expense");
 const { currentDate } = require("../utils/dateUtils");
 const mongoose = require("mongoose");
 
@@ -14,6 +15,23 @@ const getCategories = async (req, res, next) => {
   }
 
   res.json(categories.map((category) => category.toObject({ getters: true })));
+};
+
+const getUserCategories = async (req, res, next) => {
+  const { id } = req.params;
+  let user;
+  try {
+    user = await User.findById(id).populate("categories");
+  } catch (error) {
+    const err = new ErrorModel("Unable to find the user.", 500);
+    return next(err);
+  }
+  if (!user) {
+    const err = new ErrorModel("User does not exist.", 404);
+    return next(err);
+  }
+
+  res.json(user.categories);
 };
 
 const addCategory = async (req, res, next) => {
@@ -75,8 +93,62 @@ const addCategory = async (req, res, next) => {
 
 const updateCategory = (req, res, next) => {};
 
+const deleteCategory = async (req, res, next) => {
+  const { id } = req.params;
+  const { userid } = req.body;
+
+  //find the category by id
+  let category;
+  try {
+    category = await Category.findById(id);
+  } catch (error) {
+    const err = new ErrorModel("Error while fetching.", 500);
+    return next(err);
+  }
+
+  //check if the category user id corresponds to the user id received.
+  if (!category.user.equals(userid)) {
+    const err = new ErrorModel("Category does not belong to the user.", 500);
+    return next(err);
+  }
+
+  let categoryExpenseCount;
+  //check if category is being used in any expense
+  try {
+    categoryExpenseCount = await Expense.countDocuments({
+      user: userid,
+      category: id,
+    });
+  } catch (error) {
+    const err = new ErrorModel(
+      "Unable to look for expenses with the current category.",
+      500
+    );
+    return next(err);
+  }
+
+  if (categoryExpenseCount) {
+    const err = new ErrorModel(
+      "Unable to delete category. Expenses exist.",
+      500
+    );
+    return next(err);
+  }
+
+  try {
+    await category.deleteOne();
+  } catch (error) {
+    const err = new ErrorModel("Error while deleting the category", 500);
+    return next(err);
+  }
+
+  res.json("Category deleted!");
+};
+
 module.exports = {
   getCategories,
+  getUserCategories,
   addCategory,
   updateCategory,
+  deleteCategory,
 };
