@@ -2,6 +2,8 @@ const ErrorModel = require("../models/error");
 const User = require("../models/user");
 const { currentDate } = require("../utils/dateUtils");
 
+const { sendVerificationMail } = require("../services/emailService");
+
 const getUsers = async (req, res, next) => {
   let users;
   try {
@@ -50,7 +52,6 @@ const signup = async (req, res, next) => {
       );
       return next(err);
     }
-    console.log(existingUser);
   }
 
   //create user variable and save user if email address does not exist
@@ -71,6 +72,10 @@ const signup = async (req, res, next) => {
 
   try {
     await createUser.save();
+    await sendVerificationMail({
+      userEmail: "prateekaghi42@gmail.com",
+      token: email,
+    });
   } catch (error) {
     const err = new ErrorModel("Error occured while creating the user.", 500);
     return next(err);
