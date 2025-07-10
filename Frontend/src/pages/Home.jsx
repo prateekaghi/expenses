@@ -1,28 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { getUser } from "../api/usersApi";
+import React from "react";
+import { Grid } from "@mui/material";
+import UserStats from "../Containers/Users/UserStats";
 
 const Home = () => {
-  const [users, setUsers] = useState([]);
-  const fetchUsers = async () => {
-    try {
-      const data = await getUser();
-      setUsers(data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
   return (
-    <div>
-      {users.length > 0
-        ? users.map((user) => {
-            return <div>{user.email}</div>;
-          })
-        : "No users found"}
-    </div>
+    <Grid container>
+      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+        <UserStats />
+      </Grid>
+    </Grid>
   );
 };
 

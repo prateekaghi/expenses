@@ -97,6 +97,14 @@ const Login = () => {
             </Link>
           </Typography>
         </Stack>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => navigate("/")}
+          sx={{ marginTop: 2 }}
+        >
+          Go to Homepage
+        </Button>
       </Paper>
     </Box>
   );

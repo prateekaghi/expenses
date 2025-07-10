@@ -1,6 +1,6 @@
 import apiClient from "./index";
 
-export const getUser = async () => {
+export const getUsers = async () => {
   try {
     const data = await apiClient.get("/users");
     if (data.status === 200) {
