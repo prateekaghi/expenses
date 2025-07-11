@@ -5,9 +5,32 @@ const { currentDate } = require("../utils/dateUtils");
 const { sendVerificationMail } = require("../services/emailService");
 
 const getUsers = async (req, res, next) => {
+  let { page = 1, limit = 10 } = req.query;
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+    return res.status(400).json({ message: "Invalid page or limit" });
+  }
+
+  const skip = (page - 1) * limit;
   let users;
+  let userCount;
+  let totalPages;
   try {
-    users = await User.find({ Display: true }, "-password");
+    userCount = await User.countDocuments();
+    totalPages = Math.ceil(userCount / limit);
+
+    if (page > totalPages && userCount !== 0) {
+      return res.status(400).json({
+        message: `Page ${page} does not exist. Total pages: ${totalPages}`,
+      });
+    }
+
+    users = await User.find({ Display: true }, "-password")
+      .skip(skip)
+      .limit(limit)
+      .sort({ date_created: -1 });
     if (!users) {
       const err = new ErrorModel("No users found!", 404);
       return next(err);
@@ -19,8 +42,14 @@ const getUsers = async (req, res, next) => {
     );
     return next(err);
   }
-
-  res.json(users.map((user) => user.toObject({ getters: true })));
+  res.json({
+    page,
+    limit,
+    totalPages,
+    totalUsers: userCount,
+    message: "Users fetched successfully!",
+    data: users.map((user) => user.toObject({ getters: true })),
+  });
 };
 const signup = async (req, res, next) => {
   const { first_name, last_name, email, password } = req.body;
