@@ -77,7 +77,7 @@ const getUsers = async (req, res, next) => {
     page,
     limit,
     totalPages,
-    totalUsers: userCount,
+    totalRecords: userCount,
     message: "Users fetched successfully!",
     data: users.map((user) => user.toObject({ getters: true })),
   });

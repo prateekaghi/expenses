@@ -10,7 +10,7 @@ export function calculateMonthlyGrowth(dataArray) {
   let lastMonthCount = 0;
 
   dataArray.forEach((item) => {
-    const date = new Date(item.date_created);
+    const date = new Date(item.createdAt);
     const itemMonth = date.getMonth();
     const itemYear = date.getFullYear();
 

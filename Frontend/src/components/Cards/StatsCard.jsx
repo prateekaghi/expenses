@@ -24,7 +24,6 @@ const StatsCard = ({ title, period, data }) => {
         borderRadius: 3,
         p: 2,
         boxShadow: 3,
-        minWidth: 250,
       }}
     >
       <CardContent sx={{ p: 0 }}>

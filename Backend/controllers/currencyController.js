@@ -1,18 +1,42 @@
 const ErrorModel = require("../models/error");
 const Currency = require("../models/currency");
 const Expense = require("../models/expense");
-const { currentDate } = require("../utils/dateUtils");
 const mongoose = require("mongoose");
 
 const getCurrencies = async (req, res, next) => {
+  let { page, limit } = req.query;
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+    return res.status(400).json({ message: "Invalid page or limit" });
+  }
+
+  let currencyCount;
+  const skip = (page - 1) * limit;
+
   let currencies;
   try {
-    currencies = await Currency.find().sort({ date_created: -1 });
+    currencyCount = await Currency.countDocuments();
+    currencies = await Currency.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ date_created: -1 });
   } catch (error) {
     const err = new ErrorModel("Error while getting currencies.", 500);
     return next(err);
   }
-  res.json(currencies);
+  const totalPages = Math.ceil(currencyCount / limit);
+  res.json({
+    page,
+    limit,
+    totalPages,
+    totalRecords: currencyCount,
+    message: "Currencies fetched successfully",
+    data: currencies.map((currency) => {
+      return currency.toObject({ getters: true });
+    }),
+  });
 };
 
 const addCurrency = async (req, res, next) => {

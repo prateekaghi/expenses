@@ -3,7 +3,10 @@ import { useUsers } from "../../hooks/useUsers";
 import StatsCard from "../../components/Cards/StatsCard";
 
 const UserStats = () => {
-  const { data, isLoading, isError, error } = useUsers();
+  const { data, isLoading, isError, error } = useUsers({
+    page: 1,
+    limit: 1000,
+  });
   if (isLoading) return <p>Loading users...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 

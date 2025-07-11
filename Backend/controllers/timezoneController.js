@@ -11,11 +11,12 @@ const getTimezones = async (req, res, next) => {
     const err = new ErrorModel("Unable to get timezones", 500);
     return next(err);
   }
-  res.json(
-    timezones.map((timezone) => {
+  res.json({
+    message: "Timezones fetched successfully.",
+    data: timezones.map((timezone) => {
       return timezone.toObject({ getters: true });
-    })
-  );
+    }),
+  });
 };
 
 const createTimezone = async (req, res, next) => {

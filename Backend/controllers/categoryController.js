@@ -14,7 +14,10 @@ const getCategories = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(categories.map((category) => category.toObject({ getters: true })));
+  res.json({
+    message: "Categories fetched successfully",
+    data: categories.map((category) => category.toObject({ getters: true })),
+  });
 };
 
 const getUserCategories = async (req, res, next) => {

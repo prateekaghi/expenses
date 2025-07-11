@@ -18,11 +18,12 @@ const getExpenses = async (req, res, next) => {
     const err = new ErrorModel("Error fetching expenses.", 500);
     return next(err);
   }
-  res.json(
-    expenses.map((expense) => {
+  res.json({
+    message: "Expenses fetched successfully.",
+    data: expenses.map((expense) => {
       return expense.toObject({ getters: true });
-    })
-  );
+    }),
+  });
 };
 
 const getUserExpenses = async (req, res, next) => {
