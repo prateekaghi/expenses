@@ -17,8 +17,7 @@
             "required": false,
             "description": "Page Number",
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "integer"
             }
           },
           {
@@ -27,8 +26,7 @@
             "required": false,
             "description": "Number of results per page",
             "schema": {
-              "type": "integer",
-              "example": 10
+              "type": "integer"
             }
           },
           {
@@ -38,8 +36,7 @@
             "description": "ISO date string to filter users created on or after this date",
             "schema": {
               "type": "string",
-              "format": "date",
-              "example": "2024-07-01"
+              "format": "date"
             }
           },
           {
@@ -49,8 +46,34 @@
             "description": "ISO date string to filter users created on or before this date",
             "schema": {
               "type": "string",
-              "format": "date",
-              "example": "2024-07-10"
+              "format": "date"
+            }
+          },
+          {
+            "name": "isActive",
+            "in": "query",
+            "required": false,
+            "description": "Filter users based on status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "required": false,
+            "description": "Filter users based on firstname.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "required": false,
+            "description": "Filter users based on lastname.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -240,9 +263,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["Display"],
+                "required": ["display"],
                 "properties": {
-                  "Display": {
+                  "display": {
                     "type": "boolean",
                     "example": false
                   }
@@ -1178,7 +1201,7 @@
             "type": "boolean",
             "example": true
           },
-          "Display": {
+          "display": {
             "type": "boolean",
             "example": true
           },

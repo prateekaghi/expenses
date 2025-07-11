@@ -24,7 +24,7 @@ const UserSchema = new Schema(
     isActive: {
       type: Boolean,
     },
-    Display: {
+    display: {
       type: Boolean,
     },
     timezone: {

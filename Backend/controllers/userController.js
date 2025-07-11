@@ -1,11 +1,18 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
-const { currentDate } = require("../utils/dateUtils");
 
 const { sendVerificationMail } = require("../services/emailService");
 
 const getUsers = async (req, res, next) => {
-  let { page = 1, limit = 10 } = req.query;
+  let {
+    page = 1,
+    limit = 10,
+    startDate,
+    endDate,
+    isActive,
+    firstName,
+    lastName,
+  } = req.query;
   page = parseInt(page);
   limit = parseInt(limit);
 
@@ -14,16 +21,35 @@ const getUsers = async (req, res, next) => {
   }
 
   const skip = (page - 1) * limit;
+  const query = {
+    display: true,
+  };
   let users;
   let userCount;
   let totalPages;
+  if (startDate || endDate) {
+    query.createdAt = {};
+    if (startDate) query.createdAt.$gte = new Date(startDate);
+    if (endDate) query.createdAt.$lte = new Date(endDate);
+  }
+  if (isActive) {
+    query.isActive = isActive;
+  }
+  if (firstName) {
+    query.first_name = { $regex: firstName, $options: "i" };
+  }
+  if (lastName) {
+    query.last_name = { $regex: lastName, $options: "i" };
+  }
+  console.log(query);
   try {
     userCount = await User.countDocuments();
     totalPages = Math.ceil(userCount / limit);
 
     if (!userCount) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: `No available users.`,
+        data: [],
       });
     }
 
@@ -33,10 +59,10 @@ const getUsers = async (req, res, next) => {
       });
     }
 
-    users = await User.find({ Display: true }, "-password")
+    users = await User.find(query, "-password")
       .skip(skip)
       .limit(limit)
-      .sort({ date_created: -1 });
+      .sort({ createdAt: -1 });
     if (!users) {
       const err = new ErrorModel("No users found!", 404);
       return next(err);
@@ -74,7 +100,7 @@ const signup = async (req, res, next) => {
   }
   //throw error if user exists
   if (existingUser) {
-    if (existingUser.Display) {
+    if (existingUser.display) {
       const err = new ErrorModel(
         "User exists with the provided email address.",
         422
@@ -97,7 +123,7 @@ const signup = async (req, res, next) => {
     last_name,
     password,
     isActive: true,
-    Display: true,
+    display: true,
     expense: [],
     categories: [],
     timezone: "UTC",
@@ -212,9 +238,9 @@ const toggleUserStatus = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   const { userid } = req.params;
-  const { Display } = req.body;
+  const { display } = req.body;
 
-  if (Display === undefined) {
+  if (display === undefined) {
     const err = new ErrorModel("Payload missing!", 500);
     return next(err);
   }
@@ -228,7 +254,7 @@ const deleteUser = async (req, res, next) => {
   }
 
   //Update user details
-  user.Display = Display;
+  user.display = display;
 
   //save user
   try {
