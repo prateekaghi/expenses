@@ -24,13 +24,24 @@ const CustomTable = ({
   renderActions,
 }) => {
   return (
-    <Paper sx={{ width: "100%", overflowX: "auto" }}>
-      <TableContainer>
-        <Table size="small">
+    <Paper
+      sx={{
+        width: "100%",
+        overflowX: "auto",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <TableContainer style={{ maxHeight: "25vh" }}>
+        <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={col.id}>{col.label}</TableCell>
+                <TableCell sx={{ background: "#bebbbbff" }} key={col.id}>
+                  {col.label}
+                </TableCell>
               ))}
               {renderActions && <TableCell>Actions</TableCell>}
             </TableRow>
