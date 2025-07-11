@@ -41,7 +41,6 @@ const getUsers = async (req, res, next) => {
   if (lastName) {
     query.last_name = { $regex: lastName, $options: "i" };
   }
-  console.log(query);
   try {
     userCount = await User.countDocuments();
     totalPages = Math.ceil(userCount / limit);
