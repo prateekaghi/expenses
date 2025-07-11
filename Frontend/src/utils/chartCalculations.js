@@ -12,7 +12,7 @@ export const generateDailyChartData = (dataArray, days = 30) => {
 
   // Count users created on each day
   dataArray.forEach((item) => {
-    const dateKey = new Date(item.date_created).toISOString().split("T")[0];
+    const dateKey = new Date(item.createdAt).toISOString().split("T")[0];
     if (dateKey in dateMap) {
       dateMap[dateKey]++;
     }
