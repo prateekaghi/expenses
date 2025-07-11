@@ -49,7 +49,7 @@ const addCurrency = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(newCurrency);
+  res.json({ message: "Currency added.", data: newCurrency });
 };
 
 const updateCurrency = async (req, res, next) => {

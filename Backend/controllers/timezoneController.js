@@ -57,7 +57,7 @@ const createTimezone = async (req, res, next) => {
     const err = new ErrorModel("Unable to create timezones", 500);
     return next(err);
   }
-  res.json(newTimezone);
+  res.json({ message: "Timezone added.", data: newTimezone });
 };
 
 const updateTimezone = async (req, res, next) => {

@@ -85,8 +85,10 @@ const addCategory = async (req, res, next) => {
     const err = new ErrorModel("Error while creating category.", 500);
     return next(err);
   }
-
-  res.json(newCategory);
+  res.json({
+    message: "Category added.",
+    data: newCategory,
+  });
 };
 
 const updateCategory = (req, res, next) => {};

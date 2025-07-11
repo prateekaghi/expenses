@@ -94,7 +94,7 @@ const addExpense = async (req, res, next) => {
     return next(err);
   }
 
-  res.status(203).json(newExpense);
+  res.status(203).json({ message: "Expense added.", data: newExpense });
 };
 
 const updateExpense = async (req, res, next) => {
