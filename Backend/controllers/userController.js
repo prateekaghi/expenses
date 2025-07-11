@@ -21,6 +21,12 @@ const getUsers = async (req, res, next) => {
     userCount = await User.countDocuments();
     totalPages = Math.ceil(userCount / limit);
 
+    if (!userCount) {
+      return res.status(400).json({
+        message: `No available users.`,
+      });
+    }
+
     if (page > totalPages && userCount !== 0) {
       return res.status(400).json({
         message: `Page ${page} does not exist. Total pages: ${totalPages}`,
