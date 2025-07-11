@@ -7,7 +7,7 @@ const UserStats = () => {
   if (isLoading) return <p>Loading users...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 
-  return <StatsCard data={data} title="Users" period="Last month" />;
+  return <StatsCard data={data.data} title="Users" period="Last month" />;
 };
 
 export default UserStats;
