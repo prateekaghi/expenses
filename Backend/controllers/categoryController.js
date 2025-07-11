@@ -71,8 +71,6 @@ const addCategory = async (req, res, next) => {
   const newCategory = new Category({
     name,
     user: userid,
-    date_created: currentDate(),
-    date_updated: currentDate(),
   });
 
   try {

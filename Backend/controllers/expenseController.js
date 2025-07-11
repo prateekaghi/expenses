@@ -79,8 +79,6 @@ const addExpense = async (req, res, next) => {
     title,
     user,
     currency,
-    date_created: currentDate(),
-    date_updated: currentDate(),
   });
 
   try {
@@ -147,7 +145,6 @@ const updateExpense = async (req, res, next) => {
   expense.category = category || expense.category;
   expense.amount = amount || expense.amount;
   expense.currency = currency || expense.currency;
-  expense.date_updated = currentDate();
 
   //save expense
 

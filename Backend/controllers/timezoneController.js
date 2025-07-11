@@ -51,8 +51,6 @@ const createTimezone = async (req, res, next) => {
     newTimezone = new tz({
       name,
       value,
-      date_created: currentDate(),
-      date_updated: currentDate(),
     });
     await newTimezone.save();
   } catch (error) {

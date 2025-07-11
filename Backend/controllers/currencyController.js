@@ -40,8 +40,6 @@ const addCurrency = async (req, res, next) => {
   let newCurrency = new Currency({
     name,
     value,
-    date_created: currentDate(),
-    date_updated: currentDate(),
   });
 
   try {

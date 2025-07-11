@@ -90,8 +90,6 @@ const signup = async (req, res, next) => {
     first_name,
     last_name,
     password,
-    date_created: currentDate(),
-    date_updated: currentDate(),
     isActive: true,
     Display: true,
     expense: [],
@@ -109,7 +107,10 @@ const signup = async (req, res, next) => {
     const err = new ErrorModel("Error occured while creating the user.", 500);
     return next(err);
   }
-  res.status(201).json(createUser.toObject({ getters: true }));
+  res.status(201).json({
+    message: "User Created",
+    data: createUser.toObject({ getters: true }),
+  });
 };
 const getUserById = (req, res, next) => {};
 const login = async (req, res, next) => {
@@ -141,13 +142,13 @@ const login = async (req, res, next) => {
 
   res.json({
     message: "User logged in!",
+    data: existingUser.toObject({ getters: true }),
   });
 };
 
 const updateUser = async (req, res, next) => {
   const { userid } = req.params;
   const { first_name, last_name, timezone } = req.body;
-  console.log(first_name, last_name, timezone);
   let user;
   try {
     user = await User.findById(userid);
@@ -169,13 +170,12 @@ const updateUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user);
+  res.json({ message: "User updated successfully.", user });
 };
 
-const disableUser = async (req, res, next) => {
+const toggleUserStatus = async (req, res, next) => {
   const { userid } = req.params;
   const { isActive } = req.body;
-  console.log(isActive);
 
   if (isActive === undefined) {
     const err = new ErrorModel("Payload missing!", 500);
@@ -201,7 +201,7 @@ const disableUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user);
+  res.json({ message: "User status changed successfully", user });
 };
 
 const deleteUser = async (req, res, next) => {
@@ -241,6 +241,6 @@ module.exports = {
   getUsers,
   getUserById,
   updateUser,
-  disableUser,
+  toggleUserStatus,
   deleteUser,
 };

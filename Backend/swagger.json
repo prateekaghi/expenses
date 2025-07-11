@@ -10,6 +10,50 @@
     "/api/users": {
       "get": {
         "summary": "Get all users",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "description": "ISO date string to filter users created on or after this date",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-07-01"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "description": "ISO date string to filter users created on or before this date",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-07-10"
+            }
+          }
+        ],
         "tags": ["Users"],
         "responses": {
           "200": {
@@ -124,7 +168,7 @@
         }
       }
     },
-    "/api/users/{userid}/disable": {
+    "/api/users/{userid}/toggle": {
       "patch": {
         "summary": "Disable/Enable user",
         "tags": ["Users"],
@@ -720,20 +764,6 @@
                     "color": {
                       "type": "string",
                       "example": "#FF5733"
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2025-07-09T12:00:00.000Z"
-                    },
-                    "date_updated": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2025-07-09T12:30:00.000Z"
-                    },
-                    "__v": {
-                      "type": "integer",
-                      "example": 0
                     }
                   }
                 }
@@ -1152,16 +1182,6 @@
             "type": "boolean",
             "example": true
           },
-          "date_created": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
-          },
-          "date_updated": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
-          },
           "timezone": {
             "type": "string",
             "example": "UTC"
@@ -1213,16 +1233,6 @@
           "user": {
             "type": "string",
             "example": "686ae1de5486c3d973702bc6"
-          },
-          "date_created": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
-          },
-          "date_updated": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
           }
         }
       },
@@ -1240,16 +1250,6 @@
           "user": {
             "type": "string",
             "example": "686ae1de5486c3d973702bc6"
-          },
-          "date_created": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
-          },
-          "date_updated": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
           }
         }
       },
@@ -1267,16 +1267,6 @@
           "value": {
             "type": "string",
             "example": "IST"
-          },
-          "date_created": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
-          },
-          "date_updated": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
           }
         }
       },
@@ -1294,16 +1284,6 @@
           "value": {
             "type": "string",
             "example": "USD"
-          },
-          "date_created": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
-          },
-          "date_updated": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-01-15T10:30:00.000Z"
           }
         }
       }
