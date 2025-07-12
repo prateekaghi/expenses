@@ -2,7 +2,6 @@ const ErrorModel = require("../models/error");
 const Category = require("../models/category");
 const User = require("../models/user");
 const Expense = require("../models/expense");
-const { currentDate } = require("../utils/dateUtils");
 const mongoose = require("mongoose");
 
 const getCategories = async (req, res, next) => {
@@ -44,20 +43,66 @@ const getCategories = async (req, res, next) => {
 };
 
 const getUserCategories = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+  const skip = (page - 1) * limit;
   const { id } = req.params;
+
   let user;
   try {
-    user = await User.findById(id).populate("categories");
+    user = await User.findById(id);
+  } catch (error) {
+    const err = new ErrorModel("Something went wrong.", 500);
+    return next(err);
+  }
+
+  if (!user) {
+    const err = new ErrorModel("User not found.", 404);
+    return next(err);
+  }
+
+  let userCategories;
+  let userCategoryCount;
+  try {
+    userCategoryCount = await Category.countDocuments({ user: id });
+    userCategories = await Category.find({ user: id }).skip(skip).limit(limit);
   } catch (error) {
     const err = new ErrorModel("Unable to find the user.", 500);
     return next(err);
   }
-  if (!user) {
-    const err = new ErrorModel("User does not exist.", 404);
+  if (!userCategories) {
+    const err = new ErrorModel("No categoreis found for the user.", 404);
     return next(err);
   }
+  if (userCategories.length < 1) {
+    res.json({
+      message: "No user categories found",
+      data: userCategories,
+    });
+  }
+  const totalPages = Math.ceil(userCategoryCount / limit);
 
-  res.json(user.categories);
+  res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: userCategoryCount,
+    message: "User categories fetched successfully",
+    data: userCategories,
+  });
 };
 
 const addCategory = async (req, res, next) => {
