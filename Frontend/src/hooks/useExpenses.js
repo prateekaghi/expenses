@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { addCategory } from "../api/categoryApi";
 import { getExpenses } from "../api/expensesApi";
 
 export const useExpenses = ({ page, limit }) => {
@@ -7,5 +8,16 @@ export const useExpenses = ({ page, limit }) => {
     queryFn: () => getExpenses({ page, limit }),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useAddExpense = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload) => addCategory({ payload }),
+    onSuccess: () => {
+      queryClient.invalidateQueries("categories");
+    },
   });
 };

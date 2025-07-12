@@ -5,9 +5,9 @@ const categoryController = require("../controllers/categoryController");
 
 router.get("/", categoryController.getCategories);
 
-router.get("/:id", categoryController.getUserCategories);
+router.post("/", categoryController.addCategory);
 
-router.post("/add", categoryController.addCategory);
+router.get("/:id", categoryController.getUserCategories);
 
 router.patch("/update", categoryController.updateCategory);
 

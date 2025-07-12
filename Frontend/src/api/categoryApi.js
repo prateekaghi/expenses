@@ -9,6 +9,17 @@ export const getCategory = async ({ page, limit }) => {
       return data.data;
     }
   } catch (error) {
-    throw new Error(error);
+    throw error;
+  }
+};
+
+export const addCategory = async ({ payload }) => {
+  try {
+    const data = await apiClient.post("/category", payload);
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw error;
   }
 };

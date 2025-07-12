@@ -170,10 +170,12 @@ const login = async (req, res, next) => {
     const err = new ErrorModel("Invalid credentials", 401);
     return next(err);
   }
+  const userWithoutPassword = existingUser.toObject();
+  delete userWithoutPassword.password;
 
   res.json({
     message: "User logged in!",
-    data: existingUser.toObject({ getters: true }),
+    data: userWithoutPassword,
   });
 };
 

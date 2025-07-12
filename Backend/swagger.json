@@ -708,9 +708,7 @@
             "description": "Server error"
           }
         }
-      }
-    },
-    "/api/category/add": {
+      },
       "post": {
         "summary": "Add new category",
         "tags": ["Categories"],

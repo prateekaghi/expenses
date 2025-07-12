@@ -1,14 +1,24 @@
 import React from "react";
-import ExpenseForm from "../../components/Forms/ExpensesForm";
-import { addExpenes } from "../../api/expensesApi";
+import GenericForm from "../../components/Forms/GenericForm";
 
 const AddExpense = () => {
-  const addExpenseHandler = async (e) => {
-    const response = await addExpenes(e);
-    console.log("res", response);
-  };
-
-  return <ExpenseForm onSubmit={addExpenseHandler} />;
+  return (
+    <GenericForm
+      title="Add New Category"
+      initialState={{ name: "" }}
+      validationRules={{
+        name: {
+          required: true,
+          minLength: 2,
+          message:
+            "Category name is required and should be at least 2 characters.",
+        },
+      }}
+      onSubmit={handleCategorySubmit}
+      submitLabel="Add Category"
+      isLoading={isPending}
+    />
+  );
 };
 
 export default AddExpense;

@@ -1,9 +1,9 @@
 import React from "react";
-import { useCategories } from "../../hooks/useCategories";
+import { useGetCategories } from "../../hooks/useCategories";
 import StatsCard from "../../components/Cards/StatsCard";
 
 const CategoryStats = () => {
-  const { data, isLoading, isError, error } = useCategories({
+  const { data, isLoading, isError, error } = useGetCategories({
     page: 1,
     limit: 1000,
   });

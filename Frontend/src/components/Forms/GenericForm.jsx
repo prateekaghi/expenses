@@ -1,0 +1,131 @@
+// components/GenericForm.js
+
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  TextField,
+  MenuItem,
+  Typography,
+  Alert,
+} from "@mui/material";
+
+const GenericForm = ({
+  title = "Form",
+  initialState = {},
+  validationRules = {},
+  fieldConfigs = {}, // 🆕 accepts field types and select options
+  onSubmit,
+  submitLabel = "Submit",
+  isLoading = false,
+}) => {
+  const [formValues, setFormValues] = useState(initialState);
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState("");
+
+  const validate = () => {
+    const newErrors = {};
+
+    for (const key in validationRules) {
+      const value = formValues[key];
+      const rules = validationRules[key];
+
+      if (rules.required && (!value || value.toString().trim() === "")) {
+        newErrors[key] = rules.message || `${key} is required`;
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccess("");
+    setErrors({});
+
+    if (!validate()) return;
+
+    try {
+      await onSubmit(formValues);
+      setSuccess("Submitted successfully.");
+      setFormValues(initialState);
+    } catch (err) {
+      const apiMessage =
+        err?.response?.data?.message || err?.message || "Submission failed.";
+      setErrors({ form: apiMessage });
+    }
+  };
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        maxWidth: 500,
+        mx: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      <Typography variant="h6">{title}</Typography>
+
+      {Object.keys(initialState).map((field) => {
+        const config = fieldConfigs[field] || {};
+        const type = config.type || "text";
+        const label = config.label || field[0].toUpperCase() + field.slice(1);
+
+        if (type === "select") {
+          return (
+            <TextField
+              key={field}
+              name={field}
+              label={label}
+              select
+              value={formValues[field]}
+              onChange={handleChange}
+              error={!!errors[field]}
+              helperText={errors[field]}
+              fullWidth
+            >
+              {config.options?.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          );
+        }
+
+        return (
+          <TextField
+            key={field}
+            type={type}
+            name={field}
+            label={label}
+            value={formValues[field]}
+            onChange={handleChange}
+            error={!!errors[field]}
+            helperText={errors[field]}
+            fullWidth
+          />
+        );
+      })}
+
+      <Button variant="contained" type="submit" disabled={isLoading}>
+        {isLoading ? "Submitting..." : submitLabel}
+      </Button>
+
+      {errors.form && <Alert severity="error">{errors.form}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>}
+    </Box>
+  );
+};
+
+export default GenericForm;
