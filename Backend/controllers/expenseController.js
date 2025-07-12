@@ -6,9 +6,28 @@ const User = require("../models/user");
 const { currentDate } = require("../utils/dateUtils");
 
 const getExpenses = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+
   let expenses;
+  let expensesCount;
+  const skip = (page - 1) * limit;
   try {
-    expenses = await Expense.find().sort({ date: -1 });
+    expensesCount = await Expense.countDocuments();
+    expenses = await Expense.find().skip(skip).limit(limit).sort({ date: -1 });
 
     if (!expenses) {
       const err = new ErrorModel("Something went wrong!", 500);
@@ -18,7 +37,13 @@ const getExpenses = async (req, res, next) => {
     const err = new ErrorModel("Error fetching expenses.", 500);
     return next(err);
   }
+
+  const totalPages = Math.ceil(expensesCount / limit);
   res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: expensesCount,
     message: "Expenses fetched successfully.",
     data: expenses.map((expense) => {
       return expense.toObject({ getters: true });

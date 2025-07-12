@@ -4,14 +4,39 @@ const User = require("../models/user");
 const { currentDate } = require("../utils/dateUtils");
 
 const getTimezones = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
   let timezones;
+  let timezoneCount;
+  const skip = (page - 1) * limit;
+
   try {
-    timezones = await tz.find();
+    timezoneCount = await tz.countDocuments();
+    timezones = await tz.find({}).skip(skip).limit(limit);
   } catch (error) {
     const err = new ErrorModel("Unable to get timezones", 500);
     return next(err);
   }
+
+  const totalPages = Math.ceil(timezoneCount / limit);
   res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: timezoneCount,
     message: "Timezones fetched successfully.",
     data: timezones.map((timezone) => {
       return timezone.toObject({ getters: true });

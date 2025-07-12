@@ -6,15 +6,38 @@ const { currentDate } = require("../utils/dateUtils");
 const mongoose = require("mongoose");
 
 const getCategories = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+  const skip = (page - 1) * limit;
+
   let categories;
+  let categoryCount;
   try {
-    categories = await Category.find({});
+    categoryCount = await Category.countDocuments();
+    categories = await Category.find({}).skip(skip).limit(limit);
   } catch (error) {
     const err = new ErrorModel("Error while fetching.", 500);
     return next(err);
   }
-
+  const totalPages = Math.ceil(categoryCount / limit);
   res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: categoryCount,
     message: "Categories fetched successfully",
     data: categories.map((category) => category.toObject({ getters: true })),
   });

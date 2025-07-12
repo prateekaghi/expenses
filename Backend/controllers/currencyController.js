@@ -5,11 +5,19 @@ const mongoose = require("mongoose");
 
 const getCurrencies = async (req, res, next) => {
   let { page, limit } = req.query;
-  page = parseInt(page);
-  limit = parseInt(limit);
 
-  if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
-    return res.status(400).json({ message: "Invalid page or limit" });
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
   }
 
   let currencyCount;
@@ -30,7 +38,7 @@ const getCurrencies = async (req, res, next) => {
   res.json({
     page,
     limit,
-    totalPages,
+    totalPages: totalPages || 1,
     totalRecords: currencyCount,
     message: "Currencies fetched successfully",
     data: currencies.map((currency) => {
