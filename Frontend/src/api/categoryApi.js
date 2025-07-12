@@ -1,9 +1,10 @@
 import apiClient from "./index";
 
-export const getCategory = async () => {
+export const getCategory = async ({ page, limit }) => {
   try {
-    const data = await apiClient.get("/category");
-    console.log("category", data);
+    const data = await apiClient.get("/category", {
+      params: { page, limit },
+    });
     if (data.status === 200) {
       return data.data;
     }
