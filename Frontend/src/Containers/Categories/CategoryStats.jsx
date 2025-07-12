@@ -3,7 +3,10 @@ import { useCategories } from "../../hooks/useCategories";
 import StatsCard from "../../components/Cards/StatsCard";
 
 const CategoryStats = () => {
-  const { data, isLoading, isError, error } = useCategories();
+  const { data, isLoading, isError, error } = useCategories({
+    page: 1,
+    limit: 1000,
+  });
   if (isLoading) return <p>Loading users...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 

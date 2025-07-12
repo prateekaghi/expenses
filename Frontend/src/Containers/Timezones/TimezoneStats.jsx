@@ -3,7 +3,10 @@ import { useTimezones } from "../../hooks/useTimezones";
 import StatsCard from "../../components/Cards/StatsCard";
 
 const TimezoneStats = () => {
-  const { data, isLoading, isError, error } = useTimezones();
+  const { data, isLoading, isError, error } = useTimezones({
+    page: 1,
+    limit: 1000,
+  });
   if (isLoading) return <p>Loading users...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 
