@@ -10,7 +10,8 @@ import AuthLayout from "./layouts/AuthLayout";
 import PrimaryLayout from "./layouts/PrimaryLayout";
 import ExpenseList from "./pages/Expenses/ExpenseList";
 import UserLayout from "./layouts/UserLayout";
-import AddExpense from "./pages/Expenses/AddExpense";
+import AddCategoryPage from "./pages/Category/AddCategoryPage";
+import AddExpensePage from "./pages/Expenses/AddExpensePage";
 
 const App = () => {
   return (
@@ -22,7 +23,11 @@ const App = () => {
           </Route>
           <Route path="/expenses" element={<UserLayout />}>
             <Route index element={<ExpenseList />} />
-            <Route path="add" element={<AddExpense />} />
+            <Route path="add" element={<AddExpensePage />} />
+          </Route>
+          <Route path="/category" element={<UserLayout />}>
+            <Route index element={<ExpenseList />} />
+            <Route path="add" element={<AddCategoryPage />} />
           </Route>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />

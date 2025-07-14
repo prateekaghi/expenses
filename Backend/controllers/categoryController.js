@@ -1,19 +1,108 @@
 const ErrorModel = require("../models/error");
 const Category = require("../models/category");
 const User = require("../models/user");
-const { currentDate } = require("../utils/dateUtils");
+const Expense = require("../models/expense");
 const mongoose = require("mongoose");
 
 const getCategories = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+  const skip = (page - 1) * limit;
+
   let categories;
+  let categoryCount;
   try {
-    categories = await Category.find({});
+    categoryCount = await Category.countDocuments();
+    categories = await Category.find({}).skip(skip).limit(limit);
   } catch (error) {
     const err = new ErrorModel("Error while fetching.", 500);
     return next(err);
   }
+  const totalPages = Math.ceil(categoryCount / limit);
+  res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: categoryCount,
+    message: "Categories fetched successfully",
+    data: categories.map((category) => category.toObject({ getters: true })),
+  });
+};
 
-  res.json(categories.map((category) => category.toObject({ getters: true })));
+const getUserCategories = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+  const skip = (page - 1) * limit;
+  const { id } = req.params;
+
+  let user;
+  try {
+    user = await User.findById(id);
+  } catch (error) {
+    const err = new ErrorModel("Something went wrong.", 500);
+    return next(err);
+  }
+
+  if (!user) {
+    const err = new ErrorModel("User not found.", 404);
+    return next(err);
+  }
+
+  let userCategories;
+  let userCategoryCount;
+  try {
+    userCategoryCount = await Category.countDocuments({ user: id });
+    userCategories = await Category.find({ user: id }).skip(skip).limit(limit);
+  } catch (error) {
+    const err = new ErrorModel("Unable to find the user.", 500);
+    return next(err);
+  }
+  if (!userCategories) {
+    const err = new ErrorModel("No categoreis found for the user.", 404);
+    return next(err);
+  }
+  if (userCategories.length < 1) {
+    res.json({
+      message: "No user categories found",
+      data: userCategories,
+    });
+  }
+  const totalPages = Math.ceil(userCategoryCount / limit);
+
+  res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: userCategoryCount,
+    message: "User categories fetched successfully",
+    data: userCategories,
+  });
 };
 
 const addCategory = async (req, res, next) => {
@@ -53,8 +142,6 @@ const addCategory = async (req, res, next) => {
   const newCategory = new Category({
     name,
     user: userid,
-    date_created: currentDate(),
-    date_updated: currentDate(),
   });
 
   try {
@@ -69,14 +156,70 @@ const addCategory = async (req, res, next) => {
     const err = new ErrorModel("Error while creating category.", 500);
     return next(err);
   }
-
-  res.json(newCategory);
+  res.json({
+    message: "Category added.",
+    data: newCategory,
+  });
 };
 
 const updateCategory = (req, res, next) => {};
 
+const deleteCategory = async (req, res, next) => {
+  const { id } = req.params;
+  const { userid } = req.body;
+
+  //find the category by id
+  let category;
+  try {
+    category = await Category.findById(id);
+  } catch (error) {
+    const err = new ErrorModel("Error while fetching.", 500);
+    return next(err);
+  }
+
+  //check if the category user id corresponds to the user id received.
+  if (!category.user.equals(userid)) {
+    const err = new ErrorModel("Category does not belong to the user.", 500);
+    return next(err);
+  }
+
+  let categoryExpenseCount;
+  //check if category is being used in any expense
+  try {
+    categoryExpenseCount = await Expense.countDocuments({
+      user: userid,
+      category: id,
+    });
+  } catch (error) {
+    const err = new ErrorModel(
+      "Unable to look for expenses with the current category.",
+      500
+    );
+    return next(err);
+  }
+
+  if (categoryExpenseCount) {
+    const err = new ErrorModel(
+      "Unable to delete category. Expenses exist.",
+      500
+    );
+    return next(err);
+  }
+
+  try {
+    await category.deleteOne();
+  } catch (error) {
+    const err = new ErrorModel("Error while deleting the category", 500);
+    return next(err);
+  }
+
+  res.json("Category deleted!");
+};
+
 module.exports = {
   getCategories,
+  getUserCategories,
   addCategory,
   updateCategory,
+  deleteCategory,
 };

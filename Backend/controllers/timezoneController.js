@@ -1,20 +1,47 @@
 const ErrorModel = require("../models/error");
 const tz = require("../models/timezone");
 const User = require("../models/user");
+const { currentDate } = require("../utils/dateUtils");
 
 const getTimezones = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
   let timezones;
+  let timezoneCount;
+  const skip = (page - 1) * limit;
+
   try {
-    timezones = await tz.find();
+    timezoneCount = await tz.countDocuments();
+    timezones = await tz.find({}).skip(skip).limit(limit);
   } catch (error) {
     const err = new ErrorModel("Unable to get timezones", 500);
     return next(err);
   }
-  res.json(
-    timezones.map((timezone) => {
+
+  const totalPages = Math.ceil(timezoneCount / limit);
+  res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: timezoneCount,
+    message: "Timezones fetched successfully.",
+    data: timezones.map((timezone) => {
       return timezone.toObject({ getters: true });
-    })
-  );
+    }),
+  });
 };
 
 const createTimezone = async (req, res, next) => {
@@ -47,18 +74,21 @@ const createTimezone = async (req, res, next) => {
       return next(err);
     }
 
-    newTimezone = new tz({ name, value });
+    newTimezone = new tz({
+      name,
+      value,
+    });
     await newTimezone.save();
   } catch (error) {
     const err = new ErrorModel("Unable to create timezones", 500);
     return next(err);
   }
-  res.json(newTimezone);
+  res.json({ message: "Timezone added.", data: newTimezone });
 };
 
 const updateTimezone = async (req, res, next) => {
   // Get timezoneid , name and value
-  const { tid } = req.params;
+  const { id } = req.params;
   const { name, value } = req.body;
 
   //Throw error if name and value not available for update
@@ -74,7 +104,7 @@ const updateTimezone = async (req, res, next) => {
   // Verify if the timezone exists with the provided id.
   let timezone;
   try {
-    timezone = await tz.findById(tid);
+    timezone = await tz.findById(id);
   } catch (error) {
     const err = new ErrorModel("Unable to find timezone", 500);
     return next(err);
@@ -148,7 +178,11 @@ const updateTimezone = async (req, res, next) => {
   res.json(timezone);
 };
 
-const deleteTimezone = (req, res, next) => {};
+const deleteTimezone = (req, res, next) => {
+  const { id } = req.params;
+
+  res.json(`${id} will be deleted`);
+};
 
 module.exports = {
   getTimezones,

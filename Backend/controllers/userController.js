@@ -1,11 +1,67 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
-const { currentDate } = require("../utils/dateUtils");
+
+const { sendVerificationMail } = require("../services/emailService");
 
 const getUsers = async (req, res, next) => {
+  let {
+    page = 1,
+    limit = 10,
+    startDate,
+    endDate,
+    isActive,
+    firstName,
+    lastName,
+  } = req.query;
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+    return res.status(400).json({ message: "Invalid page or limit" });
+  }
+
+  const skip = (page - 1) * limit;
+  const query = {
+    display: true,
+  };
   let users;
+  let userCount;
+  let totalPages;
+  if (startDate || endDate) {
+    query.createdAt = {};
+    if (startDate) query.createdAt.$gte = new Date(startDate);
+    if (endDate) query.createdAt.$lte = new Date(endDate);
+  }
+  if (isActive) {
+    query.isActive = isActive;
+  }
+  if (firstName) {
+    query.first_name = { $regex: firstName, $options: "i" };
+  }
+  if (lastName) {
+    query.last_name = { $regex: lastName, $options: "i" };
+  }
   try {
-    users = await User.find({ Display: true }, "-password");
+    userCount = await User.countDocuments();
+    totalPages = Math.ceil(userCount / limit);
+
+    if (!userCount) {
+      return res.status(200).json({
+        message: `No available users.`,
+        data: [],
+      });
+    }
+
+    if (page > totalPages && userCount !== 0) {
+      return res.status(400).json({
+        message: `Page ${page} does not exist. Total pages: ${totalPages}`,
+      });
+    }
+
+    users = await User.find(query, "-password")
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
     if (!users) {
       const err = new ErrorModel("No users found!", 404);
       return next(err);
@@ -17,8 +73,14 @@ const getUsers = async (req, res, next) => {
     );
     return next(err);
   }
-
-  res.json(users.map((user) => user.toObject({ getters: true })));
+  res.json({
+    page,
+    limit,
+    totalPages,
+    totalRecords: userCount,
+    message: "Users fetched successfully!",
+    data: users.map((user) => user.toObject({ getters: true })),
+  });
 };
 const signup = async (req, res, next) => {
   const { first_name, last_name, email, password } = req.body;
@@ -37,7 +99,7 @@ const signup = async (req, res, next) => {
   }
   //throw error if user exists
   if (existingUser) {
-    if (existingUser.Display) {
+    if (existingUser.display) {
       const err = new ErrorModel(
         "User exists with the provided email address.",
         422
@@ -50,7 +112,6 @@ const signup = async (req, res, next) => {
       );
       return next(err);
     }
-    console.log(existingUser);
   }
 
   //create user variable and save user if email address does not exist
@@ -60,10 +121,8 @@ const signup = async (req, res, next) => {
     first_name,
     last_name,
     password,
-    date_created: currentDate(),
-    date_updated: currentDate(),
     isActive: true,
-    Display: true,
+    display: true,
     expense: [],
     categories: [],
     timezone: "UTC",
@@ -71,11 +130,18 @@ const signup = async (req, res, next) => {
 
   try {
     await createUser.save();
+    await sendVerificationMail({
+      userEmail: "prateekaghi42@gmail.com",
+      token: email,
+    });
   } catch (error) {
     const err = new ErrorModel("Error occured while creating the user.", 500);
     return next(err);
   }
-  res.status(201).json(createUser.toObject({ getters: true }));
+  res.status(201).json({
+    message: "User Created",
+    data: createUser.toObject({ getters: true }),
+  });
 };
 const getUserById = (req, res, next) => {};
 const login = async (req, res, next) => {
@@ -104,16 +170,18 @@ const login = async (req, res, next) => {
     const err = new ErrorModel("Invalid credentials", 401);
     return next(err);
   }
+  const userWithoutPassword = existingUser.toObject();
+  delete userWithoutPassword.password;
 
   res.json({
     message: "User logged in!",
+    data: userWithoutPassword,
   });
 };
 
 const updateUser = async (req, res, next) => {
   const { userid } = req.params;
   const { first_name, last_name, timezone } = req.body;
-  console.log(first_name, last_name, timezone);
   let user;
   try {
     user = await User.findById(userid);
@@ -135,13 +203,12 @@ const updateUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user);
+  res.json({ message: "User updated successfully.", user });
 };
 
-const disableUser = async (req, res, next) => {
+const toggleUserStatus = async (req, res, next) => {
   const { userid } = req.params;
   const { isActive } = req.body;
-  console.log(isActive);
 
   if (isActive === undefined) {
     const err = new ErrorModel("Payload missing!", 500);
@@ -167,14 +234,14 @@ const disableUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user);
+  res.json({ message: "User status changed successfully", user });
 };
 
 const deleteUser = async (req, res, next) => {
   const { userid } = req.params;
-  const { Display } = req.body;
+  const { display } = req.body;
 
-  if (Display === undefined) {
+  if (display === undefined) {
     const err = new ErrorModel("Payload missing!", 500);
     return next(err);
   }
@@ -188,7 +255,7 @@ const deleteUser = async (req, res, next) => {
   }
 
   //Update user details
-  user.Display = Display;
+  user.display = display;
 
   //save user
   try {
@@ -207,6 +274,6 @@ module.exports = {
   getUsers,
   getUserById,
   updateUser,
-  disableUser,
+  toggleUserStatus,
   deleteUser,
 };

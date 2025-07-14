@@ -6,9 +6,28 @@ const User = require("../models/user");
 const { currentDate } = require("../utils/dateUtils");
 
 const getExpenses = async (req, res, next) => {
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+
   let expenses;
+  let expensesCount;
+  const skip = (page - 1) * limit;
   try {
-    expenses = await Expense.find().sort({ date: -1 });
+    expensesCount = await Expense.countDocuments();
+    expenses = await Expense.find().skip(skip).limit(limit).sort({ date: -1 });
 
     if (!expenses) {
       const err = new ErrorModel("Something went wrong!", 500);
@@ -18,11 +37,18 @@ const getExpenses = async (req, res, next) => {
     const err = new ErrorModel("Error fetching expenses.", 500);
     return next(err);
   }
-  res.json(
-    expenses.map((expense) => {
+
+  const totalPages = Math.ceil(expensesCount / limit);
+  res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: expensesCount,
+    message: "Expenses fetched successfully.",
+    data: expenses.map((expense) => {
       return expense.toObject({ getters: true });
-    })
-  );
+    }),
+  });
 };
 
 const getUserExpenses = async (req, res, next) => {
@@ -79,8 +105,6 @@ const addExpense = async (req, res, next) => {
     title,
     user,
     currency,
-    date_created: currentDate(),
-    date_updated: currentDate(),
   });
 
   try {
@@ -96,7 +120,7 @@ const addExpense = async (req, res, next) => {
     return next(err);
   }
 
-  res.status(203).json(newExpense);
+  res.status(203).json({ message: "Expense added.", data: newExpense });
 };
 
 const updateExpense = async (req, res, next) => {
@@ -147,7 +171,6 @@ const updateExpense = async (req, res, next) => {
   expense.category = category || expense.category;
   expense.amount = amount || expense.amount;
   expense.currency = currency || expense.currency;
-  expense.date_updated = currentDate();
 
   //save expense
 

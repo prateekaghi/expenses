@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const { swaggerDocument, swaggerUi } = require("./swaggerConfig");
 
 const userRoutes = require("./routes/user-routes");
 const expenseRoutes = require("./routes/expense-routes");
@@ -11,6 +12,8 @@ const currencyRoutes = require("./routes/currency-routes");
 const dotenv = require("dotenv").config();
 
 const app = express();
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(bodyParser.json());
 
@@ -41,7 +44,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(`${process.env.MONGO_URI}${process.env.MONGO_DB}`)
+  .connect(process.env.MONGO_URI)
   .then(() => {
     app.listen(4000);
   })

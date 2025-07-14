@@ -2,24 +2,19 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const CategorySchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const CategorySchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    user: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
   },
-  user: {
-    type: mongoose.Types.ObjectId,
-    required: true,
-    ref: "User",
-  },
-  date_created: {
-    type: Date,
-    required: false,
-  },
-  date_updated: {
-    type: Date,
-    required: false,
-  },
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("Category", CategorySchema);

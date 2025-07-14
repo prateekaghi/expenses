@@ -1,8 +1,10 @@
 import apiClient from "./index";
 
-export const getExpenses = async () => {
+export const getExpenses = async ({ page, limit }) => {
   try {
-    const data = await apiClient.get("/expenses");
+    const data = await apiClient.get("/expenses", {
+      params: { page, limit },
+    });
     if (data.status === 200) {
       return data.data;
     }
