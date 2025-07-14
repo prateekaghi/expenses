@@ -101,7 +101,9 @@ const getUserCategories = async (req, res, next) => {
     totalPages: totalPages || 1,
     totalRecords: userCategoryCount,
     message: "User categories fetched successfully",
-    data: userCategories,
+    data: userCategories.map((category) => {
+      return category.toObject({ getters: true });
+    }),
   });
 };
 
@@ -248,7 +250,7 @@ const deleteCategory = async (req, res, next) => {
     return next(err);
   }
 
-  res.json("Category deleted!");
+  res.json({ message: "Category deleted" });
 };
 
 module.exports = {
