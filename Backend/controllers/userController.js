@@ -143,7 +143,25 @@ const signup = async (req, res, next) => {
     data: createUser.toObject({ getters: true }),
   });
 };
-const getUserById = (req, res, next) => {};
+const getUserById = async (req, res, next) => {
+  const { userid } = req.params;
+  let user;
+  try {
+    user = await User.findById(userid, "-password");
+  } catch (error) {
+    const err = new ErrorModel(
+      "Error occured while finding the user with the provided id.",
+      500
+    );
+    return next(err);
+  }
+  if (!user) {
+    const err = new ErrorModel("User not found", 404);
+    return next(err);
+  }
+
+  res.json({ message: "User found successfully.", data: user });
+};
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   //check if user exists with email
