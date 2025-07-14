@@ -44,7 +44,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(`${process.env.MONGO_URI}${process.env.MONGO_DB}`)
+  .connect(process.env.MONGO_URI)
   .then(() => {
     app.listen(4000);
   })
