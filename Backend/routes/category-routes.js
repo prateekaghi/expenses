@@ -9,7 +9,7 @@ router.post("/", categoryController.addCategory);
 
 router.get("/:id", categoryController.getUserCategories);
 
-router.patch("/update", categoryController.updateCategory);
+router.patch("/:id", categoryController.updateCategory);
 
 router.delete("/:id", categoryController.deleteCategory);
 

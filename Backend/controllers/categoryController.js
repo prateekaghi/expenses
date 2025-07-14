@@ -162,7 +162,42 @@ const addCategory = async (req, res, next) => {
   });
 };
 
-const updateCategory = (req, res, next) => {};
+const updateCategory = async (req, res, next) => {
+  const { id } = req.params;
+  const { name, userid } = req.body;
+
+  if (!name) {
+    const err = new ErrorModel("Name required to update the category.", 500);
+    return next(err);
+  }
+
+  if (!userid) {
+    const err = new ErrorModel("User id required to update the category.", 500);
+    return next(err);
+  }
+
+  let category;
+  try {
+    category = await Category.findById(id);
+  } catch (error) {}
+  if (!category) {
+    const err = new ErrorModel("Category not found", 500);
+    return next(err);
+  }
+  if (!category.user.equals(userid)) {
+    const err = new ErrorModel("Category does not belong to the user.", 500);
+    return next(err);
+  }
+
+  category.name = name;
+  try {
+    await category.save();
+  } catch (error) {
+    const err = new ErrorModel("Unable to update the category.", 500);
+    return next(err);
+  }
+  res.json({ message: "Category updated.", data: [category] });
+};
 
 const deleteCategory = async (req, res, next) => {
   const { id } = req.params;

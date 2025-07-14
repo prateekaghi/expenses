@@ -756,40 +756,6 @@
         }
       }
     },
-    "/api/category/update": {
-      "patch": {
-        "summary": "Update category",
-        "tags": ["Categories"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "Updated Food"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Category updated successfully"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
     "/api/category/{id}": {
       "get": {
         "summary": "Get all categories for a particular user id.",
@@ -854,6 +820,50 @@
           },
           "500": {
             "description": "Failed to retrieve category"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update category",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to retrieve",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Updated Food"
+                  },
+                  "userid": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       },

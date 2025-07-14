@@ -3,8 +3,6 @@ const ErrorModel = require("../models/error");
 const Expense = require("../models/expense");
 const User = require("../models/user");
 
-const { currentDate } = require("../utils/dateUtils");
-
 const getExpenses = async (req, res, next) => {
   let { page, limit } = req.query;
 
