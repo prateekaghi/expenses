@@ -1,7 +1,6 @@
 const ErrorModel = require("../models/error");
 const tz = require("../models/timezone");
 const User = require("../models/user");
-const { currentDate } = require("../utils/dateUtils");
 
 const getTimezones = async (req, res, next) => {
   let { page, limit } = req.query;
@@ -178,10 +177,45 @@ const updateTimezone = async (req, res, next) => {
   res.json(timezone);
 };
 
-const deleteTimezone = (req, res, next) => {
+const deleteTimezone = async (req, res, next) => {
   const { id } = req.params;
+  let timezone;
+  try {
+    timezone = await tz.findById(id);
+  } catch (error) {
+    const err = new ErrorModel(
+      "Error while looking for the provided timezone.",
+      500
+    );
+    return next(err);
+  }
+  if (!timezone) {
+    const err = new ErrorModel("Timezone not found.", 404);
+    return next(err);
+  }
+  let userCountWithTz;
+  try {
+    userCountWithTz = await User.countDocuments({ timezone: timezone.value });
+  } catch (error) {
+    const err = new ErrorModel(
+      "Unable to count the number of documents with the selected timezone.",
+      500
+    );
+    return next(err);
+  }
+  if (userCountWithTz) {
+    const err = new ErrorModel("Timezone being used. Can't delete.", 500);
+    return next(err);
+  }
 
-  res.json(`${id} will be deleted`);
+  try {
+    await timezone.deleteOne();
+  } catch (error) {
+    const err = new ErrorModel("Error while deleting the timezone.", 500);
+    return next(err);
+  }
+
+  res.json({ message: "Timezone deleted", data: [] });
 };
 
 module.exports = {
