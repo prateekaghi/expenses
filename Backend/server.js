@@ -2,14 +2,15 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { swaggerDocument, swaggerUi } = require("./swaggerConfig");
+const dotenv = require("dotenv").config();
+
+swaggerDocument.servers = [{ url: process.env.SWAGGER_BASE_URL }];
 
 const userRoutes = require("./routes/user-routes");
 const expenseRoutes = require("./routes/expense-routes");
 const categoryRoutes = require("./routes/category-routes");
 const timezoneRoutes = require("./routes/timezone-routes");
 const currencyRoutes = require("./routes/currency-routes");
-
-const dotenv = require("dotenv").config();
 
 const app = express();
 
@@ -46,6 +47,6 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(4000);
+    app.listen(process.env.PORT);
   })
   .catch((err) => console.error(err));
