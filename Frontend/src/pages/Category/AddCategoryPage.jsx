@@ -1,6 +1,8 @@
 import React from "react";
 import GenericForm from "../../components/Forms/GenericForm";
+import PageHeader from "../../components/navigation/PageHeader";
 import { useAddCategory } from "../../hooks/useCategories";
+import { Box } from "@mui/material";
 
 const AddCategoryPage = () => {
   const { mutateAsync, isPending } = useAddCategory();
@@ -27,15 +29,18 @@ const AddCategoryPage = () => {
     return response;
   };
   return (
-    <GenericForm
-      title="Add New Category"
-      initialState={initialState}
-      validationRules={validationRules}
-      fieldConfigs={fieldConfigs}
-      onSubmit={handleSubmit}
-      submitLabel="Add Category"
-      isLoading={isPending}
-    />
+    <Box>
+      <PageHeader backTo={"/category"} title={"Add Category"}></PageHeader>
+      <GenericForm
+        title="Add New Category"
+        initialState={initialState}
+        validationRules={validationRules}
+        fieldConfigs={fieldConfigs}
+        onSubmit={handleSubmit}
+        submitLabel="Add Category"
+        isLoading={isPending}
+      />
+    </Box>
   );
 };
 

@@ -12,6 +12,7 @@ import ExpenseList from "./pages/Expenses/ExpenseList";
 import UserLayout from "./layouts/UserLayout";
 import AddCategoryPage from "./pages/Category/AddCategoryPage";
 import AddExpensePage from "./pages/Expenses/AddExpensePage";
+import CategoryList from "./pages/Category/CategoryList";
 
 const App = () => {
   return (
@@ -26,7 +27,7 @@ const App = () => {
             <Route path="add" element={<AddExpensePage />} />
           </Route>
           <Route path="/category" element={<UserLayout />}>
-            <Route index element={<ExpenseList />} />
+            <Route index element={<CategoryList />} />
             <Route path="add" element={<AddCategoryPage />} />
           </Route>
           <Route element={<AuthLayout />}>

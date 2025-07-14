@@ -13,6 +13,19 @@ export const getCategory = async ({ page, limit }) => {
   }
 };
 
+export const getUserCategory = async ({ userid, page, limit }) => {
+  try {
+    const data = await apiClient.get(`/category/${userid}`, {
+      params: { page, limit },
+    });
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const addCategory = async ({ payload }) => {
   try {
     const data = await apiClient.post("/category", payload);

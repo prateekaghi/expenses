@@ -6,6 +6,8 @@ const linksData = [
   { title: "Home", path: "/" },
   { title: "Login", path: "/login" },
   { title: "Signup", path: "/signup" },
+  { title: "Expenses", path: "/expenses" },
+  { title: "Categories", path: "/category" },
 ];
 
 const ClientHeader = () => {

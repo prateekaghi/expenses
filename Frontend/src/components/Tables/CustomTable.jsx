@@ -22,6 +22,7 @@ const CustomTable = ({
   onPageChange,
   onLimitChange,
   renderActions,
+  tableSize,
 }) => {
   return (
     <Paper
@@ -34,7 +35,7 @@ const CustomTable = ({
         justifyContent: "space-between",
       }}
     >
-      <TableContainer style={{ maxHeight: "25vh" }}>
+      <TableContainer style={{ maxHeight: tableSize || "25vh" }}>
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
@@ -43,7 +44,9 @@ const CustomTable = ({
                   {col.label}
                 </TableCell>
               ))}
-              {renderActions && <TableCell>Actions</TableCell>}
+              {renderActions && (
+                <TableCell sx={{ background: "#bebbbbff" }}>Actions</TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
