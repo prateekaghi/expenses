@@ -6,6 +6,11 @@
     "description": "Complete API documentation for the Expenses Management System"
   },
   "servers": [{ "url": "http://localhost:4000" }],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
     "/api/auth/login": {
       "post": {
@@ -214,11 +219,6 @@
     "/api/users/{userid}": {
       "get": {
         "summary": "Get user by ID",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "tags": ["Users"],
         "parameters": [
           {
@@ -302,6 +302,54 @@
             "description": "Failed to update user"
           }
         }
+      },
+      "delete": {
+        "summary": "Soft delete user",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["display"],
+                "properties": {
+                  "display": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete user"
+          }
+        }
       }
     },
     "/api/users/{userid}/toggle": {
@@ -354,57 +402,6 @@
         }
       }
     },
-    "/api/users/{userid}/delete": {
-      "patch": {
-        "summary": "Soft delete user",
-        "tags": ["Users"],
-        "parameters": [
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["display"],
-                "properties": {
-                  "display": {
-                    "type": "boolean",
-                    "example": false
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to delete user"
-          }
-        }
-      }
-    },
-
     "/api/expenses": {
       "get": {
         "summary": "Get all expenses",

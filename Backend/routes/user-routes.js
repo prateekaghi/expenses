@@ -8,6 +8,6 @@ router.get("/", userController.getUsers);
 router.get("/:userid", checkAuth, userController.getUserById);
 router.patch("/:userid", checkAuth, userController.updateUser);
 router.patch("/:userid/toggle", checkAuth, userController.toggleUserStatus);
-router.patch("/:userid/delete", checkAuth, userController.deleteUser);
+router.delete("/:userid", checkAuth, userController.deleteUser);
 
 module.exports = router;
