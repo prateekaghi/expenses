@@ -1,5 +1,6 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
 const { sendVerificationMail } = require("../services/emailService");
 
@@ -114,13 +115,23 @@ const signup = async (req, res, next) => {
     }
   }
 
+  //hash the password
+
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (error) {
+    const err = new ErrorModel("Password hashing failed. Try again.", 500);
+    return next(err);
+  }
+
   //create user variable and save user if email address does not exist
 
   const createUser = new User({
     email,
     first_name,
     last_name,
-    password,
+    password: hashedPassword,
     isActive: true,
     display: true,
     expense: [],
@@ -164,6 +175,11 @@ const getUserById = async (req, res, next) => {
 };
 const login = async (req, res, next) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    const err = new ErrorModel("Incomplete credentials.", 500);
+    return next(err);
+  }
   //check if user exists with email
   let existingUser;
   try {
@@ -184,7 +200,14 @@ const login = async (req, res, next) => {
     return next(err);
   }
   //check if password matches the user password and throw error
-  if (!password || existingUser.password !== password) {
+  let passwordValid = false;
+  try {
+    passwordValid = await bcrypt.compare(password, existingUser.password);
+  } catch (error) {
+    const err = new ErrorModel("Error while validating the credentials.", 500);
+    return next(err);
+  }
+  if (!passwordValid) {
     const err = new ErrorModel("Invalid credentials", 401);
     return next(err);
   }
