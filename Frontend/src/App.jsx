@@ -19,13 +19,15 @@ import CategoryList from "./pages/Category/CategoryList";
 import UserDashboard from "./pages/UserDashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
 
-//404 page
+//Utility pages
 import NotFound from "./pages/NotFound";
+import AuthExpiryWatcher from "./components/Utility/AutoExpiryWatcher";
 
 const App = () => {
   return (
     <Box sx={{ m: 0, p: 0 }}>
       <BrowserRouter>
+        <AuthExpiryWatcher />
         <Routes>
           <Route element={<PrimaryLayout />}>
             <Route path="/" element={<Home />} />
