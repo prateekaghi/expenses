@@ -1,14 +1,23 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import ClientHeader from "../components/navigation/ClientHeader";
-import { Box, Container } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import FooterComponent from "../components/Footer/FooterComponent";
+import { Logout } from "@mui/icons-material";
+import { useAuthStore } from "../store/authStore";
 const linksData = [
   { title: "Dashboard", path: "/dashboard" },
   { title: "Expenses", path: "/expenses" },
   { title: "Categories", path: "/category" },
 ];
 const UserLayout = () => {
+  const navigate = useNavigate();
+  const signOut = useAuthStore((state) => state.clearAuth);
+
+  const logout = () => {
+    signOut();
+    navigate("/login");
+  };
   return (
     <Box
       sx={{
@@ -19,7 +28,14 @@ const UserLayout = () => {
       }}
     >
       <Box>
-        <ClientHeader linksArray={linksData} />
+        <ClientHeader
+          linksArray={linksData}
+          button={
+            <IconButton onClick={logout}>
+              <Logout />
+            </IconButton>
+          }
+        />
         <Box
           sx={{
             p: 5,
