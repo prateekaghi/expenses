@@ -2,22 +2,14 @@ import React from "react";
 import { Box, AppBar, Toolbar, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const linksData = [
-  { title: "Home", path: "/" },
-  { title: "Login", path: "/login" },
-  { title: "Signup", path: "/signup" },
-  { title: "Expenses", path: "/expenses" },
-  { title: "Categories", path: "/category" },
-];
-
-const ClientHeader = () => {
+const ClientHeader = ({ linksArray }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar color="white" position="static">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>Logo</Box>
           <Box>
-            {linksData.map((link) => {
+            {linksArray.map((link) => {
               return (
                 <Link key={link.path} to={link.path}>
                   <Button>{link.title}</Button>

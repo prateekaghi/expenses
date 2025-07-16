@@ -3,7 +3,11 @@ import { Outlet } from "react-router-dom";
 import ClientHeader from "../components/navigation/ClientHeader";
 import { Box, Container } from "@mui/material";
 import FooterComponent from "../components/Footer/FooterComponent";
-
+const linksData = [
+  { title: "Dashboard", path: "/dashboard" },
+  { title: "Expenses", path: "/expenses" },
+  { title: "Categories", path: "/category" },
+];
 const UserLayout = () => {
   return (
     <Box
@@ -15,7 +19,7 @@ const UserLayout = () => {
       }}
     >
       <Box>
-        <ClientHeader />
+        <ClientHeader linksArray={linksData} />
         <Box
           sx={{
             p: 5,

@@ -13,6 +13,7 @@ import UserLayout from "./layouts/UserLayout";
 import AddCategoryPage from "./pages/Category/AddCategoryPage";
 import AddExpensePage from "./pages/Expenses/AddExpensePage";
 import CategoryList from "./pages/Category/CategoryList";
+import UserDashboard from "./pages/UserDashboard";
 
 const App = () => {
   return (
@@ -21,6 +22,9 @@ const App = () => {
         <Routes>
           <Route element={<PrimaryLayout />}>
             <Route path="/" element={<Home />} />
+          </Route>{" "}
+          <Route path="/dashboard" element={<UserLayout />}>
+            <Route index element={<UserDashboard />} />
           </Route>
           <Route path="/expenses" element={<UserLayout />}>
             <Route index element={<ExpenseList />} />

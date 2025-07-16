@@ -4,6 +4,8 @@ import ClientHeader from "../components/navigation/ClientHeader";
 import { Box, Container } from "@mui/material";
 import FooterComponent from "../components/Footer/FooterComponent";
 
+const linksData = [{ title: "Login", path: "/login" }];
+
 const PrimaryLayout = () => {
   return (
     <Box
@@ -15,7 +17,7 @@ const PrimaryLayout = () => {
       }}
     >
       <Box>
-        <ClientHeader />
+        <ClientHeader linksArray={linksData} />
         <Box
           sx={{
             p: 5,
