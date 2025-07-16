@@ -9,22 +9,18 @@ module.exports = async (req, res, next) => {
     next();
   }
   try {
-    console.log(req.headers);
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
     if (!token) {
       const err = new ErrorModel("Missing token", 401);
       return next(err);
     }
     const { payload } = await jwtVerify(token, secret);
-
-    console.log("payload", payload);
     req.userData = {
       userid: payload.id,
     };
     next();
   } catch (error) {
-    const err = new ErrorModel("Not authenticated", 401);
+    const err = new ErrorModel("Error while checking auth.", 401);
     return next(err);
   }
 };
