@@ -7,9 +7,21 @@ export const signupUser = async ({
   password,
 }) => {
   try {
-    const res = await apiClient.post("/users/signup", {
+    const res = await apiClient.post("/auth/signup", {
       first_name,
       last_name,
+      email,
+      password,
+    });
+    return res.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const loginUser = async ({ email, password }) => {
+  try {
+    const res = await apiClient.post("/auth/login", {
       email,
       password,
     });

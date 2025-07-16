@@ -13,8 +13,11 @@ import GoogleIcon from "@mui/icons-material/Google";
 import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../api/authApi";
+import { useAuthStore } from "../store/authStore";
 
 const Signup = () => {
+  const token = useAuthStore((state) => state);
+  console.log("token", token);
   const [userForm, setUserForm] = useState({
     first_name: {
       label: "First Name",

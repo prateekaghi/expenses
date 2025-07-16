@@ -5,6 +5,9 @@ const config = require("dotenv").config();
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 module.exports = async (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    next();
+  }
   try {
     console.log(req.headers);
     const token = req.headers.authorization.split(" ")[1];
