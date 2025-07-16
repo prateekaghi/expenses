@@ -25,6 +25,6 @@ export const getUsers = async ({
       return data.data;
     }
   } catch (error) {
-    throw new Error(error);
+    throw error;
   }
 };

@@ -31,6 +31,9 @@ const Login = () => {
     }));
   };
 
+  if (isSuccess) {
+    navigate("/dashboard");
+  }
   return (
     <Box
       sx={{

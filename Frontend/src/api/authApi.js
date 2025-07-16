@@ -15,7 +15,7 @@ export const signupUser = async ({
     });
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -27,6 +27,9 @@ export const loginUser = async ({ email, password }) => {
     });
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    if (error.response) {
+      throw error.response.data.message;
+    }
+    throw error;
   }
 };
