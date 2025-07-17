@@ -46,7 +46,6 @@ export const addExpenes = async ({
       category,
       amount,
       currency,
-      user: "68658bc9c9c6de4430b5ce11",
     });
     if (data.status === 203) {
       return data.data;

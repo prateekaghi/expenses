@@ -105,7 +105,8 @@ const getUserExpenses = async (req, res, next) => {
 };
 
 const addExpense = async (req, res, next) => {
-  const { amount, category, date, title, user, currency } = req.body;
+  const { amount, category, date, title, currency } = req.body;
+  const user = req.userData.userid;
   if (!amount || !category || !date || !title || !user || !currency) {
     const err = new ErrorModel("Invalid or Incomplete payload", 400);
     return next(err);
@@ -123,7 +124,7 @@ const addExpense = async (req, res, next) => {
   }
 
   const categoryExists = existingUser.categories.some((cat) => {
-    return cat._id.equals(category);
+    return cat.id.equals(category);
   });
   if (!categoryExists) {
     const err = new ErrorModel("Category does not exist for the user.", 404);

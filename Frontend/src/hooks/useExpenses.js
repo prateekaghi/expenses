@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { addCategory } from "../api/categoryApi";
-import { getExpenses, getUserExpenses } from "../api/expensesApi";
+import { getExpenses, getUserExpenses, addExpenes } from "../api/expensesApi";
 
 export const useExpenses = ({ page, limit }) => {
   return useQuery({
@@ -24,9 +23,11 @@ export const useAddExpense = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload) => addCategory({ payload }),
+    mutationFn: ({ date, title, category, amount, currency }) =>
+      addExpenes({ date, title, category, amount, currency }),
     onSuccess: () => {
-      queryClient.invalidateQueries("categories");
+      queryClient.invalidateQueries("user_expenses");
+      queryClient.invalidateQueries("expenses");
     },
   });
 };

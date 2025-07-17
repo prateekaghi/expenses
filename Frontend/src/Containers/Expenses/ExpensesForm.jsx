@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PageHeader from "../../components/navigation/PageHeader";
 import GenericForm from "../../components/Forms/GenericForm";
 import { useAddExpense } from "../../hooks/useExpenses";
+import { useGetUserCategories } from "../../hooks/useCategories";
+import { useCurrencies } from "../../hooks/useCurrencies";
 
 const ExpensesForm = () => {
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [currencyOptions, setCurrencyOptions] = useState([]);
   const { mutateAsync, isPending } = useAddExpense();
+  const { data: userCategories, isLoading: categoriesLoading } =
+    useGetUserCategories({
+      page: 1,
+      limit: 1000,
+    });
+  const { data: currencyData, isLoading: currencyLoading } = useCurrencies({
+    page: 1,
+    limit: 1000,
+  });
 
   const initialState = {
     title: "",
@@ -28,27 +41,37 @@ const ExpensesForm = () => {
     category: {
       type: "select",
       label: "Category",
-      options: [
-        { label: "Food", value: "food" },
-        { label: "Travel", value: "travel" },
-        { label: "Utilities", value: "utilities" },
-      ],
+      options: categoryOptions,
     },
     currency: {
       type: "select",
       label: "Currency",
-      options: [
-        { label: "USD", value: "usd" },
-        { label: "CAD", value: "cad" },
-        { label: "INR", value: "inr" },
-      ],
+      options: currencyOptions,
     },
     date: { type: "date", label: "Date" },
+  };
+
+  const populateOptions = () => {
+    const categoryOptions = userCategories.data.map((category) => {
+      return { label: category.name, value: category.id };
+    });
+    const currencyOptions = currencyData.data.map((category) => {
+      return { label: category.name, value: category.value };
+    });
+    setCategoryOptions(categoryOptions);
+    setCurrencyOptions(currencyOptions);
   };
 
   const handleSubmit = async (data) => {
     await mutateAsync(data);
   };
+
+  useEffect(() => {
+    if (userCategories && currencyData) {
+      populateOptions();
+    }
+  }, [userCategories, currencyData]);
+
   return (
     <div>
       <PageHeader backTo={"/expenses"} title={"Add Expense"} />
@@ -60,6 +83,7 @@ const ExpensesForm = () => {
         onSubmit={handleSubmit}
         submitLabel="Add Expense"
         isLoading={isPending}
+        redirectUrl="/expenses"
       />
     </div>
   );

@@ -38,6 +38,7 @@ const AddCategoryPage = () => {
         onSubmit={handleSubmit}
         submitLabel="Add Category"
         isLoading={isPending}
+        redirectUrl="/category"
       />
     </Box>
   );
