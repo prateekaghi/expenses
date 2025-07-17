@@ -16,7 +16,7 @@ import ExpenseList from "./pages/Expenses/ExpenseList";
 import AddCategoryPage from "./pages/Category/AddCategoryPage";
 import AddExpensePage from "./pages/Expenses/AddExpensePage";
 import CategoryList from "./pages/Category/CategoryList";
-import UserDashboard from "./pages/UserDashboard";
+import UserDashboard from "./pages/Dashboard/UserDashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
 
 //Utility pages

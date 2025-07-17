@@ -82,10 +82,16 @@ const getUsers = async (req, res, next) => {
 };
 
 const getUserById = async (req, res, next) => {
-  const { userid } = req.params;
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
+
   let user;
   try {
-    user = await User.findById(userid, "-password");
+    user = await User.findById(requestUserId, "-password");
   } catch (error) {
     const err = new ErrorModel(
       "Error occured while finding the user with the provided id.",
