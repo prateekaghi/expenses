@@ -57,9 +57,30 @@ const getUserExpenses = async (req, res, next) => {
     const err = new ErrorModel("Access Denied.", 403);
     return next(err);
   }
+
+  let { page, limit } = req.query;
+
+  if (page !== undefined) {
+    page = parseInt(page);
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: "Invalid page number." });
+    }
+  }
+
+  if (limit !== undefined) {
+    limit = parseInt(limit);
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ message: "Invalid limit." });
+    }
+  }
+
   let user;
+
+  const skip = (page - 1) * limit;
   try {
     user = await User.findById(requestUserId)
+      .skip(skip)
+      .limit(limit)
       .select("expense")
       .populate("expense")
       .lean();
@@ -72,8 +93,12 @@ const getUserExpenses = async (req, res, next) => {
     const err = new ErrorModel("Error while getting the user.", 500);
     return next(err);
   }
-
+  const totalPages = Math.ceil(user.expense.length / limit);
   res.json({
+    page,
+    limit,
+    totalPages: totalPages || 1,
+    totalRecords: user.expense.length,
     message: "User expenses fetched successfully.",
     data: user.expense,
   });

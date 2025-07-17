@@ -9,7 +9,7 @@ const CategoryList = () => {
   return (
     <>
       <PageHeader
-        backTo={"/"}
+        backTo={"/dashboard"}
         title={"Category list"}
         actions={[
           <Button

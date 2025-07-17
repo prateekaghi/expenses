@@ -31,6 +31,7 @@ export const useAddCategory = () => {
     mutationFn: (payload) => addCategory({ payload }),
     onSuccess: () => {
       queryClient.invalidateQueries("categories");
+      queryClient.invalidateQueries("userCategories");
     },
   });
 };

@@ -116,13 +116,11 @@ const getUserCategories = async (req, res, next) => {
 };
 
 const addCategory = async (req, res, next) => {
-  const { name, userid } = req.body;
+  const { name } = req.body;
+  const userid = req.userData.userid;
 
   if (!userid) {
-    const err = new ErrorModel(
-      "User id is required for adding the expense.",
-      500
-    );
+    const err = new ErrorModel("Access Denied.", 403);
     return next(err);
   }
 

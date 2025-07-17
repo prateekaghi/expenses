@@ -24,7 +24,6 @@ const AddCategoryPage = () => {
   const handleSubmit = async (data) => {
     const response = await mutateAsync({
       name: data.name,
-      userid: "68714954b0c65006abe791b4",
     });
     return response;
   };
