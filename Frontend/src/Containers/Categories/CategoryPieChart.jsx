@@ -55,7 +55,6 @@ const CategoryPieChart = () => {
 
   if (userExpenses && userCategories) {
     data = getChartData();
-    console.log("dataaaa", data);
   }
 
   return (

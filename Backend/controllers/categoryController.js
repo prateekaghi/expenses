@@ -208,21 +208,21 @@ const updateCategory = async (req, res, next) => {
 };
 
 const deleteCategory = async (req, res, next) => {
-  const { id } = req.params;
-  const { userid } = req.body;
+  const { categoryId } = req.params;
+  const loggedUserId = req.userData.userid;
 
   //find the category by id
   let category;
   try {
-    category = await Category.findById(id);
+    category = await Category.findById(categoryId);
   } catch (error) {
     const err = new ErrorModel("Error while fetching.", 500);
     return next(err);
   }
 
   //check if the category user id corresponds to the user id received.
-  if (!category.user.equals(userid)) {
-    const err = new ErrorModel("Category does not belong to the user.", 500);
+  if (!category.user.equals(loggedUserId)) {
+    const err = new ErrorModel("Access Denied.", 403);
     return next(err);
   }
 
@@ -230,8 +230,8 @@ const deleteCategory = async (req, res, next) => {
   //check if category is being used in any expense
   try {
     categoryExpenseCount = await Expense.countDocuments({
-      user: userid,
-      category: id,
+      user: loggedUserId,
+      category: categoryId,
     });
   } catch (error) {
     const err = new ErrorModel(

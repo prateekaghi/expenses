@@ -9,31 +9,34 @@ import { DeleteOutlineOutlined } from "@mui/icons-material";
 
 const CategoryTable = () => {
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(25);
   const { data, isLoading, isError, error, isFetching } = useGetUserCategories({
     page: page + 1,
     limit: limit,
   });
-  const { mutate, isPending } = useDeleteCategory();
+  const { mutateAsync, isPending, isSuccess } = useDeleteCategory();
   const columns = [
-    { id: "name", label: "First Name" },
-    { id: "user", label: "Last Name" },
+    { id: "name", label: "Title" },
+    { id: "user", label: "User ID" },
   ];
   if (isLoading) return <p>Loading...</p>;
   if (isFetching) return <p>Fetching...</p>;
   if (isError) return <p>Error: {error.message}</p>;
+
+  const deleteHandler = async (data) => {
+    try {
+      const response = await mutateAsync({ categoryId: data.id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const tableActions = (row) => {
     return (
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <IconButton
           disabled={isPending || isLoading}
-          onClick={() => {
-            mutate({
-              id: row.id,
-              payload: { userid },
-            });
-          }}
+          onClick={() => deleteHandler(row)}
         >
           <DeleteOutlineOutlined />
         </IconButton>

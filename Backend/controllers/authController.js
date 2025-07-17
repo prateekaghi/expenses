@@ -153,7 +153,6 @@ const signup = async (req, res, next) => {
       token: email,
     });
   } catch (error) {
-    console.log(error);
     const err = new ErrorModel("Error occured while creating the user.", 500);
     return next(err);
   }
