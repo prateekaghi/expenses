@@ -122,6 +122,52 @@
         }
       }
     },
+    "/api/auth/refresh": {
+      "post": {
+        "summary": "Refresh access token using refresh token cookie",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "refreshToken",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Refresh token stored in cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Token Refreshed"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "email": { "type": "string" },
+                        "token": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid or expired refresh token"
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "summary": "Get all users",

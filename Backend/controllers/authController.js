@@ -1,11 +1,13 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const { SignJWT } = require("jose");
+const {
+  generateToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} = require("../utils/tokenUtils");
 
 const config = require("dotenv").config();
-
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 const { sendVerificationMail } = require("../services/emailService");
 
@@ -48,16 +50,17 @@ const login = async (req, res, next) => {
     return next(err);
   }
 
-  let token;
+  let accessToken;
+  let refreshToken;
   try {
-    token = await new SignJWT({
+    accessToken = await generateToken({
       email: existingUser.email,
       id: existingUser.id,
-    })
-      .setIssuedAt()
-      .setExpirationTime(process.env.JWT_EXPIRY)
-      .setProtectedHeader({ alg: "HS256" })
-      .sign(secret);
+    });
+    refreshToken = await generateRefreshToken({
+      email: existingUser.email,
+      id: existingUser.id,
+    });
   } catch (error) {
     const err = new ErrorModel("Error while generating the token.", 500);
     return next(err);
@@ -65,13 +68,20 @@ const login = async (req, res, next) => {
 
   const userWithoutPassword = existingUser.toObject();
   delete userWithoutPassword.password;
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "Strict" : "Lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
   res.json({
     message: "User logged in!",
     data: {
       id: existingUser.id,
       email: existingUser.email,
-      token: token,
+      token: accessToken,
     },
   });
 };
@@ -131,16 +141,17 @@ const signup = async (req, res, next) => {
     categories: [],
     timezone: "UTC",
   });
-  let token;
+  let accessToken;
+  let refreshToken;
   try {
-    token = await new SignJWT({
-      email: createUser.email,
-      id: createUser.id,
-    })
-      .setIssuedAt()
-      .setExpirationTime(process.env.JWT_EXPIRY)
-      .setProtectedHeader({ alg: "HS256" })
-      .sign(secret);
+    accessToken = await generateToken({
+      email: existingUser.email,
+      id: existingUser.id,
+    });
+    refreshToken = await generateRefreshToken({
+      email: existingUser.email,
+      id: existingUser.id,
+    });
   } catch (error) {
     const err = new ErrorModel("Error while generating the token.", 500);
     return next(err);
@@ -157,17 +168,52 @@ const signup = async (req, res, next) => {
     return next(err);
   }
 
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "Strict" : "Lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.status(201).json({
     message: "User Created",
     data: {
       id: createUser.id,
       email: createUser.email,
-      token: token,
+      token: accessToken,
     },
   });
+};
+
+const refresh = async (req, res, next) => {
+  try {
+    const token = req.cookie?.refreshToken;
+    if (!token) {
+      return res.status(401).json({ message: "Missing refresh token" });
+    }
+    const verificationPayload = verifyRefreshToken({ token });
+    const newAccessToken = await generateToken({
+      email: verificationPayload.email,
+      id: verificationPayload.id,
+    });
+    return res.status(200).json({
+      message: "Token Refreshed",
+      data: {
+        id: verificationPayload.id,
+        email: verificationPayload.email,
+        token: newAccessToken,
+      },
+    });
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ message: "Invalid or expired refresh token" });
+  }
 };
 
 module.exports = {
   login,
   signup,
+  refresh,
 };

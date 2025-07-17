@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { swaggerDocument, swaggerUi } = require("./swaggerConfig");
 const dotenv = require("dotenv").config();
+const cors = require("cors");
 
 swaggerDocument.servers = [{ url: process.env.SWAGGER_BASE_URL }];
 
@@ -14,6 +15,13 @@ const timezoneRoutes = require("./routes/timezone-routes");
 const currencyRoutes = require("./routes/currency-routes");
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // or your frontend URL
+    credentials: true, // allow cookies
+  })
+);
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
