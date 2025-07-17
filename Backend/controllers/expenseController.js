@@ -50,10 +50,16 @@ const getExpenses = async (req, res, next) => {
 };
 
 const getUserExpenses = async (req, res, next) => {
-  const { userid } = req.params;
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
   let user;
   try {
-    user = await User.findById(userid)
+    user = await User.findById(requestUserId)
       .select("expense")
       .populate("expense")
       .lean();
@@ -67,7 +73,10 @@ const getUserExpenses = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user.expense);
+  res.json({
+    message: "User expenses fetched successfully.",
+    data: user.expense,
+  });
 };
 
 const addExpense = async (req, res, next) => {

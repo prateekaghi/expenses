@@ -1,4 +1,5 @@
 import apiClient from "./index";
+import { useAuthStore } from "../store/authStore";
 
 export const getCategory = async ({ page, limit }) => {
   try {
@@ -14,8 +15,9 @@ export const getCategory = async ({ page, limit }) => {
 };
 
 export const getUserCategory = async ({ userid, page, limit }) => {
+  const userId = useAuthStore.getState().id;
   try {
-    const data = await apiClient.get(`/category/${userid}`, {
+    const data = await apiClient.get(`/category/${userId}`, {
       params: { page, limit },
     });
     if (data.status === 200) {

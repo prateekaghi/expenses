@@ -8,11 +8,9 @@ import { Box, IconButton } from "@mui/material";
 import { DeleteOutlineOutlined } from "@mui/icons-material";
 
 const CategoryTable = () => {
-  const userid = "68714954b0c65006abe791b4";
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(20);
   const { data, isLoading, isError, error, isFetching } = useGetUserCategories({
-    userid,
     page: page + 1,
     limit: limit,
   });

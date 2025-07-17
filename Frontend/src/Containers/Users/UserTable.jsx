@@ -15,6 +15,9 @@ const UserTable = () => {
   ];
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: {error.message}</p>;
+  if (data) {
+    console.log("data", data);
+  }
   return (
     <CustomTable
       columns={columns}

@@ -15,10 +15,10 @@ export const useGetCategories = ({ page, limit }) => {
   });
 };
 
-export const useGetUserCategories = ({ userid, page, limit }) => {
+export const useGetUserCategories = ({ page, limit }) => {
   return useQuery({
-    queryKey: ["userCategories", { userid, page, limit }],
-    queryFn: () => getUserCategory({ userid, page, limit }),
+    queryKey: ["userCategories", { page, limit }],
+    queryFn: () => getUserCategory({ page, limit }),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
   });

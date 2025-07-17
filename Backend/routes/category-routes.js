@@ -8,7 +8,7 @@ router.get("/", categoryController.getCategories);
 
 router.post("/", checkAuth, categoryController.addCategory);
 
-router.get("/:id", checkAuth, categoryController.getUserCategories);
+router.get("/:userid", checkAuth, categoryController.getUserCategories);
 
 router.patch("/:id", checkAuth, categoryController.updateCategory);
 

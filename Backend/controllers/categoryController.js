@@ -43,6 +43,13 @@ const getCategories = async (req, res, next) => {
 };
 
 const getUserCategories = async (req, res, next) => {
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
+
   let { page, limit } = req.query;
 
   if (page !== undefined) {
@@ -59,11 +66,10 @@ const getUserCategories = async (req, res, next) => {
     }
   }
   const skip = (page - 1) * limit;
-  const { id } = req.params;
 
   let user;
   try {
-    user = await User.findById(id);
+    user = await User.findById(requestUserId);
   } catch (error) {
     const err = new ErrorModel("Something went wrong.", 500);
     return next(err);
@@ -77,8 +83,10 @@ const getUserCategories = async (req, res, next) => {
   let userCategories;
   let userCategoryCount;
   try {
-    userCategoryCount = await Category.countDocuments({ user: id });
-    userCategories = await Category.find({ user: id }).skip(skip).limit(limit);
+    userCategoryCount = await Category.countDocuments({ user: requestUserId });
+    userCategories = await Category.find({ user: requestUserId })
+      .skip(skip)
+      .limit(limit);
   } catch (error) {
     const err = new ErrorModel("Unable to find the user.", 500);
     return next(err);

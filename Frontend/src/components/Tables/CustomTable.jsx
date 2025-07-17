@@ -62,7 +62,9 @@ const CustomTable = ({
               data.map((row, i) => (
                 <TableRow key={row._id || i}>
                   {columns.map((col) => (
-                    <TableCell key={col.id}>{row[col.id]}</TableCell>
+                    <TableCell key={col.id}>
+                      {col.render ? col.render(row) : row[col.id]}
+                    </TableCell>
                   ))}
                   {renderActions && <TableCell>{renderActions(row)}</TableCell>}
                 </TableRow>
