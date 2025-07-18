@@ -1,8 +1,7 @@
 const ErrorModel = require("../models/error");
-const { jwtVerify } = require("jose");
+const { verifyToken } = require("../utils/tokenUtils");
 
 const config = require("dotenv").config();
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 module.exports = async (req, res, next) => {
   if (req.method === "OPTIONS") {
@@ -14,13 +13,15 @@ module.exports = async (req, res, next) => {
       const err = new ErrorModel("Missing token", 401);
       return next(err);
     }
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await verifyToken({ token });
+    const { id, first_name, last_name, email } = payload;
     req.userData = {
-      userid: payload.id,
-      first_name: payload.first_name,
-      last_name: payload.last_name,
-      email: payload.email,
+      userid: id,
+      first_name,
+      last_name,
+      email,
     };
+    console.log(req.userData);
     next();
   } catch (error) {
     const err = new ErrorModel("Error while checking auth.", 401);
