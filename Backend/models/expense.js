@@ -25,6 +25,10 @@ const ExpenseSchema = new Schema(
       type: Number,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+    },
     user: {
       type: mongoose.Types.ObjectId,
       required: true,

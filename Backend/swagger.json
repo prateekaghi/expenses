@@ -459,7 +459,7 @@
                   "category",
                   "date",
                   "title",
-                  "user",
+                  "type",
                   "currency"
                 ],
                 "properties": {
@@ -480,9 +480,9 @@
                     "type": "string",
                     "example": "Lunch"
                   },
-                  "user": {
+                  "type": {
                     "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
+                    "example": "expense"
                   },
                   "currency": {
                     "type": "string",
@@ -719,15 +719,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "userid"],
+                "required": ["name"],
                 "properties": {
                   "name": {
                     "type": "string",
                     "example": "Food"
-                  },
-                  "userid": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
                   }
                 }
               }

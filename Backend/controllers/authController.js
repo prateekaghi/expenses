@@ -8,6 +8,7 @@ const config = require("dotenv").config();
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 const { sendVerificationMail } = require("../services/emailService");
+const { generateAccessToken } = require("../utils/tokenUtils");
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -50,14 +51,12 @@ const login = async (req, res, next) => {
 
   let token;
   try {
-    token = await new SignJWT({
-      email: existingUser.email,
+    token = await generateAccessToken({
       id: existingUser.id,
-    })
-      .setIssuedAt()
-      .setExpirationTime(process.env.JWT_EXPIRY)
-      .setProtectedHeader({ alg: "HS256" })
-      .sign(secret);
+      email: existingUser.email,
+      first_name: existingUser.first_name,
+      last_name: existingUser.last_name,
+    });
   } catch (error) {
     const err = new ErrorModel("Error while generating the token.", 500);
     return next(err);
@@ -71,6 +70,8 @@ const login = async (req, res, next) => {
     data: {
       id: existingUser.id,
       email: existingUser.email,
+      first_name: existingUser.first_name,
+      last_name: existingUser.last_name,
       token: token,
     },
   });
@@ -120,7 +121,7 @@ const signup = async (req, res, next) => {
 
   //create user variable and save user if email address does not exist
 
-  const createUser = new User({
+  const createdUser = new User({
     email,
     first_name,
     last_name,
@@ -130,24 +131,23 @@ const signup = async (req, res, next) => {
     expense: [],
     categories: [],
     timezone: "UTC",
+    currency: "USD",
   });
   let token;
   try {
-    token = await new SignJWT({
-      email: createUser.email,
-      id: createUser.id,
-    })
-      .setIssuedAt()
-      .setExpirationTime(process.env.JWT_EXPIRY)
-      .setProtectedHeader({ alg: "HS256" })
-      .sign(secret);
+    token = await generateAccessToken({
+      id: createdUser.id,
+      email: createdUser.email,
+      first_name: createdUser.first_name,
+      last_name: createdUser.last_name,
+    });
   } catch (error) {
     const err = new ErrorModel("Error while generating the token.", 500);
     return next(err);
   }
 
   try {
-    await createUser.save();
+    await createdUser.save();
     await sendVerificationMail({
       userEmail: "prateekaghi42@gmail.com",
       token: email,
@@ -160,8 +160,10 @@ const signup = async (req, res, next) => {
   res.status(201).json({
     message: "User Created",
     data: {
-      id: createUser.id,
-      email: createUser.email,
+      id: createdUser.id,
+      email: createdUser.email,
+      first_name: createdUser.first_name,
+      last_name: createdUser.last_name,
       token: token,
     },
   });
