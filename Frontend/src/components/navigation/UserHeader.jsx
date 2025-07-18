@@ -1,0 +1,108 @@
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Button,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  MenuList,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Chip,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { useState } from "react";
+
+const UserHeader = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => setAnchorEl(null);
+
+  return (
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        backgroundColor: "#fff",
+        borderBottom: "1px solid #e5e7eb", // Tailwind's border-gray-200
+        px: 3,
+        py: 2,
+      }}
+    >
+      <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+        {/* Left Side */}
+        <Box display="flex" alignItems="center" gap={2}>
+          <Typography variant="h5" fontWeight="bold" color="text.primary">
+            ExpenseTracker
+          </Typography>
+          <Chip label="Pro Plan" variant="outlined" size="small" />
+        </Box>
+
+        {/* Right Side */}
+        <Box display="flex" alignItems="center" gap={2}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<AddIcon fontSize="small" />}
+          >
+            Add Transaction
+          </Button>
+
+          <IconButton size="small">
+            <NotificationsIcon fontSize="small" />
+          </IconButton>
+
+          {/* Avatar & Menu */}
+          <IconButton onClick={handleAvatarClick} sx={{ p: 0 }}>
+            <Avatar
+              alt="User"
+              src="/placeholder.svg?height=32&width=32"
+              sx={{ width: 32, height: 32 }}
+            />
+          </IconButton>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            PaperProps={{ sx: { width: 220 } }}
+          >
+            <MenuList dense>
+              <Box px={2} py={1}>
+                <Typography variant="body1" fontWeight="medium">
+                  John Doe
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  john@example.com
+                </Typography>
+              </Box>
+              <Divider />
+              <MenuItem>
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Settings</ListItemText>
+              </MenuItem>
+              <MenuItem>Log out</MenuItem>
+            </MenuList>
+          </Menu>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default UserHeader;

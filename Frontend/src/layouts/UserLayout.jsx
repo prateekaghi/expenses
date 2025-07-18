@@ -6,6 +6,7 @@ import FooterComponent from "../components/Footer/FooterComponent";
 import { Logout } from "@mui/icons-material";
 import { useAuthStore } from "../store/authStore";
 import { isTokenExpired } from "../utils/tokenFunctions";
+import UserHeader from "../components/navigation/UserHeader";
 const linksData = [
   { title: "Dashboard", path: "/dashboard" },
   { title: "Expenses", path: "/expenses" },
@@ -39,14 +40,7 @@ const UserLayout = () => {
       }}
     >
       <Box>
-        <ClientHeader
-          linksArray={linksData}
-          button={
-            <IconButton onClick={logout}>
-              <Logout />
-            </IconButton>
-          }
-        />
+        <UserHeader />
         <Box
           sx={{
             p: 5,
