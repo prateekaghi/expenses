@@ -24,49 +24,6 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { useUserExpenses } from "../../hooks/useExpenses";
 import { formatDate } from "../../utils/dateUtility";
 
-const recentTransactions = [
-  {
-    id: 1,
-    description: "Grocery Store",
-    amount: -89.5,
-    category: "Food & Dining",
-    date: "2024-01-15",
-    type: "expense",
-  },
-  {
-    id: 2,
-    description: "Salary Deposit",
-    amount: 3500.0,
-    category: "Income",
-    date: "2024-01-15",
-    type: "income",
-  },
-  {
-    id: 3,
-    description: "Gas Station",
-    amount: -45.2,
-    category: "Transportation",
-    date: "2024-01-14",
-    type: "expense",
-  },
-  {
-    id: 4,
-    description: "Netflix Subscription",
-    amount: -15.99,
-    category: "Entertainment",
-    date: "2024-01-14",
-    type: "expense",
-  },
-  {
-    id: 5,
-    description: "Freelance Payment",
-    amount: 750.0,
-    category: "Income",
-    date: "2024-01-13",
-    type: "income",
-  },
-];
-
 const TransactionsSummary = () => {
   const { data, isLoading, error, isError } = useUserExpenses({
     page: 1,
