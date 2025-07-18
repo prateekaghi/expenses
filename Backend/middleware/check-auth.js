@@ -17,6 +17,9 @@ module.exports = async (req, res, next) => {
     const { payload } = await jwtVerify(token, secret);
     req.userData = {
       userid: payload.id,
+      first_name: payload.first_name,
+      last_name: payload.last_name,
+      email: payload.email,
     };
     next();
   } catch (error) {
