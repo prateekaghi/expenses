@@ -1,7 +1,7 @@
 const ErrorModel = require("../models/error");
 const Category = require("../models/category");
 const User = require("../models/user");
-const Expense = require("../models/expense");
+const Transaction = require("../models/transaction");
 const mongoose = require("mongoose");
 
 const getCategories = async (req, res, next) => {
@@ -172,14 +172,15 @@ const addCategory = async (req, res, next) => {
 
 const updateCategory = async (req, res, next) => {
   const { id } = req.params;
-  const { name, userid } = req.body;
+  const { name } = req.body;
+  const loggedUserId = req.userData.userid;
 
   if (!name) {
     const err = new ErrorModel("Name required to update the category.", 500);
     return next(err);
   }
 
-  if (!userid) {
+  if (!loggedUserId) {
     const err = new ErrorModel("User id required to update the category.", 500);
     return next(err);
   }
@@ -192,7 +193,7 @@ const updateCategory = async (req, res, next) => {
     const err = new ErrorModel("Category not found", 500);
     return next(err);
   }
-  if (!category.user.equals(userid)) {
+  if (!category.user.equals(loggedUserId)) {
     const err = new ErrorModel("Category does not belong to the user.", 500);
     return next(err);
   }
@@ -226,24 +227,24 @@ const deleteCategory = async (req, res, next) => {
     return next(err);
   }
 
-  let categoryExpenseCount;
-  //check if category is being used in any expense
+  let categoryTransactionCount;
+  //check if category is being used in any transaction
   try {
-    categoryExpenseCount = await Expense.countDocuments({
+    categoryTransactionCount = await Transaction.countDocuments({
       user: loggedUserId,
       category: categoryId,
     });
   } catch (error) {
     const err = new ErrorModel(
-      "Unable to look for expenses with the current category.",
+      "Unable to look for transactions with the current category.",
       500
     );
     return next(err);
   }
 
-  if (categoryExpenseCount) {
+  if (categoryTransactionCount) {
     const err = new ErrorModel(
-      "Unable to delete category. Expenses exist.",
+      "Unable to delete category. Transactions exist.",
       500
     );
     return next(err);

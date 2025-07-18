@@ -1,9 +1,9 @@
 const { default: mongoose } = require("mongoose");
 const ErrorModel = require("../models/error");
-const Expense = require("../models/expense");
+const Transaction = require("../models/transaction");
 const User = require("../models/user");
 
-const getExpenses = async (req, res, next) => {
+const getAllTransactions = async (req, res, next) => {
   let { page, limit } = req.query;
 
   if (page !== undefined) {
@@ -20,36 +20,39 @@ const getExpenses = async (req, res, next) => {
     }
   }
 
-  let expenses;
-  let expensesCount;
+  let transactions;
+  let transactionsCount;
   const skip = (page - 1) * limit;
   try {
-    expensesCount = await Expense.countDocuments();
-    expenses = await Expense.find().skip(skip).limit(limit).sort({ date: -1 });
+    transactionsCount = await Transaction.countDocuments();
+    transactions = await Transaction.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ date: -1 });
 
-    if (!expenses) {
+    if (!transactions) {
       const err = new ErrorModel("Something went wrong!", 500);
       return next(err);
     }
   } catch (error) {
-    const err = new ErrorModel("Error fetching expenses.", 500);
+    const err = new ErrorModel("Error fetching transactions.", 500);
     return next(err);
   }
 
-  const totalPages = Math.ceil(expensesCount / limit);
+  const totalPages = Math.ceil(transactionsCount / limit);
   res.json({
     page,
     limit,
     totalPages: totalPages || 1,
-    totalRecords: expensesCount,
-    message: "Expenses fetched successfully.",
-    data: expenses.map((expense) => {
-      return expense.toObject({ getters: true });
+    totalRecords: transactionsCount,
+    message: "Transactions fetched successfully.",
+    data: transactions.map((transaction) => {
+      return transaction.toObject({ getters: true });
     }),
   });
 };
 
-const getUserExpenses = async (req, res, next) => {
+const getUserTransactions = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
 
@@ -75,32 +78,37 @@ const getUserExpenses = async (req, res, next) => {
   }
 
   const skip = (page - 1) * limit;
-  let userExpense;
+  let userTransaction;
 
   try {
-    userExpense = await Expense.find({ user: requestUserId })
+    userTransaction = await Transaction.find({ user: requestUserId })
       .skip(skip)
       .limit(limit)
       .populate("category")
       .sort({ date: -1 });
   } catch (error) {
-    const err = new ErrorModel("Error while getting the user expenses.", 500);
+    const err = new ErrorModel(
+      "Error while getting the user transactions.",
+      500
+    );
     return next(err);
   }
 
-  const totalPages = Math.ceil(userExpense.length / limit);
+  const totalPages = Math.ceil(userTransaction.length / limit);
 
   res.json({
     page,
     limit,
     totalPages: totalPages || 1,
-    totalRecords: userExpense.length,
-    message: "User expenses fetched successfully.",
-    data: userExpense.map((expense) => expense.toObject({ getters: true })),
+    totalRecords: userTransaction.length,
+    message: "User transactions fetched successfully.",
+    data: userTransaction.map((transaction) =>
+      transaction.toObject({ getters: true })
+    ),
   });
 };
 
-const addExpense = async (req, res, next) => {
+const addTransaction = async (req, res, next) => {
   const { amount, category, date, title, currency, type } = req.body;
   const user = req.userData.userid;
   if (!amount || !category || !date || !title || !user || !currency) {
@@ -127,7 +135,7 @@ const addExpense = async (req, res, next) => {
     return next(err);
   }
 
-  const newExpense = new Expense({
+  const newTransaction = new Transaction({
     amount,
     category,
     date,
@@ -140,42 +148,45 @@ const addExpense = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await newExpense.save({ session: sess });
-    existingUser.expense.push(newExpense);
+    await newTransaction.save({ session: sess });
+    existingUser.expense.push(newTransaction);
     await existingUser.save();
     await sess.commitTransaction();
   } catch (error) {
-    const err = new ErrorModel("Unable to add expense", 500);
+    const err = new ErrorModel("Unable to add transaction", 500);
 
     return next(err);
   }
 
-  res.status(203).json({ message: "Expense added.", data: newExpense });
+  res
+    .status(203)
+    .json({ message: "Transaction recorded.", data: newTransaction });
 };
 
-const updateExpense = async (req, res, next) => {
+const updateTransaction = async (req, res, next) => {
   const { eid } = req.params;
-  const { user_id, title, category, amount, currency } = req.body;
-  let expense;
+  const { title, category, amount, currency } = req.body;
+  const user_id = req.userData.userid;
+  let transaction;
 
-  //find expense
+  //find transaction
   try {
-    expense = await Expense.findById(eid).populate("user");
+    transaction = await Transaction.findById(eid).populate("user");
   } catch (error) {
-    const err = new ErrorModel("Error finding the expense.", 500);
+    const err = new ErrorModel("Error finding the transaction.", 500);
     return next(err);
   }
 
-  //throw error if expense not found
-  if (!expense) {
-    const err = new ErrorModel("Expense not found!", 404);
+  //throw error if transaction not found
+  if (!transaction) {
+    const err = new ErrorModel("Transaction not found!", 404);
     return next(err);
   }
 
   //check user id from payload to see if it corresponds with the userid of the expense
   //throw error if payload user id does not match with the expense user id
 
-  if (!user_id || !expense.user.equals(user_id)) {
+  if (!user_id || !transaction.user.equals(user_id)) {
     const err = new ErrorModel(
       "You are not authorised to updated the expense.",
       401
@@ -185,7 +196,7 @@ const updateExpense = async (req, res, next) => {
 
   //check if the category exists for the user
   if (category) {
-    const { user } = expense;
+    const { user } = transaction;
     const categoryExists = user.categories.some((cat) => {
       return cat.equals(category);
     });
@@ -197,29 +208,30 @@ const updateExpense = async (req, res, next) => {
   }
 
   //update expense
-  expense.title = title || expense.title;
-  expense.category = category || expense.category;
-  expense.amount = amount || expense.amount;
-  expense.currency = currency || expense.currency;
+  transaction.title = title || transaction.title;
+  transaction.category = category || transaction.category;
+  transaction.amount = amount || transaction.amount;
+  transaction.currency = currency || transaction.currency;
 
   //save expense
 
   try {
-    await expense.save();
+    await transaction.save();
   } catch (error) {
     const err = new ErrorModel("Error updating the expense.", 500);
     return next(err);
   }
 
-  res.json(expense.toObject({ getters: true }));
+  res.json(transaction.toObject({ getters: true }));
 };
 
-const deleteExpense = async (req, res, next) => {
+const deleteTransaction = async (req, res, next) => {
   const { eid } = req.params;
-  let expense;
+  const loggedUserId = req.userData.userid;
+  let transaction;
   //Find expense by id
   try {
-    expense = await Expense.findById(eid);
+    transaction = await Transaction.findById(eid);
   } catch (error) {
     const err = new ErrorModel("Error finding the expense.", 500);
     return next(err);
@@ -227,7 +239,7 @@ const deleteExpense = async (req, res, next) => {
 
   //throw error if expense not found by id
 
-  if (!expense) {
+  if (!transaction) {
     const err = new ErrorModel("Expense not found!", 404);
     return next(err);
   }
@@ -235,7 +247,7 @@ const deleteExpense = async (req, res, next) => {
   //check if the user connected to the expense exists
   let user;
   try {
-    user = await User.findById(expense.user);
+    user = await User.findById(transaction.user);
   } catch (error) {
     const err = new ErrorModel("Something went wrong!", 500);
     return next(err);
@@ -246,14 +258,24 @@ const deleteExpense = async (req, res, next) => {
     return next(err);
   }
 
+  //check if the transaction user is the logged user
+
+  if (!transaction.user.equals(loggedUserId)) {
+    const err = new ErrorModel(
+      "Transaction does not belong to the logged user.",
+      500
+    );
+    return next(err);
+  }
+
   try {
     //start transaction
     const sess = await mongoose.startSession();
     sess.startTransaction();
     //remove expense from expense collection
-    await expense.deleteOne({ session: sess });
+    await transaction.deleteOne({ session: sess });
     //remove expense from user collection
-    user.expense.pop(expense);
+    user.expense.pop(transaction);
     //save user
     await user.save();
     //commit transaction
@@ -267,9 +289,9 @@ const deleteExpense = async (req, res, next) => {
 };
 
 module.exports = {
-  addExpense,
-  getExpenses,
-  getUserExpenses,
-  updateExpense,
-  deleteExpense,
+  addTransaction,
+  getAllTransactions,
+  getUserTransactions,
+  updateTransaction,
+  deleteTransaction,
 };

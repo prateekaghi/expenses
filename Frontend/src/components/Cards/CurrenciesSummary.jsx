@@ -9,11 +9,27 @@ import {
   Paper,
 } from "@mui/material";
 import PublicIcon from "@mui/icons-material/Public";
+import { useCurrencies } from "../../hooks/useCurrencies";
+import { useUserByID } from "../../hooks/useUsers";
 const currencies = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY"];
 
 const CurrenciesSummary = () => {
+  const { data, isLoading, error, isError } = useCurrencies({
+    page: 1,
+    limit: 1000,
+  });
+  const {
+    data: userData,
+    isLoading: userIsLoading,
+    error: userError,
+    isError: userIsError,
+  } = useUserByID({ page: 1, limit: 10 });
+
+  if (isLoading || userIsLoading) return <p>Loading...</p>;
+  if (isError || userIsError) return <p>{error || userError}</p>;
+
   return (
-    <Card>
+    <Card sx={{ height: "100%" }}>
       <CardHeader
         title={
           <Typography variant="h6" fontWeight="medium">
@@ -29,32 +45,33 @@ const CurrenciesSummary = () => {
 
       <CardContent>
         <Grid container spacing={2}>
-          {currencies.map((currency, index) => (
-            <Grid item xs={3} key={index}>
+          {data.data.map((currency, index) => (
+            <Grid size={{ xs: 3 }} key={index}>
               <Paper
                 elevation={0}
                 sx={{
                   p: 1.5,
                   textAlign: "center",
-                  bgcolor: "grey.50",
+                  bgcolor: "#f9fafb",
                   borderRadius: 2,
+                  border: "1px solid #d6d7d9",
                 }}
               >
                 <Typography variant="body2" fontWeight="medium">
-                  {currency}
+                  {currency.name}
                 </Typography>
               </Paper>
             </Grid>
           ))}
         </Grid>
 
-        <Box mt={4} p={2} bgcolor="blue.50" borderRadius={2}>
-          <Typography variant="body2" sx={{ color: "blue.800" }}>
+        <Box mt={4} p={2} bgcolor="#eff6ff" borderRadius={2}>
+          <Typography variant="body2" sx={{ color: "#1e40af" }}>
             <PublicIcon
               fontSize="small"
               sx={{ verticalAlign: "middle", mr: 1 }}
             />
-            Primary currency: USD • Auto-conversion enabled
+            Primary currency: {userData.data.currency} • Auto-conversion enabled
           </Typography>
         </Box>
       </CardContent>

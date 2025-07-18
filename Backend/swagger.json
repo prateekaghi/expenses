@@ -318,23 +318,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["display"],
-                "properties": {
-                  "display": {
-                    "type": "boolean",
-                    "example": false
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "User deleted successfully",
@@ -402,7 +385,7 @@
         }
       }
     },
-    "/api/expenses": {
+    "/api/transactions": {
       "get": {
         "summary": "Get all expenses",
         "tags": ["Expenses"],
@@ -434,7 +417,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Expense"
+                    "$ref": "#/components/schemas/transaction"
                   }
                 }
               }
@@ -499,7 +482,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Expense"
+                  "$ref": "#/components/schemas/transaction"
                 }
               }
             }
@@ -516,7 +499,7 @@
         }
       }
     },
-    "/api/expenses/{userid}": {
+    "/api/transactions/{userid}": {
       "get": {
         "summary": "Get expenses by user ID",
         "tags": ["Expenses"],
@@ -558,7 +541,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Expense"
+                    "$ref": "#/components/schemas/transaction"
                   }
                 }
               }
@@ -573,7 +556,7 @@
         }
       }
     },
-    "/api/expenses/{eid}": {
+    "/api/transactions/{eid}": {
       "patch": {
         "summary": "Update expense",
         "tags": ["Expenses"],
@@ -628,7 +611,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Expense"
+                  "$ref": "#/components/schemas/transaction"
                 }
               }
             }
@@ -863,10 +846,6 @@
                   "name": {
                     "type": "string",
                     "example": "Updated Food"
-                  },
-                  "userid": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
                   }
                 }
               }
@@ -897,22 +876,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "userid": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Category deleted successfully",

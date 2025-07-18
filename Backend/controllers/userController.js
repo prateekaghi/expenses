@@ -167,12 +167,6 @@ const toggleUserStatus = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   const { userid } = req.params;
-  const { display } = req.body;
-
-  if (display === undefined) {
-    const err = new ErrorModel("Payload missing!", 500);
-    return next(err);
-  }
 
   let user;
   try {
@@ -183,7 +177,7 @@ const deleteUser = async (req, res, next) => {
   }
 
   //Update user details
-  user.display = display;
+  user.display = false;
 
   //save user
   try {
@@ -193,7 +187,7 @@ const deleteUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user);
+  res.json({ message: "User deleted.", data: user });
 };
 
 module.exports = {
