@@ -3,7 +3,7 @@ import apiClient from "./index";
 
 export const getExpenses = async ({ page, limit }) => {
   try {
-    const data = await apiClient.get("/expenses", {
+    const data = await apiClient.get("/transactions", {
       params: { page, limit },
     });
     if (data.status === 200) {
@@ -21,7 +21,7 @@ export const getUserExpenses = async ({ page, limit }) => {
     throw new Error("Missing User ID.");
   }
   try {
-    const data = await apiClient.get(`/expenses/${userId}`, {
+    const data = await apiClient.get(`/transactions/${userId}`, {
       params: { page, limit },
     });
     if (data.status === 200) {
@@ -40,7 +40,7 @@ export const addExpenes = async ({
   currency,
 }) => {
   try {
-    const data = await apiClient.post("/expenses", {
+    const data = await apiClient.post("/transactions", {
       date,
       title,
       category,
