@@ -82,7 +82,6 @@ const getUserExpenses = async (req, res, next) => {
       .skip(skip)
       .limit(limit)
       .populate("category")
-      .lean()
       .sort({ date: -1 });
   } catch (error) {
     const err = new ErrorModel("Error while getting the user expenses.", 500);
@@ -97,7 +96,7 @@ const getUserExpenses = async (req, res, next) => {
     totalPages: totalPages || 1,
     totalRecords: userExpense.length,
     message: "User expenses fetched successfully.",
-    data: userExpense,
+    data: userExpense.map((expense) => expense.toObject({ getters: true })),
   });
 };
 

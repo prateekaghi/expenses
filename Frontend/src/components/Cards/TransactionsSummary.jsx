@@ -21,6 +21,9 @@ import DownloadIcon from "@mui/icons-material/Download";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
+import { useUserExpenses } from "../../hooks/useExpenses";
+import { formatDate } from "../../utils/dateUtility";
+
 const recentTransactions = [
   {
     id: 1,
@@ -65,6 +68,14 @@ const recentTransactions = [
 ];
 
 const TransactionsSummary = () => {
+  const { data, isLoading, error, isError } = useUserExpenses({
+    page: 1,
+    limit: 15,
+  });
+
+  if (isLoading) return <p>Loading user expenses...</p>;
+  if (isError) return <p>{error}</p>;
+
   return (
     <Card>
       <CardHeader
@@ -114,9 +125,9 @@ const TransactionsSummary = () => {
             </TableHead>
 
             <TableBody>
-              {recentTransactions.map((transaction) => (
+              {data.data.map((transaction) => (
                 <TableRow key={transaction.id}>
-                  <TableCell>
+                  <TableCell sx={{ padding: "10px 5px" }}>
                     <Box display="flex" alignItems="center" gap={1}>
                       {transaction.type === "expense" ? (
                         <CreditCardIcon
@@ -130,22 +141,25 @@ const TransactionsSummary = () => {
                         />
                       )}
                       <Typography variant="body2">
-                        {transaction.description}
+                        {transaction.title}
                       </Typography>
                     </Box>
                   </TableCell>
 
                   <TableCell>
                     <Chip
-                      label={transaction.category}
+                      label={transaction.category.name}
                       color="default"
                       size="small"
-                      variant="outlined"
+                      variant="filled"
+                      sx={{ width: "50%" }}
                     />
                   </TableCell>
 
                   <TableCell>
-                    <Typography variant="body2">{transaction.date}</Typography>
+                    <Typography variant="body2">
+                      {formatDate(transaction.date)}
+                    </Typography>
                   </TableCell>
 
                   <TableCell align="right">
@@ -154,13 +168,19 @@ const TransactionsSummary = () => {
                       fontWeight="medium"
                       sx={{
                         color:
-                          transaction.amount > 0
+                          transaction.type === "income"
                             ? "success.main"
-                            : "error.main",
+                            : transaction.type === "expense"
+                            ? "error.main"
+                            : "secondary.main",
                       }}
                     >
-                      {transaction.amount > 0 ? "+" : "-"}$
-                      {Math.abs(transaction.amount).toLocaleString()}
+                      {transaction.type === "expense"
+                        ? "-"
+                        : transaction.type === "income"
+                        ? "+"
+                        : "N.A"}
+                      ${Math.abs(transaction.amount).toLocaleString()}
                     </Typography>
                   </TableCell>
                 </TableRow>
