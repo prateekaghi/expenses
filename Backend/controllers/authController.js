@@ -1,11 +1,8 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const { SignJWT } = require("jose");
 
 const config = require("dotenv").config();
-
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 const { sendVerificationMail } = require("../services/emailService");
 const { generateAccessToken } = require("../utils/tokenUtils");
