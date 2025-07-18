@@ -74,33 +74,30 @@ const getUserExpenses = async (req, res, next) => {
     }
   }
 
-  let user;
-
   const skip = (page - 1) * limit;
+  let userExpense;
+
   try {
-    user = await User.findById(requestUserId)
+    userExpense = await Expense.find({ user: requestUserId })
       .skip(skip)
       .limit(limit)
-      .select("expense")
-      .populate("expense")
-      .lean();
-
-    if (!user) {
-      const err = new ErrorModel("User not found!", 404);
-      return next(err);
-    }
+      .populate("category")
+      .lean()
+      .sort({ date: -1 });
   } catch (error) {
-    const err = new ErrorModel("Error while getting the user.", 500);
+    const err = new ErrorModel("Error while getting the user expenses.", 500);
     return next(err);
   }
-  const totalPages = Math.ceil(user.expense.length / limit);
+
+  const totalPages = Math.ceil(userExpense.length / limit);
+
   res.json({
     page,
     limit,
     totalPages: totalPages || 1,
-    totalRecords: user.expense.length,
+    totalRecords: userExpense.length,
     message: "User expenses fetched successfully.",
-    data: user.expense,
+    data: userExpense,
   });
 };
 

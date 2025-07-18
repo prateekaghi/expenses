@@ -522,6 +522,24 @@
         "tags": ["Expenses"],
         "parameters": [
           {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
             "name": "userid",
             "in": "path",
             "required": true,
