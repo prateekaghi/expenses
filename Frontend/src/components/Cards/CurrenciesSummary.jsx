@@ -29,7 +29,13 @@ const CurrenciesSummary = () => {
   if (isError || userIsError) return <p>{error || userError}</p>;
 
   return (
-    <Card sx={{ height: "100%" }}>
+    <Card
+      sx={{
+        borderRadius: "0.5rem",
+        border: "1px solid #e4e4e7",
+        height: "100%",
+      }}
+    >
       <CardHeader
         title={
           <Typography variant="h6" fontWeight="medium">

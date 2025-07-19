@@ -15,20 +15,6 @@ const UserDashboard = () => {
         <Welcome />
       </Box>
       <UserStats />
-      <Grid container spacing={3} mb={4}>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
-        </Grid>
-      </Grid>
 
       <Grid container spacing={3} mb={4}>
         <Grid size={{ xs: 12, lg: 6 }}>

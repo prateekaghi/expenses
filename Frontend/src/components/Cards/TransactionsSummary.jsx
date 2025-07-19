@@ -34,7 +34,7 @@ const TransactionsSummary = () => {
   if (isError) return <p>{error}</p>;
 
   return (
-    <Card>
+    <Card sx={{ borderRadius: "0.5rem", border: "1px solid #e4e4e7" }}>
       <CardHeader
         title={
           <Box

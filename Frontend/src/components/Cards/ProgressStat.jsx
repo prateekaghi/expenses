@@ -10,7 +10,7 @@ import {
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 const ProgressStat = () => {
   return (
-    <Card>
+    <Card sx={{ borderRadius: "0.5rem", border: "1px solid #e4e4e7" }}>
       <CardHeader
         title={
           <Typography variant="body2" fontWeight="medium">
