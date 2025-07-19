@@ -1,7 +1,7 @@
-const { default: mongoose } = require("mongoose");
 const ErrorModel = require("../models/error");
 const Transaction = require("../models/transaction");
 const User = require("../models/user");
+const mongoose = require("mongoose");
 
 const getAllTransactions = async (req, res, next) => {
   let { page, limit } = req.query;
@@ -61,7 +61,7 @@ const getUserTransactions = async (req, res, next) => {
     return next(err);
   }
 
-  let { page, limit } = req.query;
+  let { page, limit, startDate, endDate, type, category } = req.query;
 
   if (page !== undefined) {
     page = parseInt(page);
@@ -76,12 +76,32 @@ const getUserTransactions = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid limit." });
     }
   }
+  let query = {
+    user: loggedUserId,
+  };
+  if (startDate || endDate) {
+    query.date = {};
+    if (startDate) query.date.$gte = new Date(startDate);
+    if (endDate) query.date.$lte = new Date(endDate);
+  }
+
+  if (type) {
+    query.type = { $regex: type, $options: "i" };
+  }
+
+  if (category) {
+    if (!mongoose.Types.ObjectId.isValid(category)) {
+      return res.status(400).json({ message: "Invalid Category." });
+    }
+    query.category = category;
+  }
 
   const skip = (page - 1) * limit;
   let userTransaction;
-
+  let totalUserTransactions;
   try {
-    userTransaction = await Transaction.find({ user: requestUserId })
+    totalUserTransactions = await Transaction.countDocuments(query);
+    userTransaction = await Transaction.find(query)
       .skip(skip)
       .limit(limit)
       .populate("category")
@@ -94,18 +114,104 @@ const getUserTransactions = async (req, res, next) => {
     return next(err);
   }
 
-  const totalPages = Math.ceil(userTransaction.length / limit);
+  const totalPages = Math.ceil(totalUserTransactions / limit);
 
   res.json({
     page,
     limit,
     totalPages: totalPages || 1,
-    totalRecords: userTransaction.length,
+    totalRecords: totalUserTransactions,
     message: "User transactions fetched successfully.",
     data: userTransaction.map((transaction) =>
       transaction.toObject({ getters: true })
     ),
   });
+};
+
+const getUserTransactionSummary = async (req, res, next) => {
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  let summary;
+
+  const id = new mongoose.Types.ObjectId(requestUserId);
+
+  try {
+    const [monthlySummary, lifetimeSummary] = await Promise.all([
+      Transaction.aggregate([
+        {
+          $match: {
+            user: id,
+            date: { $gte: firstDayOfMonth },
+          },
+        },
+        {
+          $group: {
+            _id: "$type",
+            total: {
+              $sum: "$amount",
+            },
+          },
+        },
+      ]),
+      Transaction.aggregate([
+        {
+          $match: {
+            user: id,
+          },
+        },
+        {
+          $group: {
+            _id: "$type",
+            total: {
+              $sum: "$amount",
+            },
+          },
+        },
+      ]),
+    ]);
+    let monthlyIncome = 0;
+    let monthlyExpenses = 0;
+    let lifetimeIncome = 0;
+    let lifetimeExpenses = 0;
+
+    lifetimeSummary.forEach((trans) => {
+      if (trans._id === "expense") {
+        lifetimeExpenses = trans.total;
+      }
+      if (trans._id === "income") {
+        lifetimeIncome = trans.total;
+      }
+    });
+    monthlySummary.forEach((trans) => {
+      if (trans._id === "expense") {
+        monthlyExpenses = trans.total;
+      }
+      if (trans._id === "income") {
+        monthlyIncome = trans.total;
+      }
+    });
+    summary = {
+      monthlyExpenses,
+      monthlyIncome,
+      lifetimeExpenses,
+      lifetimeIncome,
+    };
+  } catch (error) {
+    const err = new ErrorModel(
+      "Error while getting the user transaction summary.",
+      500
+    );
+    return next(err);
+  }
+
+  res.json({ message: "User summary fetched.", data: summary });
 };
 
 const addTransaction = async (req, res, next) => {
@@ -153,6 +259,7 @@ const addTransaction = async (req, res, next) => {
     await existingUser.save();
     await sess.commitTransaction();
   } catch (error) {
+    console.log(error);
     const err = new ErrorModel("Unable to add transaction", 500);
 
     return next(err);
@@ -291,6 +398,7 @@ const deleteTransaction = async (req, res, next) => {
 module.exports = {
   addTransaction,
   getAllTransactions,
+  getUserTransactionSummary,
   getUserTransactions,
   updateTransaction,
   deleteTransaction,

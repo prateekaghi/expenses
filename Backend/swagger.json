@@ -122,6 +122,954 @@
         }
       }
     },
+    "/api/category": {
+      "get": {
+        "summary": "Get all categories",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new category",
+        "tags": ["Categories"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Food"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Category already exists"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/category/{id}": {
+      "get": {
+        "summary": "Get all categories for a particular user id.",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to retrieve",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "686ae1de5486c3d973702bc6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Food"
+                    },
+                    "color": {
+                      "type": "string",
+                      "example": "#FF5733"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Failed to retrieve category"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update category",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to retrieve",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Updated Food"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a category by ID",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to delete",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Failed to delete category"
+          }
+        }
+      }
+    },
+    "/api/currency": {
+      "get": {
+        "summary": "Get all currencies.",
+        "tags": ["Currencies"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of currencies.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Currency"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new currency",
+        "tags": ["Currencies"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "value"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "US Dollar"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "USD"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Currency already exists or creation failed"
+          }
+        }
+      }
+    },
+    "/api/currency/{id}": {
+      "patch": {
+        "summary": "Update currency",
+        "tags": ["Currencies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Currency ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Updated US Dollar"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "USD"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Currency not found"
+          },
+          "500": {
+            "description": "Failed to update currency"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete currency",
+        "tags": ["Currencies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Currency ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Currency deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Currency deleted."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Currency not found"
+          },
+          "500": {
+            "description": "Cannot delete currency - expenses exist with this currency"
+          }
+        }
+      }
+    },
+    "/api/timezone": {
+      "get": {
+        "summary": "Get all timezones",
+        "tags": ["Timezones"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of timezones.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Timezone"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new timezone",
+        "tags": ["Timezones"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "value"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "India Standard Time"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "IST"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Timezone created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Timezone"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Timezone already exists or creation failed"
+          }
+        }
+      }
+    },
+    "/api/timezone/{id}/update": {
+      "patch": {
+        "summary": "Update an existing timezone",
+        "tags": ["Timezones"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the timezone to update",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Pacific Standard Time"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "PST"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Timezone updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Timezone"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Timezone not found"
+          },
+          "500": {
+            "description": "Failed to update timezone"
+          }
+        }
+      }
+    },
+    "/api/timezone/{id}": {
+      "delete": {
+        "summary": "Delete a timezone by ID",
+        "tags": ["Timezones"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the timezone to delete",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Timezone deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Timezone deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Timezone not found"
+          },
+          "500": {
+            "description": "Failed to delete timezone"
+          }
+        }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "summary": "Get all expenses",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all expenses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/transaction"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new expense",
+        "tags": ["Transactions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount",
+                  "category",
+                  "date",
+                  "title",
+                  "type",
+                  "currency"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "example": 50.0
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-01-15T10:30:00.000Z"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Lunch"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "expense"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "USD"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "203": {
+            "description": "Expense created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or user not found"
+          },
+          "404": {
+            "description": "Category not found for user"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/transactions/{userid}": {
+      "get": {
+        "summary": "Get transactions by user ID",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "description": "Start date for transactions",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "description": "End date for transactions",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Type of transaction",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cateogry",
+            "in": "query",
+            "required": false,
+            "description": "Category ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User expenses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/transaction"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/transactions/{userid}/summary": {
+      "get": {
+        "summary": "Get user transactions summary",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User transaction summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/transaction"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/transactions/{eid}": {
+      "patch": {
+        "summary": "Update expense",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "description": "Expense ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id"],
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Lunch"
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 60.0
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "USD"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expense updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized to update expense"
+          },
+          "404": {
+            "description": "Expense or category not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete expense",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "description": "Expense ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expense deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Expense deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Expense or user not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "summary": "Get all users",
@@ -381,879 +1329,6 @@
           },
           "500": {
             "description": "Failed to update user status"
-          }
-        }
-      }
-    },
-    "/api/transactions": {
-      "get": {
-        "summary": "Get all expenses",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of all expenses",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/transaction"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      },
-      "post": {
-        "summary": "Add new expense",
-        "tags": ["Expenses"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "amount",
-                  "category",
-                  "date",
-                  "title",
-                  "type",
-                  "currency"
-                ],
-                "properties": {
-                  "amount": {
-                    "type": "number",
-                    "example": 50.0
-                  },
-                  "category": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-01-15T10:30:00.000Z"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Lunch"
-                  },
-                  "type": {
-                    "type": "string",
-                    "example": "expense"
-                  },
-                  "currency": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "203": {
-            "description": "Expense created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/transaction"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload or user not found"
-          },
-          "404": {
-            "description": "Category not found for user"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/transactions/{userid}": {
-      "get": {
-        "summary": "Get expenses by user ID",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User expenses",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/transaction"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/transactions/{eid}": {
-      "patch": {
-        "summary": "Update expense",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "eid",
-            "in": "path",
-            "required": true,
-            "description": "Expense ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["user_id"],
-                "properties": {
-                  "user_id": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Updated Lunch"
-                  },
-                  "category": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "example": 60.0
-                  },
-                  "currency": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Expense updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/transaction"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized to update expense"
-          },
-          "404": {
-            "description": "Expense or category not found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete expense",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "eid",
-            "in": "path",
-            "required": true,
-            "description": "Expense ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Expense deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Expense deleted successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Expense or user not found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/category": {
-      "get": {
-        "summary": "Get all categories",
-        "tags": ["Categories"],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of all categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Category"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      },
-      "post": {
-        "summary": "Add new category",
-        "tags": ["Categories"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Food"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Category created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "409": {
-            "description": "Category already exists"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/category/{id}": {
-      "get": {
-        "summary": "Get all categories for a particular user id.",
-        "tags": ["Categories"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "MongoDB ID of the category to retrieve",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "type": "string",
-                      "example": "686ae1de5486c3d973702bc6"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "Food"
-                    },
-                    "color": {
-                      "type": "string",
-                      "example": "#FF5733"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found"
-          },
-          "500": {
-            "description": "Failed to retrieve category"
-          }
-        }
-      },
-      "patch": {
-        "summary": "Update category",
-        "tags": ["Categories"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "MongoDB ID of the category to retrieve",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Updated Food"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Category updated successfully"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete a category by ID",
-        "tags": ["Categories"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "MongoDB ID of the category to delete",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Category deleted successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found"
-          },
-          "500": {
-            "description": "Failed to delete category"
-          }
-        }
-      }
-    },
-    "/api/timezone": {
-      "get": {
-        "summary": "Get all timezones",
-        "tags": ["Timezones"],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of timezones.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Timezone"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new timezone",
-        "tags": ["Timezones"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name", "value"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "India Standard Time"
-                  },
-                  "value": {
-                    "type": "string",
-                    "example": "IST"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Timezone created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Timezone"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Timezone already exists or creation failed"
-          }
-        }
-      }
-    },
-    "/api/timezone/{id}/update": {
-      "patch": {
-        "summary": "Update an existing timezone",
-        "tags": ["Timezones"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID of the timezone to update",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Pacific Standard Time"
-                  },
-                  "value": {
-                    "type": "string",
-                    "example": "PST"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Timezone updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Timezone"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Timezone not found"
-          },
-          "500": {
-            "description": "Failed to update timezone"
-          }
-        }
-      }
-    },
-    "/api/timezone/{id}": {
-      "delete": {
-        "summary": "Delete a timezone by ID",
-        "tags": ["Timezones"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "MongoDB ID of the timezone to delete",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Timezone deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Timezone deleted successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Timezone not found"
-          },
-          "500": {
-            "description": "Failed to delete timezone"
-          }
-        }
-      }
-    },
-    "/api/currency": {
-      "get": {
-        "summary": "Get all currencies.",
-        "tags": ["Currencies"],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of currencies.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Currency"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Add new currency",
-        "tags": ["Currencies"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name", "value"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "US Dollar"
-                  },
-                  "value": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Currency created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Currency"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Currency already exists or creation failed"
-          }
-        }
-      }
-    },
-    "/api/currency/{id}": {
-      "patch": {
-        "summary": "Update currency",
-        "tags": ["Currencies"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Currency ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Updated US Dollar"
-                  },
-                  "value": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Currency updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Currency"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Currency not found"
-          },
-          "500": {
-            "description": "Failed to update currency"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete currency",
-        "tags": ["Currencies"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Currency ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Currency deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Currency deleted."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Currency not found"
-          },
-          "500": {
-            "description": "Cannot delete currency - expenses exist with this currency"
           }
         }
       }

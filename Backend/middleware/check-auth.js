@@ -21,7 +21,6 @@ module.exports = async (req, res, next) => {
       last_name,
       email,
     };
-    console.log(req.userData);
     next();
   } catch (error) {
     const err = new ErrorModel("Error while checking auth.", 401);

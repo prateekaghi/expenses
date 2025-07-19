@@ -7,6 +7,11 @@ const checkAuth = require("../middleware/check-auth");
 router.get("/", transactionsController.getAllTransactions);
 
 router.get("/:userid", checkAuth, transactionsController.getUserTransactions);
+router.get(
+  "/:userid/summary",
+  checkAuth,
+  transactionsController.getUserTransactionSummary
+);
 
 router.post("/", checkAuth, transactionsController.addTransaction);
 
