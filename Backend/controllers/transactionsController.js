@@ -1,6 +1,7 @@
 const ErrorModel = require("../models/error");
 const Transaction = require("../models/transaction");
 const User = require("../models/user");
+const Currency = require("../models/currency");
 const mongoose = require("mongoose");
 
 const getAllTransactions = async (req, res, next) => {
@@ -136,6 +137,18 @@ const getUserTransactionSummary = async (req, res, next) => {
     const err = new ErrorModel("Access Denied.", 403);
     return next(err);
   }
+  let currency;
+  let currencySymbol;
+  try {
+    const userData = await User.findById(requestUserId, "currency");
+    currency = userData.currency;
+    const currencyData = await Currency.findOne({ value: currency });
+    currencySymbol = currencyData.symbol;
+  } catch (error) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
+  console.log(currencySymbol);
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayOfLastMonth = new Date(
@@ -248,12 +261,16 @@ const getUserTransactionSummary = async (req, res, next) => {
 
     summary = {
       income: {
+        currency,
+        currencySymbol,
         current: monthlyIncome,
         previous: prevMonthIncome,
         total: lifetimeIncome,
         change: calculateChange(monthlyIncome, prevMonthIncome),
       },
       expense: {
+        currency,
+        currencySymbol,
         current: monthlyExpenses,
         previous: prevMonthExpense,
         total: lifetimeExpenses,
