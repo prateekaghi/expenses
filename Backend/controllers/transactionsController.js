@@ -148,7 +148,6 @@ const getUserTransactionSummary = async (req, res, next) => {
     const err = new ErrorModel("Access Denied.", 403);
     return next(err);
   }
-  console.log(currencySymbol);
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayOfLastMonth = new Date(
@@ -222,6 +221,7 @@ const getUserTransactionSummary = async (req, res, next) => {
     let lifetimeExpenses = 0;
     let prevMonthIncome = 0;
     let prevMonthExpense = 0;
+    let netWorth = 0;
 
     lifetimeSummary.forEach((trans) => {
       if (trans._id === "expense") {
@@ -248,6 +248,10 @@ const getUserTransactionSummary = async (req, res, next) => {
       }
     });
 
+    netWorth = lifetimeIncome - lifetimeExpenses;
+    let monthlyDelta = monthlyIncome - monthlyExpenses;
+    let prevMonthDelta = prevMonthIncome - prevMonthExpense;
+
     const calculateChange = (current, previous) => {
       if (previous === 0) {
         if (current === 0) {
@@ -256,10 +260,16 @@ const getUserTransactionSummary = async (req, res, next) => {
         return 100;
       }
       const percentageChange = ((current - previous) / previous) * 100;
-      return percentageChange;
+      return percentageChange.toFixed(2);
     };
 
     summary = {
+      networth: {
+        currency,
+        currencySymbol,
+        total: netWorth,
+        change: calculateChange(monthlyDelta, prevMonthDelta),
+      },
       income: {
         currency,
         currencySymbol,
