@@ -1,0 +1,37 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  getAllTransactions,
+  addTransaction,
+  getUserTransactions,
+} from "../api/transactionsApi";
+
+export const useTransactions = ({ page, limit }) => {
+  return useQuery({
+    queryKey: ["transactions", { page, limit }],
+    queryFn: () => getAllTransactions({ page, limit }),
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useUserTransactions = ({ page, limit }) => {
+  return useQuery({
+    queryKey: ["user_transactions", { page, limit }],
+    queryFn: () => getUserTransactions({ page, limit }),
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useAddTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ date, title, category, amount, currency }) =>
+      addTransaction({ date, title, category, amount, currency }),
+    onSuccess: () => {
+      queryClient.invalidateQueries("user_transactions");
+      queryClient.invalidateQueries("transactions");
+    },
+  });
+};

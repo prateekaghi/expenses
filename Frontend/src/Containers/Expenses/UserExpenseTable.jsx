@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import CustomTable from "../../components/Tables/CustomTable";
 import PageHeader from "../../components/navigation/PageHeader";
-import { useUserExpenses } from "../../hooks/useExpenses";
-import { Button, IconButton } from "@mui/material";
+import { useUserTransactions } from "../../hooks/useTransactions";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const UserExpenseTable = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
-  const { data, isLoading, isError, error } = useUserExpenses({
+  const { data, isLoading, isError, error } = useUserTransactions({
     page: page + 1,
     limit,
   });

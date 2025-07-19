@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useGetUserCategories } from "../../hooks/useCategories";
-import { useUserExpenses } from "../../hooks/useExpenses";
+import { useUserTransactions } from "../../hooks/useTransactions";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
 const CategoryPieChart = () => {
@@ -14,12 +14,12 @@ const CategoryPieChart = () => {
     });
 
   const {
-    data: userExpenses,
+    data: userTransactions,
     isLoading,
     isError,
     error,
     isFetching,
-  } = useUserExpenses({
+  } = useUserTransactions({
     page: page + 1,
     limit: limit,
   });
@@ -39,12 +39,12 @@ const CategoryPieChart = () => {
     });
 
     const categoryCounts = {};
-    userExpenses.data.forEach((exp) => {
+    userTransactions.data.forEach((exp) => {
       const catId = exp.category;
       categoryCounts[catId] = (categoryCounts[catId] || 0) + 1;
     });
 
-    const totalCount = userExpenses.data.length;
+    const totalCount = userTransactions.data.length;
 
     return Object.entries(categoryCounts).map(([catId, count]) => ({
       name: categoryMap[catId] || "Unknown",
@@ -53,7 +53,7 @@ const CategoryPieChart = () => {
     }));
   };
 
-  if (userExpenses && userCategories) {
+  if (userTransactions && userCategories) {
     data = getChartData();
   }
 

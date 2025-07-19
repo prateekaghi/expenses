@@ -1,9 +1,9 @@
 import React from "react";
-import { useExpenses } from "../../hooks/useExpenses";
+import { useTransactions } from "../../hooks/useTransactions";
 import StatsCard from "../../components/Cards/StatsCard";
 
 const ExpenseStats = () => {
-  const { data, isLoading, isError, error } = useExpenses({
+  const { data, isLoading, isError, error } = useTransactions({
     page: 1,
     limit: 1000,
   });

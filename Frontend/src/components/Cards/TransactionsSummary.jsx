@@ -21,16 +21,16 @@ import DownloadIcon from "@mui/icons-material/Download";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
-import { useUserExpenses } from "../../hooks/useExpenses";
+import { useUserTransactions } from "../../hooks/useTransactions";
 import { formatDate } from "../../utils/dateUtility";
 
 const TransactionsSummary = () => {
-  const { data, isLoading, error, isError } = useUserExpenses({
+  const { data, isLoading, error, isError } = useUserTransactions({
     page: 1,
     limit: 15,
   });
 
-  if (isLoading) return <p>Loading user expenses...</p>;
+  if (isLoading) return <p>Loading user transactions...</p>;
   if (isError) return <p>{error}</p>;
 
   return (

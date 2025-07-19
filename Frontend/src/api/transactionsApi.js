@@ -1,7 +1,7 @@
 import { useAuthStore } from "../store/authStore";
 import apiClient from "./index";
 
-export const getExpenses = async ({ page, limit }) => {
+export const getAllTransactions = async ({ page, limit }) => {
   try {
     const data = await apiClient.get("/transactions", {
       params: { page, limit },
@@ -14,7 +14,7 @@ export const getExpenses = async ({ page, limit }) => {
   }
 };
 
-export const getUserExpenses = async ({ page, limit }) => {
+export const getUserTransactions = async ({ page, limit }) => {
   const userId = useAuthStore.getState().id;
 
   if (!userId) {
@@ -32,7 +32,7 @@ export const getUserExpenses = async ({ page, limit }) => {
   }
 };
 
-export const addExpenes = async ({
+export const addTransaction = async ({
   date,
   title,
   category,

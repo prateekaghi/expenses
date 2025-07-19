@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PageHeader from "../../components/navigation/PageHeader";
 import GenericForm from "../../components/Forms/GenericForm";
-import { useAddExpense } from "../../hooks/useExpenses";
+import { useAddTransaction } from "../../hooks/useTransactions";
 import { useGetUserCategories } from "../../hooks/useCategories";
 import { useCurrencies } from "../../hooks/useCurrencies";
 
 const ExpensesForm = () => {
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [currencyOptions, setCurrencyOptions] = useState([]);
-  const { mutateAsync, isPending } = useAddExpense();
+  const { mutateAsync, isPending } = useAddTransaction();
   const { data: userCategories, isLoading: categoriesLoading } =
     useGetUserCategories({
       page: 1,
