@@ -5,19 +5,21 @@ import {
   TrendingDown,
   ArrowUpward,
   ArrowDownward,
+  SavingsOutlined,
 } from "@mui/icons-material";
 
-const Stats = ({ title, data }) => {
-  const { current = "N.A", change = 0 } = data || {};
+const Stats = ({ title, data, color = "error.main", icon = "default" }) => {
+  const { total = "N.A", change = 0 } = data || {};
 
   const isPositive = change > 0;
   const isNegative = change < 0;
 
-  const ChangeIcon = isPositive
-    ? ArrowUpward
-    : isNegative
-    ? ArrowDownward
-    : null;
+  const ChangeIcon =
+    icon === "income"
+      ? ArrowUpward
+      : icon === "expense"
+      ? ArrowDownward
+      : SavingsOutlined;
 
   const TrendIcon = isPositive ? TrendingUp : isNegative ? TrendingDown : null;
 
@@ -30,12 +32,7 @@ const Stats = ({ title, data }) => {
           </Typography>
         }
         action={
-          ChangeIcon && (
-            <ChangeIcon
-              fontSize="small"
-              sx={{ color: isPositive ? "success.main" : "error.main" }}
-            />
-          )
+          ChangeIcon && <ChangeIcon fontSize="small" sx={{ color: color }} />
         }
         sx={{
           pb: 1,
@@ -46,12 +43,8 @@ const Stats = ({ title, data }) => {
         }}
       />
       <CardContent>
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          sx={{ color: isPositive ? "success.main" : "error.main", mb: 0.5 }}
-        >
-          {current}
+        <Typography variant="h5" fontWeight="bold" sx={{ color, mb: 0.5 }}>
+          {`${data.currencySymbol} ${total}`}
         </Typography>
 
         <Typography variant="caption" color="text.secondary">

@@ -16,13 +16,28 @@ const UserStats = () => {
   return (
     <Grid container spacing={3} mb={4}>
       <Grid size={{ xs: 12, md: 4 }}>
-        <Stats title={"Total Lifetime Expense"} data={data?.data?.expense} />
+        <Stats
+          title={"Total Lifetime Expense"}
+          data={data?.data?.expense}
+          color="error.main"
+          icon="expense"
+        />
       </Grid>
       <Grid size={{ xs: 12, md: 4 }}>
-        <Stats title={"Total Lifetime Income"} data={data?.data?.income} />
+        <Stats
+          title={"Total Lifetime Income"}
+          data={data?.data?.income}
+          color="success.main"
+          icon="income"
+        />
       </Grid>
       <Grid size={{ xs: 12, md: 4 }}>
-        {/* <Stats title={"Net Worth"} /> */}
+        <Stats
+          title={"Net Worth"}
+          data={data?.data?.networth}
+          color="#2563EB"
+          icon="default"
+        />
       </Grid>
     </Grid>
   );
