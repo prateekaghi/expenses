@@ -251,6 +251,8 @@ const getUserTransactionSummary = async (req, res, next) => {
     netWorth = lifetimeIncome - lifetimeExpenses;
     let monthlyDelta = monthlyIncome - monthlyExpenses;
     let prevMonthDelta = prevMonthIncome - prevMonthExpense;
+    let lifetimeIncomePrevMonth = lifetimeIncome - monthlyIncome;
+    let lifetimeExpensePrevMonth = lifetimeExpenses - monthlyExpenses;
 
     const calculateChange = (current, previous) => {
       if (previous === 0) {
@@ -270,21 +272,29 @@ const getUserTransactionSummary = async (req, res, next) => {
         total: netWorth,
         change: calculateChange(monthlyDelta, prevMonthDelta),
       },
-      income: {
+      monthlyIncome: {
         currency,
         currencySymbol,
-        current: monthlyIncome,
-        previous: prevMonthIncome,
-        total: lifetimeIncome,
+        total: monthlyIncome,
         change: calculateChange(monthlyIncome, prevMonthIncome),
       },
-      expense: {
+      monthlyExpense: {
         currency,
         currencySymbol,
-        current: monthlyExpenses,
-        previous: prevMonthExpense,
-        total: lifetimeExpenses,
+        total: monthlyExpenses,
         change: calculateChange(monthlyExpenses, prevMonthExpense),
+      },
+      lifetimeExpense: {
+        currency,
+        currencySymbol,
+        total: lifetimeExpenses,
+        change: calculateChange(lifetimeExpenses, lifetimeExpensePrevMonth),
+      },
+      lifetimeIncome: {
+        currency,
+        currencySymbol,
+        total: lifetimeIncome,
+        change: calculateChange(lifetimeIncome, lifetimeIncomePrevMonth),
       },
     };
   } catch (error) {
