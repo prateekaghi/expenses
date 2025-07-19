@@ -414,6 +414,10 @@
                   "value": {
                     "type": "string",
                     "example": "USD"
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "example": "$"
                   }
                 }
               }
@@ -467,6 +471,10 @@
                   "value": {
                     "type": "string",
                     "example": "USD"
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "example": "$"
                   }
                 }
               }

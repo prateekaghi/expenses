@@ -48,8 +48,8 @@ const getCurrencies = async (req, res, next) => {
 };
 
 const addCurrency = async (req, res, next) => {
-  const { name, value } = req.body;
-  if (!name || !value) {
+  const { name, value, symbol } = req.body;
+  if (!name || !value || symbol) {
     const err = new ErrorModel("Missing payload.", 500);
     return next(err);
   }
@@ -72,6 +72,7 @@ const addCurrency = async (req, res, next) => {
   let newCurrency = new Currency({
     name,
     value,
+    symbol,
   });
 
   try {
@@ -86,7 +87,7 @@ const addCurrency = async (req, res, next) => {
 
 const updateCurrency = async (req, res, next) => {
   const { id } = req.params;
-  const { name, value } = req.body;
+  const { name, value, symbol } = req.body;
 
   let currency;
   try {
@@ -136,6 +137,7 @@ const updateCurrency = async (req, res, next) => {
       //update the values for the currency
       currency.name = name || currency.name;
       currency.value = value || currency.value;
+      currency.symbol = symbol || currency.symbol;
       await currency.save();
     } catch (error) {
       const err = new ErrorModel(
@@ -163,6 +165,7 @@ const updateCurrency = async (req, res, next) => {
       );
       currency.name = name || currency.name;
       currency.value = value || currency.value;
+      currency.symbol = symbol || currency.symbol;
 
       await currency.save({ session: sess });
       await sess.commitTransaction();

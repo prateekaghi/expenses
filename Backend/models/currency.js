@@ -12,6 +12,10 @@ const CurrencySchema = new Schema(
       type: String,
       required: true,
     },
+    symbol: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
