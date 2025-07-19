@@ -235,30 +235,33 @@ const getUserTransactionSummary = async (req, res, next) => {
       }
     });
 
-    const incomeGrowth = lifetimeIncome - prevMonthIncome;
-    const expensesGrowth = lifetimeExpenses - prevMonthExpense;
+    const calculateChange = (current, previous) => {
+      if (previous === 0) {
+        if (current === 0) {
+          return { change: 0, direction: null };
+        }
+        return { change: 100, direction: "up" };
+      }
+      const percentageChange = ((current - previous) / previous) * 100;
+      return {
+        change: Math.abs(percentageChange.toFixed(2)),
+        direction: percentageChange > 0 ? "up" : "down",
+      };
+    };
 
-    const incomGrowthPercent =
-      prevMonthIncome > 0
-        ? (incomeGrowth / prevMonthIncome) * 100
-        : lifetimeIncome > 0
-        ? 100
-        : 0;
-    const expenseGrowth =
-      prevMonthExpense > 0
-        ? (expensesGrowth / prevMonthExpense) * 100
-        : lifetimeExpenses > 0
-        ? 100
-        : 0;
     summary = {
-      monthlyExpenses,
-      monthlyIncome,
-      lifetimeExpenses,
-      lifetimeIncome,
-      prevMonthExpense,
-      prevMonthIncome,
-      expenseGrowth,
-      incomGrowthPercent,
+      income: {
+        current: monthlyIncome,
+        previous: prevMonthIncome,
+        total: lifetimeIncome,
+        change: calculateChange(monthlyIncome, prevMonthIncome),
+      },
+      expense: {
+        current: monthlyExpenses,
+        previous: prevMonthExpense,
+        total: lifetimeExpenses,
+        change: calculateChange(monthlyExpenses, prevMonthExpense),
+      },
     };
   } catch (error) {
     const err = new ErrorModel(
