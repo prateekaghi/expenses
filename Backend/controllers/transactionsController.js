@@ -138,48 +138,77 @@ const getUserTransactionSummary = async (req, res, next) => {
   }
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const firstDayOfLastMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    1
+  );
+  const lastDayOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
   let summary;
 
   const id = new mongoose.Types.ObjectId(requestUserId);
 
   try {
-    const [monthlySummary, lifetimeSummary] = await Promise.all([
-      Transaction.aggregate([
-        {
-          $match: {
-            user: id,
-            date: { $gte: firstDayOfMonth },
-          },
-        },
-        {
-          $group: {
-            _id: "$type",
-            total: {
-              $sum: "$amount",
+    const [monthlySummary, lifetimeSummary, prevMonthSummary] =
+      await Promise.all([
+        Transaction.aggregate([
+          {
+            $match: {
+              user: id,
+              date: { $gte: firstDayOfMonth },
             },
           },
-        },
-      ]),
-      Transaction.aggregate([
-        {
-          $match: {
-            user: id,
-          },
-        },
-        {
-          $group: {
-            _id: "$type",
-            total: {
-              $sum: "$amount",
+          {
+            $group: {
+              _id: "$type",
+              total: {
+                $sum: "$amount",
+              },
             },
           },
-        },
-      ]),
-    ]);
+        ]),
+        Transaction.aggregate([
+          {
+            $match: {
+              user: id,
+            },
+          },
+          {
+            $group: {
+              _id: "$type",
+              total: {
+                $sum: "$amount",
+              },
+            },
+          },
+        ]),
+        Transaction.aggregate([
+          {
+            $match: {
+              user: id,
+              date: {
+                $gte: firstDayOfLastMonth,
+                $lte: lastDayOfLastMonth,
+              },
+            },
+          },
+          {
+            $group: {
+              _id: "$type",
+              total: {
+                $sum: "$amount",
+              },
+            },
+          },
+        ]),
+      ]);
     let monthlyIncome = 0;
     let monthlyExpenses = 0;
     let lifetimeIncome = 0;
     let lifetimeExpenses = 0;
+    let prevMonthIncome = 0;
+    let prevMonthExpense = 0;
 
     lifetimeSummary.forEach((trans) => {
       if (trans._id === "expense") {
@@ -197,11 +226,39 @@ const getUserTransactionSummary = async (req, res, next) => {
         monthlyIncome = trans.total;
       }
     });
+    prevMonthSummary.forEach((trans) => {
+      if (trans._id === "expense") {
+        prevMonthExpense = trans.total;
+      }
+      if (trans._id === "income") {
+        prevMonthIncome = trans.total;
+      }
+    });
+
+    const incomeGrowth = lifetimeIncome - prevMonthIncome;
+    const expensesGrowth = lifetimeExpenses - prevMonthExpense;
+
+    const incomGrowthPercent =
+      prevMonthIncome > 0
+        ? (incomeGrowth / prevMonthIncome) * 100
+        : lifetimeIncome > 0
+        ? 100
+        : 0;
+    const expenseGrowth =
+      prevMonthExpense > 0
+        ? (expensesGrowth / prevMonthExpense) * 100
+        : lifetimeExpenses > 0
+        ? 100
+        : 0;
     summary = {
       monthlyExpenses,
       monthlyIncome,
       lifetimeExpenses,
       lifetimeIncome,
+      prevMonthExpense,
+      prevMonthIncome,
+      expenseGrowth,
+      incomGrowthPercent,
     };
   } catch (error) {
     const err = new ErrorModel(
