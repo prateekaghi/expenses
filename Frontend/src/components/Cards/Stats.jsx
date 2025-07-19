@@ -19,12 +19,22 @@ const Stats = ({ title, data, color = "error.main", icon = "default" }) => {
       ? ArrowUpward
       : icon === "expense"
       ? ArrowDownward
+      : icon === "monthly-expense"
+      ? TrendingDown
+      : icon === "monthly-income"
+      ? TrendingUp
       : SavingsOutlined;
 
   const TrendIcon = isPositive ? TrendingUp : isNegative ? TrendingDown : null;
 
   return (
-    <Card sx={{ borderRadius: "0.5rem", border: "1px solid #e4e4e7" }}>
+    <Card
+      sx={{
+        borderRadius: "0.5rem",
+        border: "1px solid #e4e4e7",
+        height: "100%",
+      }}
+    >
       <CardHeader
         title={
           <Typography variant="body2" fontWeight="medium">
@@ -44,7 +54,7 @@ const Stats = ({ title, data, color = "error.main", icon = "default" }) => {
       />
       <CardContent>
         <Typography variant="h5" fontWeight="bold" sx={{ color, mb: 0.5 }}>
-          {`${data.currencySymbol} ${total}`}
+          {`${data?.currencySymbol} ${total}`}
         </Typography>
 
         <Typography variant="caption" color="text.secondary">

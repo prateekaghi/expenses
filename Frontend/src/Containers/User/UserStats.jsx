@@ -1,17 +1,32 @@
 import React from "react";
 import { Grid } from "@mui/material";
+import { LanguageRounded, SellOutlined } from "@mui/icons-material";
 import Stats from "../../components/Cards/Stats";
 import { useUserTransactionSummary } from "../../hooks/useTransactions";
-import ProgressStat from "../../components/Cards/ProgressStat";
+import { useGetUserCategories } from "../../hooks/useCategories";
+import { useCurrencies } from "../../hooks/useCurrencies";
+import CategorySummary from "../../components/Cards/CategorySummary";
 const UserStats = () => {
   const { data, isLoading, isError, error } = useUserTransactionSummary();
+  const {
+    data: categoryData,
+    isLoading: categoryLoading,
+    isError: categoryError,
+    error: categoryErrorMessage,
+  } = useGetUserCategories({ page: 1, limit: 10000 });
+  const {
+    data: currencyData,
+    isLoading: currencyLoading,
+    isError: currency,
+    error: currencyErrorMessage,
+  } = useCurrencies({ page: 1, limit: 10000 });
 
-  if (isLoading) {
+  if (isLoading || categoryLoading) {
     return <p>Loading user summary...</p>;
   }
 
-  if (isError) {
-    return <p>{error}</p>;
+  if (isError || categoryError) {
+    return <p>{error || categoryErrorMessage}</p>;
   }
 
   return (
@@ -20,7 +35,7 @@ const UserStats = () => {
         <Grid size={{ xs: 12, md: 4 }}>
           <Stats
             title={"Total Lifetime Expense"}
-            data={data?.data?.expense}
+            data={data?.data?.lifetimeExpense}
             color="error.main"
             icon="expense"
           />
@@ -28,7 +43,7 @@ const UserStats = () => {
         <Grid size={{ xs: 12, md: 4 }}>
           <Stats
             title={"Total Lifetime Income"}
-            data={data?.data?.income}
+            data={data?.data?.lifetimeIncome}
             color="success.main"
             icon="income"
           />
@@ -44,16 +59,36 @@ const UserStats = () => {
       </Grid>
       <Grid container spacing={3} mb={4}>
         <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
+          <Stats
+            title={"This Month Expenses"}
+            data={data?.data?.monthlyExpense}
+            color="error.main"
+            icon="monthly-expense"
+          />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
+          <Stats
+            title={"This Month Income"}
+            data={data?.data?.monthlyIncome}
+            color="success.main"
+            icon="monthly-income"
+          />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
+          <CategorySummary
+            title={"Supported Currencies"}
+            totalRecords={currencyData.totalRecords}
+            subtitle={"Multi-currency support"}
+            icon={<LanguageRounded />}
+          />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
-          <ProgressStat />
+          <CategorySummary
+            title="Total Categories"
+            totalRecords={categoryData.totalRecords}
+            subtitle={"Active spending categories"}
+            icon={<SellOutlined />}
+          />
         </Grid>
       </Grid>
     </>

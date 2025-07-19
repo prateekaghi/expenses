@@ -278,6 +278,16 @@ const getUserTransactionSummary = async (req, res, next) => {
         total: monthlyIncome,
         change: calculateChange(monthlyIncome, prevMonthIncome),
       },
+      prevIncome: {
+        currency,
+        currencySymbol,
+        total: prevMonthIncome,
+      },
+      prevExpense: {
+        currency,
+        currencySymbol,
+        total: prevMonthExpense,
+      },
       monthlyExpense: {
         currency,
         currencySymbol,
