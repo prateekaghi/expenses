@@ -27,11 +27,11 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "john.doe@example.com"
+                    "example": "prateekaghi42@gmail.com"
                   },
                   "password": {
                     "type": "string",
-                    "example": "password123"
+                    "example": "prateekaghi"
                   }
                 }
               }
