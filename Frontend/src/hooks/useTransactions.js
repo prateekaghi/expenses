@@ -3,6 +3,7 @@ import {
   getAllTransactions,
   addTransaction,
   getUserTransactions,
+  getUserTransactionsSummary,
 } from "../api/transactionsApi";
 
 export const useTransactions = ({ page, limit }) => {
@@ -23,6 +24,15 @@ export const useUserTransactions = ({ page, limit }) => {
   });
 };
 
+export const useUserTransactionSummary = () => {
+  return useQuery({
+    queryKey: ["user_transaction_summary"],
+    queryFn: getUserTransactionsSummary,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
+
 export const useAddTransaction = () => {
   const queryClient = useQueryClient();
 
@@ -30,6 +40,7 @@ export const useAddTransaction = () => {
     mutationFn: ({ date, title, category, amount, currency }) =>
       addTransaction({ date, title, category, amount, currency }),
     onSuccess: () => {
+      queryClient.invalidateQueries("user_transaction_summary");
       queryClient.invalidateQueries("user_transactions");
       queryClient.invalidateQueries("transactions");
     },

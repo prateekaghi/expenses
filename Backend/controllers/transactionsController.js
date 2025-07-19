@@ -238,15 +238,12 @@ const getUserTransactionSummary = async (req, res, next) => {
     const calculateChange = (current, previous) => {
       if (previous === 0) {
         if (current === 0) {
-          return { change: 0, direction: null };
+          return 0;
         }
-        return { change: 100, direction: "up" };
+        return 100;
       }
       const percentageChange = ((current - previous) / previous) * 100;
-      return {
-        change: Math.abs(percentageChange.toFixed(2)),
-        direction: percentageChange > 0 ? "up" : "down",
-      };
+      return percentageChange;
     };
 
     summary = {

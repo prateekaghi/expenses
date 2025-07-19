@@ -32,6 +32,22 @@ export const getUserTransactions = async ({ page, limit }) => {
   }
 };
 
+export const getUserTransactionsSummary = async () => {
+  const userId = useAuthStore.getState().id;
+
+  if (!userId) {
+    throw new Error("Missing User ID.");
+  }
+  try {
+    const data = await apiClient.get(`/transactions/${userId}/summary`);
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const addTransaction = async ({
   date,
   title,
