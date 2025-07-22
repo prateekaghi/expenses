@@ -1,5 +1,4 @@
 import { Box, Typography, Button, Chip, useTheme, Grid } from "@mui/material";
-// import Image from "next/image";
 import { TrendingUp, ArrowForward, Check } from "@mui/icons-material";
 import dashboardImage from "../../assets/dashboard.png";
 
