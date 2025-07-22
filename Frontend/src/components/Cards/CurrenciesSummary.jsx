@@ -52,7 +52,7 @@ const CurrenciesSummary = () => {
       <CardContent>
         <Grid container spacing={2}>
           {data.data.map((currency, index) => (
-            <Grid size={{ xs: 3 }} key={index}>
+            <Grid size={{ xs: 6 }} key={index}>
               <Paper
                 elevation={0}
                 sx={{
