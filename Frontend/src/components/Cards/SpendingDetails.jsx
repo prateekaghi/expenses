@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Card,
   CardHeader,
@@ -14,21 +15,22 @@ import {
   DirectionsCar,
   Work,
 } from "@mui/icons-material";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-} from "recharts";
-import React from "react";
+import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { useUserTransactionCategorySummary } from "../../hooks/useTransactions";
 
 const currentMonthStats = {
   expenses: 3456.78,
   income: 6789.12,
   budget: 4000.0,
 };
+const chartColors = [
+  "#ef4444",
+  "#3b82f6",
+  "#22c55e",
+  "#a855f7",
+  "#f97316",
+  "#6366f1",
+];
 
 const categories = [
   {
@@ -75,24 +77,15 @@ const categories = [
   },
 ];
 
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    const value = payload[0].value;
-    const name = payload[0].name;
-    return (
-      <div className="bg-white p-3 shadow-lg rounded-lg border border-gray-200">
-        <p className="font-medium">{name}</p>
-        <p className="text-sm text-gray-600">${value.toLocaleString()}</p>
-        <p className="text-xs text-gray-500">
-          {((value / currentMonthStats.expenses) * 100).toFixed(1)}% of total
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
 const SpendingDetails = () => {
+  const { data, isLoading, isError, error } =
+    useUserTransactionCategorySummary();
+
+  if (isLoading) return <p>Loading.....</p>;
+  if (isError) return <p>{error}</p>;
+
+  console.log(data.data);
+
   return (
     <Card sx={{ borderRadius: "0.5rem", border: "1px solid #e4e4e7" }}>
       <CardHeader
@@ -113,18 +106,18 @@ const SpendingDetails = () => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={categories}
+                data={data.data}
                 cx="50%"
                 cy="50%"
                 innerRadius={60}
                 outerRadius={80}
                 paddingAngle={2}
                 dataKey="amount"
-                nameKey="name"
+                nameKey="category"
                 isAnimationActive={false}
               >
-                {categories.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.chartColor} />
+                {data.data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={chartColors[index]} />
                 ))}
               </Pie>
               <Legend
@@ -137,13 +130,7 @@ const SpendingDetails = () => {
           </ResponsiveContainer>
         </Box>
 
-        {categories.map((category, index) => {
-          const Icon = category.icon;
-          const percentage = (
-            (category.amount / currentMonthStats.expenses) *
-            100
-          ).toFixed(1);
-
+        {data.data.map((category, index) => {
           return (
             <Box
               key={index}
@@ -161,20 +148,20 @@ const SpendingDetails = () => {
                   }}
                   variant="rounded"
                 >
-                  <Icon style={{ fontSize: 16, color: "#fff" }} />
+                  {/* <Icon style={{ fontSize: 16, color: "#fff" }} /> */}
                 </Avatar>
 
                 <Box>
-                  <Typography fontWeight={500}>{category.name}</Typography>
+                  <Typography fontWeight={500}>{category.category}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {percentage}% of total
+                    {category.percentage} % of {category.total}
                   </Typography>
                 </Box>
               </Box>
 
               <Box textAlign="right">
                 <Typography fontWeight={500}>
-                  ${category.amount.toLocaleString()}
+                  $ {category.amount.toLocaleString()}
                 </Typography>
               </Box>
             </Box>
