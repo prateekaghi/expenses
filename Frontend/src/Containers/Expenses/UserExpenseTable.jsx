@@ -4,6 +4,8 @@ import PageHeader from "../../components/navigation/PageHeader";
 import { useUserTransactions } from "../../hooks/useTransactions";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { DeleteOutlineOutlined } from "@mui/icons-material";
+import { IconButton, Box } from "@mui/material";
 
 const UserExpenseTable = () => {
   const navigate = useNavigate();
@@ -33,6 +35,16 @@ const UserExpenseTable = () => {
     { id: "currency", label: "Currency" },
     { id: "amount", label: "Amount" },
   ];
+
+  const tableActions = (row) => {
+    return (
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton disabled={isLoading}>
+          <DeleteOutlineOutlined />
+        </IconButton>
+      </Box>
+    );
+  };
 
   if (isLoading) return <p>Loading User Expenses</p>;
   if (isError) return <p>Error: {error.message}</p>;
@@ -66,6 +78,8 @@ const UserExpenseTable = () => {
           setLimit(newLimit);
           setPage(0);
         }}
+        renderActions={tableActions}
+        tableSize={"80vh"}
       />
     </>
   );
