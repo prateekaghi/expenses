@@ -14,6 +14,14 @@ import {
   DirectionsCar,
   Work,
 } from "@mui/icons-material";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+} from "recharts";
 import React from "react";
 
 const currentMonthStats = {
@@ -21,39 +29,68 @@ const currentMonthStats = {
   income: 6789.12,
   budget: 4000.0,
 };
+
 const categories = [
   {
     name: "Food & Dining",
     amount: 1234.56,
     icon: Restaurant,
-    color: "error.main",
+    color: "bg-red-500",
+    chartColor: "#ef4444",
   },
   {
     name: "Transportation",
     amount: 567.89,
     icon: DirectionsCar,
-    color: "info.main",
+    color: "bg-blue-500",
+    chartColor: "#3b82f6",
   },
   {
     name: "Shopping",
     amount: 890.12,
     icon: ShoppingCart,
-    color: "success.main",
+    color: "bg-green-500",
+    chartColor: "#22c55e",
   },
   {
     name: "Entertainment",
     amount: 345.67,
     icon: SportsEsports,
-    color: "secondary.main",
+    color: "bg-purple-500",
+    chartColor: "#a855f7",
   },
   {
     name: "Bills & Utilities",
     amount: 234.56,
     icon: Home,
-    color: "warning.main",
+    color: "bg-orange-500",
+    chartColor: "#f97316",
   },
-  { name: "Business", amount: 123.45, icon: Work, color: "primary.main" },
+  {
+    name: "Business",
+    amount: 123.45,
+    icon: Work,
+    color: "bg-indigo-500",
+    chartColor: "#6366f1",
+  },
 ];
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const value = payload[0].value;
+    const name = payload[0].name;
+    return (
+      <div className="bg-white p-3 shadow-lg rounded-lg border border-gray-200">
+        <p className="font-medium">{name}</p>
+        <p className="text-sm text-gray-600">${value.toLocaleString()}</p>
+        <p className="text-xs text-gray-500">
+          {((value / currentMonthStats.expenses) * 100).toFixed(1)}% of total
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
 
 const SpendingDetails = () => {
   return (
@@ -72,6 +109,34 @@ const SpendingDetails = () => {
       />
 
       <CardContent>
+        <Box height={250}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={categories}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={2}
+                dataKey="amount"
+                nameKey="name"
+                isAnimationActive={false}
+              >
+                {categories.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.chartColor} />
+                ))}
+              </Pie>
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                formatter={(value) => <span className="text-xs">{value}</span>}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+
         {categories.map((category, index) => {
           const Icon = category.icon;
           const percentage = (
@@ -85,12 +150,12 @@ const SpendingDetails = () => {
               display="flex"
               alignItems="center"
               justifyContent="space-between"
-              mb={2}
+              mt={2}
             >
               <Box display="flex" alignItems="center" gap={2}>
                 <Avatar
                   sx={{
-                    bgcolor: category.color, // e.g. 'primary.main' or '#3b82f6'
+                    bgcolor: category.color,
                     width: 32,
                     height: 32,
                   }}
