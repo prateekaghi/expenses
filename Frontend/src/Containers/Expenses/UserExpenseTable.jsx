@@ -4,7 +4,7 @@ import PageHeader from "../../components/navigation/PageHeader";
 import { useUserTransactions } from "../../hooks/useTransactions";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { DeleteOutlineOutlined } from "@mui/icons-material";
+import { Add, DeleteOutlineOutlined } from "@mui/icons-material";
 import { IconButton, Box } from "@mui/material";
 
 const UserExpenseTable = () => {
@@ -52,16 +52,18 @@ const UserExpenseTable = () => {
     <>
       <PageHeader
         backTo={"/dashboard"}
-        title={"Expense List"}
+        title={"Transactions List"}
         actions={[
           <Button
-            variant="contained"
-            color="success"
+            startIcon={<Add />}
+            variant="outlined"
+            size="small"
+            color="primary"
             onClick={() => {
               navigate("add");
             }}
           >
-            Add Expense
+            Add Transaction
           </Button>,
           ,
         ]}
