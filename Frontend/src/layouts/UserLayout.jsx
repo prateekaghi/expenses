@@ -17,7 +17,6 @@ const UserLayout = () => {
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.token);
   const signOut = useAuthStore((state) => state.clearAuth);
-  const tokenExpired = isTokenExpired(token);
 
   const logout = () => {
     signOut();

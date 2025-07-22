@@ -97,6 +97,12 @@ const GenericForm = ({
                 select
                 value={formValues[field]}
                 onChange={handleChange}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+                placeholder={label}
                 error={!!errors[field]}
                 helperText={errors[field]}
                 fullWidth
@@ -117,6 +123,12 @@ const GenericForm = ({
               name={field}
               label={label}
               value={formValues[field]}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
+              placeholder={label}
               onChange={handleChange}
               error={!!errors[field]}
               helperText={errors[field]}

@@ -20,17 +20,19 @@ const ExpensesForm = () => {
   });
 
   const initialState = {
-    title: "",
-    amount: "",
-    category: "",
-    currency: "",
     date: "",
+    title: "",
+    category: "",
+    type: "",
+    currency: "",
+    amount: "",
   };
 
   const validationRules = {
     title: { required: true },
     amount: { required: true },
     category: { required: true },
+    type: { required: true },
     currency: { required: true },
     date: { required: true },
   };
@@ -43,12 +45,20 @@ const ExpensesForm = () => {
       label: "Category",
       options: categoryOptions,
     },
+    type: {
+      type: "select",
+      label: "Transaction Type",
+      options: [
+        { label: "Expense", value: "expense" },
+        { label: "Income", value: "income" },
+      ],
+    },
     currency: {
       type: "select",
       label: "Currency",
       options: currencyOptions,
     },
-    date: { type: "date", label: "Date" },
+    date: { type: "date", label: "Transaction Date" },
   };
 
   const populateOptions = () => {
@@ -74,7 +84,7 @@ const ExpensesForm = () => {
 
   return (
     <div>
-      <PageHeader backTo={"/expenses"} title={"Add Expense"} />
+      <PageHeader backTo={"/dashboard"} title={"Add Expense"} />
       <GenericForm
         title="Add Expense"
         initialState={initialState}
@@ -83,7 +93,7 @@ const ExpensesForm = () => {
         onSubmit={handleSubmit}
         submitLabel="Add Expense"
         isLoading={isPending}
-        redirectUrl="/expenses"
+        redirectUrl="/dashboard"
       />
     </div>
   );

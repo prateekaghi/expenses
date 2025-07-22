@@ -18,8 +18,10 @@ import AddIcon from "@mui/icons-material/Add";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserHeader = () => {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -54,6 +56,9 @@ const UserHeader = () => {
             variant="outlined"
             size="small"
             startIcon={<AddIcon fontSize="small" />}
+            onClick={() => {
+              navigate("/expenses/add");
+            }}
           >
             Add Transaction
           </Button>

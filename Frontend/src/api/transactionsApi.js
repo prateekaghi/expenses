@@ -54,6 +54,7 @@ export const addTransaction = async ({
   category,
   amount,
   currency,
+  type,
 }) => {
   try {
     const data = await apiClient.post("/transactions", {
@@ -62,6 +63,7 @@ export const addTransaction = async ({
       category,
       amount,
       currency,
+      type,
     });
     if (data.status === 203) {
       return data.data;
