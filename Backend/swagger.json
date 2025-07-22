@@ -966,6 +966,56 @@
         }
       }
     },
+    "/api/transactions/{userid}/categorised": {
+      "get": {
+        "summary": "Get user expense categorised summary.",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB UserID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category wise expenses retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "686ae1de5486c3d973702bc6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Food"
+                    },
+                    "color": {
+                      "type": "string",
+                      "example": "#FF5733"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Failed to retrieve category"
+          }
+        }
+      }
+    },
     "/api/transactions/{eid}": {
       "patch": {
         "summary": "Update expense",

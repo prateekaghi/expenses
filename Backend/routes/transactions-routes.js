@@ -12,6 +12,11 @@ router.get(
   checkAuth,
   transactionsController.getUserTransactionSummary
 );
+router.get(
+  "/:userid/categorised",
+  checkAuth,
+  transactionsController.getUserTransactionsCategorySummary
+);
 
 router.post("/", checkAuth, transactionsController.addTransaction);
 

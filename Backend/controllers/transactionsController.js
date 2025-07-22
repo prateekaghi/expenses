@@ -318,6 +318,90 @@ const getUserTransactionSummary = async (req, res, next) => {
   res.json({ message: "User summary fetched.", data: summary });
 };
 
+const getUserTransactionsCategorySummary = async (req, res, next) => {
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+  let categorySummary = [];
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
+
+  try {
+    const total = await Transaction.aggregate([
+      {
+        $match: { user: new mongoose.Types.ObjectId(requestUserId) },
+      },
+      {
+        $group: {
+          _id: "$category",
+          total: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
+      {
+        $unwind: "$categoryInfo",
+      },
+      {
+        $project: {
+          _id: 0,
+          category: "$categoryInfo.name",
+          total: 1,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          categories: { $push: "$$ROOT" },
+          grandTotal: { $sum: "$total" },
+        },
+      },
+      { $unwind: "$categories" },
+      {
+        $project: {
+          category: "$categories.category",
+          total: "$categories.total",
+          percentage: {
+            $round: [
+              {
+                $multiply: [
+                  {
+                    $divide: ["$categories.total", "$grandTotal"],
+                  },
+                  100,
+                ],
+              },
+              2,
+            ],
+          },
+        },
+      },
+    ]);
+    total.forEach((cat) => {
+      categorySummary.push({
+        category: cat.category,
+        percentage: cat.percentage,
+        total: cat.total,
+      });
+    });
+  } catch (error) {
+    const err = new ErrorModel("Something went wrong.", 500);
+    return next(err);
+  }
+
+  res.json({
+    message: "Categorised user data fetched.",
+    data: categorySummary,
+  });
+};
+
 const addTransaction = async (req, res, next) => {
   const { amount, category, date, title, currency, type } = req.body;
   const user = req.userData.userid;
@@ -506,4 +590,5 @@ module.exports = {
   getUserTransactions,
   updateTransaction,
   deleteTransaction,
+  getUserTransactionsCategorySummary,
 };
