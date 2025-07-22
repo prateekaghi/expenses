@@ -528,6 +528,7 @@ const updateTransaction = async (req, res, next) => {
 const deleteTransaction = async (req, res, next) => {
   const { eid } = req.params;
   const loggedUserId = req.userData.userid;
+  console.log(eid, loggedUserId);
   let transaction;
   //Find expense by id
   try {

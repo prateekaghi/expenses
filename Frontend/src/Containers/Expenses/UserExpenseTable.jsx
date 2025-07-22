@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import CustomTable from "../../components/Tables/CustomTable";
 import PageHeader from "../../components/navigation/PageHeader";
-import { useUserTransactions } from "../../hooks/useTransactions";
+import {
+  useUserTransactions,
+  useDeleteTransaction,
+} from "../../hooks/useTransactions";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Add, DeleteOutlineOutlined } from "@mui/icons-material";
@@ -15,6 +18,18 @@ const UserExpenseTable = () => {
     page: page + 1,
     limit,
   });
+
+  const { mutateAsync, isSuccess } = useDeleteTransaction();
+
+  const deleteHandler = async (data) => {
+    try {
+      const response = await mutateAsync({ transactionId: data.id });
+      console.log("res", response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const columns = [
     {
       id: "date",
@@ -39,7 +54,7 @@ const UserExpenseTable = () => {
   const tableActions = (row) => {
     return (
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <IconButton disabled={isLoading}>
+        <IconButton disabled={isLoading} onClick={() => deleteHandler(row)}>
           <DeleteOutlineOutlined />
         </IconButton>
       </Box>

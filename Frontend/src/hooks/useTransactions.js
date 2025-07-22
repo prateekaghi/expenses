@@ -5,6 +5,7 @@ import {
   getUserTransactions,
   getUserTransactionsSummary,
   getUserTransactionCatgorySummary,
+  deleteTransaction,
 } from "../api/transactionsApi";
 
 export const useTransactions = ({ page, limit }) => {
@@ -48,6 +49,20 @@ export const useAddTransaction = () => {
   return useMutation({
     mutationFn: ({ date, title, category, amount, type, currency }) =>
       addTransaction({ date, title, category, amount, type, currency }),
+    onSuccess: () => {
+      queryClient.invalidateQueries("user_transaction_category_summary");
+      queryClient.invalidateQueries("user_transaction_summary");
+      queryClient.invalidateQueries("user_transactions");
+      queryClient.invalidateQueries("transactions");
+    },
+  });
+};
+
+export const useDeleteTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ transactionId }) => deleteTransaction({ transactionId }),
     onSuccess: () => {
       queryClient.invalidateQueries("user_transaction_category_summary");
       queryClient.invalidateQueries("user_transaction_summary");

@@ -88,3 +88,19 @@ export const getUserTransactionCatgorySummary = async () => {
     throw new Error(error);
   }
 };
+
+export const deleteTransaction = async ({ transactionId }) => {
+  const userId = useAuthStore.getState().id;
+
+  if (!userId) {
+    throw new Error("Missing User ID.");
+  }
+  try {
+    const data = await apiClient.delete(`/transactions/${transactionId}`);
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
