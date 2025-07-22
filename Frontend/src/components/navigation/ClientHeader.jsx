@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Typography, Button, Link as MuiLink } from "@mui/material";
 import { AccountBalanceWalletOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const ClientHeader = () => {
+  const navigate = useNavigate();
   return (
     <Box
       component="header"
@@ -53,22 +55,16 @@ const ClientHeader = () => {
         >
           Pricing
         </MuiLink>
-        <MuiLink
-          href="#about"
-          variant="body2"
-          underline="hover"
-          sx={{ fontWeight: 500, color: "inherit" }}
-        >
-          About
-        </MuiLink>
       </Box>
 
       <Box sx={{ display: "flex", gap: 1, ml: 2 }}>
-        <Button variant="text" size="small">
-          Sign In
-        </Button>
-        <Button variant="contained" size="small">
-          Get Started
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => navigate("/login")}
+          sx={{ px: 5 }}
+        >
+          Login
         </Button>
       </Box>
     </Box>
