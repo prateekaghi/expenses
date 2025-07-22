@@ -367,7 +367,8 @@ const getUserTransactionsCategorySummary = async (req, res, next) => {
       {
         $project: {
           category: "$categories.category",
-          total: "$categories.total",
+          amount: "$categories.total",
+          total: "$grandTotal",
           percentage: {
             $round: [
               {
@@ -388,6 +389,7 @@ const getUserTransactionsCategorySummary = async (req, res, next) => {
       categorySummary.push({
         category: cat.category,
         percentage: cat.percentage,
+        amount: cat.amount,
         total: cat.total,
       });
     });
