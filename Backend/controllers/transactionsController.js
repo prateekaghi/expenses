@@ -330,7 +330,10 @@ const getUserTransactionsCategorySummary = async (req, res, next) => {
   try {
     const total = await Transaction.aggregate([
       {
-        $match: { user: new mongoose.Types.ObjectId(requestUserId) },
+        $match: {
+          user: new mongoose.Types.ObjectId(requestUserId),
+          type: "expense",
+        },
       },
       {
         $group: {
