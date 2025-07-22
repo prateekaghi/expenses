@@ -25,7 +25,11 @@ const UserExpenseTable = () => {
         }),
     },
     { id: "title", label: "Title" },
-    { id: "category", label: "Category" },
+    {
+      id: "category",
+      label: "Category",
+      render: (row) => row.category.name,
+    },
     { id: "currency", label: "Currency" },
     { id: "amount", label: "Amount" },
   ];
