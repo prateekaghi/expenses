@@ -4,6 +4,7 @@ import {
   addTransaction,
   getUserTransactions,
   getUserTransactionsSummary,
+  getUserTransactionCatgorySummary,
 } from "../api/transactionsApi";
 
 export const useTransactions = ({ page, limit }) => {
@@ -33,6 +34,14 @@ export const useUserTransactionSummary = () => {
   });
 };
 
+export const useUserTransactionCategorySummary = () => {
+  return useQuery({
+    queryKey: ["user_transaction_category_summary"],
+    queryFn: getUserTransactionCatgorySummary,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
 export const useAddTransaction = () => {
   const queryClient = useQueryClient();
 
