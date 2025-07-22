@@ -17,16 +17,16 @@ const UserStats = () => {
   const {
     data: currencyData,
     isLoading: currencyLoading,
-    isError: currency,
+    isError: currencyError,
     error: currencyErrorMessage,
   } = useCurrencies({ page: 1, limit: 10000 });
 
-  if (isLoading || categoryLoading) {
-    return <p>Loading user summary...</p>;
+  if (isLoading || categoryLoading || currencyLoading) {
+    return <p>Loading Data...</p>;
   }
 
-  if (isError || categoryError) {
-    return <p>{error || categoryErrorMessage}</p>;
+  if (isError || categoryError || currencyError) {
+    return <p>{error || categoryErrorMessage || currencyErrorMessage}</p>;
   }
 
   return (
