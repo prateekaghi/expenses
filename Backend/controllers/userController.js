@@ -1,8 +1,6 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
 
-const { sendVerificationMail } = require("../services/emailService");
-
 const getUsers = async (req, res, next) => {
   let {
     page = 1,
@@ -82,101 +80,31 @@ const getUsers = async (req, res, next) => {
     data: users.map((user) => user.toObject({ getters: true })),
   });
 };
-const signup = async (req, res, next) => {
-  const { first_name, last_name, email, password } = req.body;
-  let existingUser;
-  if (!first_name || !last_name || !email || !password) {
-    const err = new ErrorModel("Missing required payload data.", 500);
+
+const getUserById = async (req, res, next) => {
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
     return next(err);
   }
 
+  let user;
   try {
-    //check if user email already exists
-    existingUser = await User.findOne({ email: email });
-  } catch (error) {
-    const err = new ErrorModel("Error occured while trying to signup!", 500);
-    return next(err);
-  }
-  //throw error if user exists
-  if (existingUser) {
-    if (existingUser.display) {
-      const err = new ErrorModel(
-        "User exists with the provided email address.",
-        422
-      );
-      return next(err);
-    } else {
-      const err = new ErrorModel(
-        "Deleted user. Contact admin to enable the user with the provided email id.",
-        422
-      );
-      return next(err);
-    }
-  }
-
-  //create user variable and save user if email address does not exist
-
-  const createUser = new User({
-    email,
-    first_name,
-    last_name,
-    password,
-    isActive: true,
-    display: true,
-    expense: [],
-    categories: [],
-    timezone: "UTC",
-  });
-
-  try {
-    await createUser.save();
-    await sendVerificationMail({
-      userEmail: "prateekaghi42@gmail.com",
-      token: email,
-    });
-  } catch (error) {
-    const err = new ErrorModel("Error occured while creating the user.", 500);
-    return next(err);
-  }
-  res.status(201).json({
-    message: "User Created",
-    data: createUser.toObject({ getters: true }),
-  });
-};
-const getUserById = (req, res, next) => {};
-const login = async (req, res, next) => {
-  const { email, password } = req.body;
-  //check if user exists with email
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ email: email });
+    user = await User.findById(requestUserId, "-password");
   } catch (error) {
     const err = new ErrorModel(
-      "Error occured while verifying the user email.",
+      "Error occured while finding the user with the provided id.",
       500
     );
     return next(err);
   }
-  //throw error if the user with the email does not exist
-  if (!existingUser || existingUser.length === 0) {
-    const err = new ErrorModel(
-      "No user found with the provided email address.",
-      404
-    );
+  if (!user) {
+    const err = new ErrorModel("User not found", 404);
     return next(err);
   }
-  //check if password matches the user password and throw error
-  if (!password || existingUser.password !== password) {
-    const err = new ErrorModel("Invalid credentials", 401);
-    return next(err);
-  }
-  const userWithoutPassword = existingUser.toObject();
-  delete userWithoutPassword.password;
 
-  res.json({
-    message: "User logged in!",
-    data: userWithoutPassword,
-  });
+  res.json({ message: "User found successfully.", data: user });
 };
 
 const updateUser = async (req, res, next) => {
@@ -239,12 +167,6 @@ const toggleUserStatus = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   const { userid } = req.params;
-  const { display } = req.body;
-
-  if (display === undefined) {
-    const err = new ErrorModel("Payload missing!", 500);
-    return next(err);
-  }
 
   let user;
   try {
@@ -255,7 +177,7 @@ const deleteUser = async (req, res, next) => {
   }
 
   //Update user details
-  user.display = display;
+  user.display = false;
 
   //save user
   try {
@@ -265,12 +187,10 @@ const deleteUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(user);
+  res.json({ message: "User deleted.", data: user });
 };
 
 module.exports = {
-  signup,
-  login,
   getUsers,
   getUserById,
   updateUser,

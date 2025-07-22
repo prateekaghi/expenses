@@ -8,7 +8,6 @@ export const getTimezones = async ({ page = 1, limit = 10 }) => {
         limit,
       },
     });
-    console.log("time", data);
     if (data.status === 200) {
       return data.data;
     }

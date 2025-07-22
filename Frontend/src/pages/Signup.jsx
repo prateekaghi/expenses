@@ -12,9 +12,10 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
-import { signupUser } from "../api/authApi";
+import { useSignupAuth } from "../hooks/useAuth";
 
 const Signup = () => {
+  const { mutate, isSuccess, isError, error } = useSignupAuth();
   const [userForm, setUserForm] = useState({
     first_name: {
       label: "First Name",
@@ -129,10 +130,10 @@ const Signup = () => {
     const validForm = validate();
     if (validForm) {
       const { email, first_name, last_name, password } = userForm;
-      const response = await signupUser({
-        email: email.value,
+      mutate({
         first_name: first_name.value,
         last_name: last_name.value,
+        email: email.value,
         password: password.value,
       });
     }
@@ -159,6 +160,10 @@ const Signup = () => {
     // TODO: Handle Google signup logic
     console.log("Signup with Google");
   };
+
+  if (isSuccess) {
+    navigate("/dashboard");
+  }
 
   return (
     <Box

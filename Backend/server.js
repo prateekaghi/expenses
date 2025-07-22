@@ -6,8 +6,9 @@ const dotenv = require("dotenv").config();
 
 swaggerDocument.servers = [{ url: process.env.SWAGGER_BASE_URL }];
 
+const authRoutes = require("./routes/auth-routes");
 const userRoutes = require("./routes/user-routes");
-const expenseRoutes = require("./routes/expense-routes");
+const transactionsRoutes = require("./routes/transactions-routes");
 const categoryRoutes = require("./routes/category-routes");
 const timezoneRoutes = require("./routes/timezone-routes");
 const currencyRoutes = require("./routes/currency-routes");
@@ -27,10 +28,10 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
   next();
 });
-
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
-app.use("/api/expenses", expenseRoutes);
+app.use("/api/transactions", transactionsRoutes);
 app.use("/api/timezone", timezoneRoutes);
 app.use("/api/currency", currencyRoutes);
 

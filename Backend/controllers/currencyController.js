@@ -1,6 +1,6 @@
 const ErrorModel = require("../models/error");
 const Currency = require("../models/currency");
-const Expense = require("../models/expense");
+const Transaction = require("../models/transaction");
 const mongoose = require("mongoose");
 
 const getCurrencies = async (req, res, next) => {
@@ -48,8 +48,8 @@ const getCurrencies = async (req, res, next) => {
 };
 
 const addCurrency = async (req, res, next) => {
-  const { name, value } = req.body;
-  if (!name || !value) {
+  const { name, value, symbol } = req.body;
+  if (!name || !value || symbol) {
     const err = new ErrorModel("Missing payload.", 500);
     return next(err);
   }
@@ -72,6 +72,7 @@ const addCurrency = async (req, res, next) => {
   let newCurrency = new Currency({
     name,
     value,
+    symbol,
   });
 
   try {
@@ -86,7 +87,7 @@ const addCurrency = async (req, res, next) => {
 
 const updateCurrency = async (req, res, next) => {
   const { id } = req.params;
-  const { name, value } = req.body;
+  const { name, value, symbol } = req.body;
 
   let currency;
   try {
@@ -116,43 +117,44 @@ const updateCurrency = async (req, res, next) => {
     return next(err);
   }
 
-  //check if expenses exist with the current values
-  let currentCurrencyExpense;
+  //check if Transactions exist with the current values
+  let currentCurrencyTransaction;
   try {
-    currentCurrencyExpense = await Expense.countDocuments({
+    currentCurrencyTransaction = await Transaction.countDocuments({
       currency: currency.value,
     });
   } catch (error) {
     const err = new ErrorModel(
-      "Error while checking expenses with the current currency.",
+      "Error while checking Transactions with the current currency.",
       500
     );
     return next(err);
   }
 
-  if (currentCurrencyExpense === 0) {
-    //Save updated currency values if no expense found with currency
+  if (currentCurrencyTransaction === 0) {
+    //Save updated currency values if no Transaction found with currency
     try {
       //update the values for the currency
       currency.name = name || currency.name;
       currency.value = value || currency.value;
+      currency.symbol = symbol || currency.symbol;
       await currency.save();
     } catch (error) {
       const err = new ErrorModel(
-        "Error while updating the currency not being used in any existing expenses.",
+        "Error while updating the currency not being used in any existing Transactions.",
         500
       );
       return next(err);
     }
   } else {
-    //Start session, update expenses with new currency value,
+    //Start session, update Transactions with new currency value,
     //save updated currency value , commit transaction
 
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
 
-      const updatedExpenses = await Expense.updateMany(
+      const updatedTransactions = await Transaction.updateMany(
         {
           currency: currency.value,
         },
@@ -163,6 +165,7 @@ const updateCurrency = async (req, res, next) => {
       );
       currency.name = name || currency.name;
       currency.value = value || currency.value;
+      currency.symbol = symbol || currency.symbol;
 
       await currency.save({ session: sess });
       await sess.commitTransaction();
@@ -190,16 +193,18 @@ const deleteCurrency = async (req, res, next) => {
     return next(err);
   }
 
-  let expenseCount;
+  let transactionCount;
   try {
-    expenseCount = await Expense.countDocuments({ currency: currency.value });
+    transactionCount = await Transaction.countDocuments({
+      currency: currency.value,
+    });
   } catch (error) {
     const err = new ErrorModel("Something went wrong.", 500);
     return next(err);
   }
-  if (expenseCount) {
+  if (transactionCount) {
     const err = new ErrorModel(
-      "Expense with the currency exist. Currency cannot be deleted.",
+      "Transaction with the currency exist. Currency cannot be deleted.",
       500
     );
     return next(err);

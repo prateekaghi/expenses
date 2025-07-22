@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -11,20 +11,29 @@ import {
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useNavigate } from "react-router-dom";
+import { useLoginAuth } from "../hooks/useAuth";
+
+const initialState = {
+  email: { value: "", error: "" },
+  password: { value: "", error: "" },
+};
 
 const Login = () => {
+  const { mutate, isSuccess, isError, error } = useLoginAuth();
+  const [formData, setFormData] = useState(initialState);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Handle login logic
+  const inputHandler = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: { ...prev[name], value, error: "" }, // Clear error on change
+    }));
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: Handle Google login logic
-    console.log("Login with Google");
-  };
-
+  if (isSuccess) {
+    navigate("/dashboard");
+  }
   return (
     <Box
       sx={{
@@ -41,14 +50,18 @@ const Login = () => {
           Sign In to Your Account
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+        <Box sx={{ mt: 2 }}>
           <TextField
             fullWidth
             label="Email"
             type="email"
             margin="normal"
             size="small"
-            required
+            onChange={inputHandler}
+            name="email"
+            value={formData.email.value}
+            error={!!formData.email.error}
+            helperText={formData.email.error}
           />
           <TextField
             fullWidth
@@ -56,38 +69,44 @@ const Login = () => {
             type="password"
             margin="normal"
             size="small"
-            required
+            name="password"
+            onChange={inputHandler}
+            value={formData.password.value}
+            error={!!formData.password.error}
+            helperText={formData.password.error}
           />
 
           <Box textAlign="right" mt={1} mb={2}>
-            <Link
-              component="button"
-              variant="body2"
-              onClick={() => navigate("/forgot-password")}
-            >
+            <Link component="button" variant="body2">
               Forgot Password?
             </Link>
           </Box>
 
-          <Button type="submit" variant="contained" color="primary" fullWidth>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={() => {
+              mutate({
+                email: formData.email.value,
+                password: formData.password.value,
+              });
+            }}
+          >
             Login
           </Button>
         </Box>
 
         <Divider sx={{ my: 3 }}>OR</Divider>
 
-        <Button
-          variant="outlined"
-          startIcon={<GoogleIcon />}
-          fullWidth
-          onClick={handleGoogleLogin}
-        >
+        <Button variant="outlined" startIcon={<GoogleIcon />} fullWidth>
           Sign in with Google
         </Button>
 
         <Stack direction="row" justifyContent="center" mt={3}>
           <Typography variant="body2">
-            Don't have an account ?
+            Don't have an account?{" "}
             <Link
               component="button"
               variant="body2"
@@ -97,6 +116,7 @@ const Login = () => {
             </Link>
           </Typography>
         </Stack>
+
         <Button
           variant="outlined"
           fullWidth

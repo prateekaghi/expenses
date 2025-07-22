@@ -31,6 +31,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    currency: {
+      type: String,
+      required: true,
+    },
     expense: [
       {
         type: mongoose.Schema.Types.ObjectId,

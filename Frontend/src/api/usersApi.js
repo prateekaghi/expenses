@@ -1,4 +1,5 @@
 import apiClient from "./index";
+import { useAuthStore } from "../store/authStore";
 
 export const getUsers = async ({
   page = 1,
@@ -25,6 +26,40 @@ export const getUsers = async ({
       return data.data;
     }
   } catch (error) {
-    throw new Error(error);
+    throw error;
+  }
+};
+
+export const getUserByID = async ({
+  page = 1,
+  limit = 10,
+  startDate,
+  endDate,
+  isActive,
+  firstName,
+  lastName,
+}) => {
+  const userId = useAuthStore.getState().id;
+  if (!userId) {
+    throw new Error("User details not found");
+  }
+
+  try {
+    const data = await apiClient.get(`/users/${userId}`, {
+      params: {
+        page,
+        limit,
+        startDate,
+        endDate,
+        isActive,
+        firstName,
+        lastName,
+      },
+    });
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw error;
   }
 };

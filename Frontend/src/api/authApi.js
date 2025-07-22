@@ -7,7 +7,7 @@ export const signupUser = async ({
   password,
 }) => {
   try {
-    const res = await apiClient.post("/users/signup", {
+    const res = await apiClient.post("/auth/signup", {
       first_name,
       last_name,
       email,
@@ -15,6 +15,21 @@ export const signupUser = async ({
     });
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw error;
+  }
+};
+
+export const loginUser = async ({ email, password }) => {
+  try {
+    const res = await apiClient.post("/auth/login", {
+      email,
+      password,
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data.message;
+    }
+    throw error;
   }
 };

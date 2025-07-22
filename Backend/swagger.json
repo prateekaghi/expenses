@@ -6,295 +6,16 @@
     "description": "Complete API documentation for the Expenses Management System"
   },
   "servers": [{ "url": "http://localhost:4000" }],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
-    "/api/users": {
-      "get": {
-        "summary": "Get all users",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "startDate",
-            "in": "query",
-            "required": false,
-            "description": "ISO date string to filter users created on or after this date",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "required": false,
-            "description": "ISO date string to filter users created on or before this date",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "isActive",
-            "in": "query",
-            "required": false,
-            "description": "Filter users based on status",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "firstName",
-            "in": "query",
-            "required": false,
-            "description": "Filter users based on firstname.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "lastName",
-            "in": "query",
-            "required": false,
-            "description": "Filter users based on lastname.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "tags": ["Users"],
-        "responses": {
-          "200": {
-            "description": "List of all active users",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No users found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/users/{userid}": {
-      "get": {
-        "summary": "Get user by ID",
-        "tags": ["Users"],
-        "parameters": [
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/api/users/{userid}/update": {
-      "patch": {
-        "summary": "Update user details",
-        "tags": ["Users"],
-        "parameters": [
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "first_name": {
-                    "type": "string",
-                    "example": "John"
-                  },
-                  "last_name": {
-                    "type": "string",
-                    "example": "Doe"
-                  },
-                  "timezone": {
-                    "type": "string",
-                    "example": "UTC"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to update user"
-          }
-        }
-      }
-    },
-    "/api/users/{userid}/toggle": {
-      "patch": {
-        "summary": "Disable/Enable user",
-        "tags": ["Users"],
-        "parameters": [
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["isActive"],
-                "properties": {
-                  "isActive": {
-                    "type": "boolean",
-                    "example": false
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User status updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to update user status"
-          }
-        }
-      }
-    },
-    "/api/users/{userid}/delete": {
-      "patch": {
-        "summary": "Soft delete user",
-        "tags": ["Users"],
-        "parameters": [
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["display"],
-                "properties": {
-                  "display": {
-                    "type": "boolean",
-                    "example": false
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to delete user"
-          }
-        }
-      }
-    },
-    "/api/users/login": {
+    "/api/auth/login": {
       "post": {
         "summary": "User login",
-        "tags": ["Users"],
+        "tags": ["Auth"],
         "requestBody": {
           "required": true,
           "content": {
@@ -306,11 +27,11 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "john.doe@example.com"
+                    "example": "prateekaghi42@gmail.com"
                   },
                   "password": {
                     "type": "string",
-                    "example": "password123"
+                    "example": "prateekaghi"
                   }
                 }
               }
@@ -346,10 +67,10 @@
         }
       }
     },
-    "/api/users/signup": {
+    "/api/auth/signup": {
       "post": {
         "summary": "User registration",
-        "tags": ["Users"],
+        "tags": ["Auth"],
         "requestBody": {
           "required": true,
           "content": {
@@ -394,271 +115,6 @@
           },
           "422": {
             "description": "User already exists or validation error"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/expenses": {
-      "get": {
-        "summary": "Get all expenses",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Number of results per page",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "description": "Page Number",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of all expenses",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Expense"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      },
-      "post": {
-        "summary": "Add new expense",
-        "tags": ["Expenses"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "amount",
-                  "category",
-                  "date",
-                  "title",
-                  "user",
-                  "currency"
-                ],
-                "properties": {
-                  "amount": {
-                    "type": "number",
-                    "example": 50.0
-                  },
-                  "category": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-01-15T10:30:00.000Z"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Lunch"
-                  },
-                  "user": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "currency": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "203": {
-            "description": "Expense created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Expense"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload or user not found"
-          },
-          "404": {
-            "description": "Category not found for user"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/expenses/{userid}": {
-      "get": {
-        "summary": "Get expenses by user ID",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "userid",
-            "in": "path",
-            "required": true,
-            "description": "User ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User expenses",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Expense"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/expenses/{eid}": {
-      "patch": {
-        "summary": "Update expense",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "eid",
-            "in": "path",
-            "required": true,
-            "description": "Expense ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["user_id"],
-                "properties": {
-                  "user_id": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Updated Lunch"
-                  },
-                  "category": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "example": 60.0
-                  },
-                  "currency": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Expense updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Expense"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized to update expense"
-          },
-          "404": {
-            "description": "Expense or category not found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete expense",
-        "tags": ["Expenses"],
-        "parameters": [
-          {
-            "name": "eid",
-            "in": "path",
-            "required": true,
-            "description": "Expense ID",
-            "schema": {
-              "type": "string",
-              "example": "686ae1de5486c3d973702bc6"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Expense deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Expense deleted successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Expense or user not found"
           },
           "500": {
             "description": "Server error"
@@ -718,15 +174,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "userid"],
+                "required": ["name"],
                 "properties": {
                   "name": {
                     "type": "string",
                     "example": "Food"
-                  },
-                  "userid": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
                   }
                 }
               }
@@ -749,40 +201,6 @@
           },
           "409": {
             "description": "Category already exists"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/category/update": {
-      "patch": {
-        "summary": "Update category",
-        "tags": ["Categories"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "Updated Food"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Category updated successfully"
           },
           "500": {
             "description": "Server error"
@@ -857,6 +275,46 @@
           }
         }
       },
+      "patch": {
+        "summary": "Update category",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to retrieve",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Updated Food"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
       "delete": {
         "summary": "Delete a category by ID",
         "tags": ["Categories"],
@@ -872,22 +330,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "userid": {
-                    "type": "string",
-                    "example": "686ae1de5486c3d973702bc6"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Category deleted successfully",
@@ -910,6 +352,191 @@
           },
           "500": {
             "description": "Failed to delete category"
+          }
+        }
+      }
+    },
+    "/api/currency": {
+      "get": {
+        "summary": "Get all currencies.",
+        "tags": ["Currencies"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of currencies.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Currency"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new currency",
+        "tags": ["Currencies"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "value"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "US Dollar"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "USD"
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "example": "$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Currency already exists or creation failed"
+          }
+        }
+      }
+    },
+    "/api/currency/{id}": {
+      "patch": {
+        "summary": "Update currency",
+        "tags": ["Currencies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Currency ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Updated US Dollar"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "USD"
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "example": "$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Currency"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Currency not found"
+          },
+          "500": {
+            "description": "Failed to update currency"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete currency",
+        "tags": ["Currencies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Currency ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Currency deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Currency deleted."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Currency not found"
+          },
+          "500": {
+            "description": "Cannot delete currency - expenses exist with this currency"
           }
         }
       }
@@ -1093,10 +720,10 @@
         }
       }
     },
-    "/api/currency": {
+    "/api/transactions": {
       "get": {
-        "summary": "Get all currencies.",
-        "tags": ["Currencies"],
+        "summary": "Get all expenses",
+        "tags": ["Transactions"],
         "parameters": [
           {
             "name": "limit",
@@ -1119,36 +746,63 @@
         ],
         "responses": {
           "200": {
-            "description": "An array of currencies.",
+            "description": "List of all expenses",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Currency"
+                    "$ref": "#/components/schemas/transaction"
                   }
                 }
               }
             }
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       },
       "post": {
-        "summary": "Add new currency",
-        "tags": ["Currencies"],
+        "summary": "Add new expense",
+        "tags": ["Transactions"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "value"],
+                "required": [
+                  "amount",
+                  "category",
+                  "date",
+                  "title",
+                  "type",
+                  "currency"
+                ],
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "US Dollar"
+                  "amount": {
+                    "type": "number",
+                    "example": 50.0
                   },
-                  "value": {
+                  "category": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-01-15T10:30:00.000Z"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Lunch"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "expense"
+                  },
+                  "currency": {
                     "type": "string",
                     "example": "USD"
                   }
@@ -1158,86 +812,131 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Currency created successfully",
+          "203": {
+            "description": "Expense created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Currency"
+                  "$ref": "#/components/schemas/transaction"
                 }
               }
             }
           },
+          "400": {
+            "description": "Invalid payload or user not found"
+          },
+          "404": {
+            "description": "Category not found for user"
+          },
           "500": {
-            "description": "Currency already exists or creation failed"
+            "description": "Server error"
           }
         }
       }
     },
-    "/api/currency/{id}": {
-      "patch": {
-        "summary": "Update currency",
-        "tags": ["Currencies"],
+    "/api/transactions/{userid}": {
+      "get": {
+        "summary": "Get transactions by user ID",
+        "tags": ["Transactions"],
         "parameters": [
           {
-            "name": "id",
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "description": "Start date for transactions",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "description": "End date for transactions",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Type of transaction",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cateogry",
+            "in": "query",
+            "required": false,
+            "description": "Category ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userid",
             "in": "path",
             "required": true,
-            "description": "Currency ID",
+            "description": "User ID",
             "schema": {
               "type": "string",
               "example": "686ae1de5486c3d973702bc6"
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Updated US Dollar"
-                  },
-                  "value": {
-                    "type": "string",
-                    "example": "USD"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Currency updated successfully",
+            "description": "User expenses",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Currency"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/transaction"
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Currency not found"
+            "description": "User not found"
           },
           "500": {
-            "description": "Failed to update currency"
+            "description": "Server error"
           }
         }
-      },
-      "delete": {
-        "summary": "Delete currency",
-        "tags": ["Currencies"],
+      }
+    },
+    "/api/transactions/{userid}/summary": {
+      "get": {
+        "summary": "Get user transactions summary",
+        "tags": ["Transactions"],
         "parameters": [
           {
-            "name": "id",
+            "name": "userid",
             "in": "path",
             "required": true,
-            "description": "Currency ID",
+            "description": "User ID",
             "schema": {
               "type": "string",
               "example": "686ae1de5486c3d973702bc6"
@@ -1246,7 +945,116 @@
         ],
         "responses": {
           "200": {
-            "description": "Currency deleted successfully",
+            "description": "User transaction summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/transaction"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/transactions/{eid}": {
+      "patch": {
+        "summary": "Update expense",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "description": "Expense ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id"],
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Lunch"
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "686ae1de5486c3d973702bc6"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 60.0
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "USD"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expense updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized to update expense"
+          },
+          "404": {
+            "description": "Expense or category not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete expense",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "description": "Expense ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expense deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1254,7 +1062,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Currency deleted."
+                      "example": "Expense deleted successfully"
                     }
                   }
                 }
@@ -1262,16 +1070,286 @@
             }
           },
           "404": {
-            "description": "Currency not found"
+            "description": "Expense or user not found"
           },
           "500": {
-            "description": "Cannot delete currency - expenses exist with this currency"
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Get all users",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page Number",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "description": "ISO date string to filter users created on or after this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "description": "ISO date string to filter users created on or before this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "isActive",
+            "in": "query",
+            "required": false,
+            "description": "Filter users based on status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "required": false,
+            "description": "Filter users based on firstname.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "required": false,
+            "description": "Filter users based on lastname.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "List of all active users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No users found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/users/{userid}": {
+      "get": {
+        "summary": "Get user by ID",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user details",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "first_name": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "example": "UTC"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to update user"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Soft delete user",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete user"
+          }
+        }
+      }
+    },
+    "/api/users/{userid}/toggle": {
+      "patch": {
+        "summary": "Disable/Enable user",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["isActive"],
+                "properties": {
+                  "isActive": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to update user status"
           }
         }
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "User": {
         "type": "object",

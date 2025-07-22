@@ -1,7 +1,8 @@
 import React from "react";
+import UserExpenseTable from "../../Containers/Expenses/UserExpenseTable";
 
 const ExpenseList = () => {
-  return <div>ExpenseList</div>;
+  return <UserExpenseTable />;
 };
 
 export default ExpenseList;

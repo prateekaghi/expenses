@@ -16,12 +16,7 @@ const PrimaryLayout = () => {
     >
       <Box>
         <ClientHeader />
-        <Box
-          sx={{
-            p: 5,
-            backgroundColor: "#f5f5f5",
-          }}
-        >
+        <Box>
           <Outlet />
         </Box>
       </Box>
