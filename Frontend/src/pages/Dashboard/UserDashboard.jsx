@@ -1,8 +1,6 @@
 import React from "react";
-import Welcome from "../../components/UserInfo/Welcome";
-import Stats from "../../components/Cards/Stats";
 import { Box, Grid } from "@mui/material";
-import ProgressStat from "../../components/Cards/ProgressStat";
+import Welcome from "../../components/UserInfo/Welcome";
 import SpendingDetails from "../../components/Cards/SpendingDetails";
 import CurrenciesSummary from "../../components/Cards/CurrenciesSummary";
 import TransactionsSummary from "../../components/Cards/TransactionsSummary";
@@ -15,7 +13,6 @@ const UserDashboard = () => {
         <Welcome />
       </Box>
       <UserStats />
-
       <Grid container spacing={3} mb={4}>
         <Grid size={{ xs: 12, lg: 6 }}>
           <SpendingDetails />
