@@ -217,7 +217,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "MongoDB ID of the category to retrieve",
+            "description": "MongoDB ID of User to retrieve all the categories.",
             "schema": {
               "type": "string",
               "example": "686ae1de5486c3d973702bc6"
@@ -352,6 +352,52 @@
           },
           "500": {
             "description": "Failed to delete category"
+          }
+        }
+      }
+    },
+    "/api/category/detail/{id}": {
+      "get": {
+        "summary": "Get gategory by ID.",
+        "tags": ["Categories"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ID of the category to retrieve",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "686ae1de5486c3d973702bc6"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Food"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Failed to retrieve category"
           }
         }
       }
