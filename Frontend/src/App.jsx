@@ -25,6 +25,7 @@ import AuthExpiryWatcher from "./components/Utility/AutoExpiryWatcher";
 import CurrencyList from "./pages/Currency/CurrencyList";
 import TimezoneList from "./pages/Timezone/TimezoneList";
 import EditCategoryPage from "./pages/Category/EditCategoryPage";
+import UserProfile from "./pages/Profile/UserProfile";
 
 const App = () => {
   return (
@@ -39,6 +40,9 @@ const App = () => {
             <Route element={<UserLayout />}>
               <Route path="/dashboard">
                 <Route index element={<UserDashboard />} />
+              </Route>
+              <Route path="/profile">
+                <Route index element={<UserProfile />} />
               </Route>
               <Route path="/transactions">
                 <Route index element={<ExpenseList />} />

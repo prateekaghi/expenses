@@ -1333,6 +1333,9 @@
                   "timezone": {
                     "type": "string",
                     "example": "UTC"
+                  },
+                  "profile_image": {
+                    "type": "string"
                   }
                 }
               }

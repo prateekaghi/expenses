@@ -1,5 +1,6 @@
 const ErrorModel = require("../models/error");
 const User = require("../models/user");
+const cloudinary = require("../utils/cloudinary");
 
 const getUsers = async (req, res, next) => {
   let {
@@ -109,7 +110,8 @@ const getUserById = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   const { userid } = req.params;
-  const { first_name, last_name, timezone } = req.body;
+  const { first_name, last_name, timezone, profile_image } = req.body;
+
   let user;
   try {
     user = await User.findById(userid);
@@ -118,10 +120,25 @@ const updateUser = async (req, res, next) => {
     return next(err);
   }
 
+  let profileImageUrl = user.profile_image;
+
+  if (profile_image && profile_image.startsWith("data:image")) {
+    try {
+      const result = await cloudinary.uploader.upload(profile_image, {
+        folder: "profile_images",
+      });
+      profileImageUrl = result.secure_url;
+    } catch (error) {
+      console.error("Cloudinary error:", error);
+      return next(new ErrorModel("Failed to upload profile image.", 500));
+    }
+  }
+
   //Update user details
   user.first_name = first_name || user.first_name;
   user.last_name = last_name || user.last_name;
   user.timezone = timezone || user.timezone;
+  user.profile_image = profileImageUrl;
 
   //save user
   try {

@@ -63,3 +63,28 @@ export const getUserByID = async ({
     throw error;
   }
 };
+
+export const updateUser = async ({
+  first_name,
+  last_name,
+  profile_image,
+  timezone,
+}) => {
+  const userId = useAuthStore.getState().id;
+  if (!userId) {
+    throw new Error("User details not found");
+  }
+  try {
+    const data = await apiClient.patch(`/users/${userId}`, {
+      first_name,
+      last_name,
+      profile_image,
+      timezone,
+    });
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};

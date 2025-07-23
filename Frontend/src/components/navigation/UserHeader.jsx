@@ -97,7 +97,11 @@ const UserHeader = () => {
                 </Typography>
               </Box>
               <Divider />
-              <MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              >
                 <ListItemIcon>
                   <SettingsIcon fontSize="small" />
                 </ListItemIcon>
