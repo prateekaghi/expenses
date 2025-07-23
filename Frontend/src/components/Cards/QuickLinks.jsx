@@ -16,7 +16,6 @@ const QuickLinks = () => {
       sx={{
         borderRadius: "0.5rem",
         border: "1px solid #e4e4e7",
-        height: "100%",
         padding: 5,
       }}
     >
