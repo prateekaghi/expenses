@@ -114,7 +114,9 @@ const updateUser = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findById(userid);
+    user = await User.findById(userid).select(
+      "first_name last_name timezone profile_image"
+    );
   } catch (error) {
     const err = new ErrorModel("Unable to get user details.", 500);
     return next(err);
