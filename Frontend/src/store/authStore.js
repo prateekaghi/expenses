@@ -9,6 +9,8 @@ export const useAuthStore = create(
       first_name: null,
       last_name: null,
       email: null,
+      profile_image: null,
+      timezone: null,
 
       setAuth: ({ id, token, first_name, last_name, email }) => {
         set({
@@ -27,6 +29,13 @@ export const useAuthStore = create(
           last_name: null,
           email: null,
         });
+      },
+      updateProfile: ({ first_name, last_name, profile_image }) => {
+        set(() => ({
+          first_name,
+          last_name,
+          profile_image,
+        }));
       },
     }),
     {

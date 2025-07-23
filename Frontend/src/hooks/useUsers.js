@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUsers, getUserByID, updateUser } from "../api/usersApi";
+import { useAuthStore } from "../store/authStore";
 
 export const useUsers = ({ page, limit, filters }) => {
   return useQuery({
@@ -34,10 +35,15 @@ export const useUserByID = ({ page, limit, filters }) => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ first_name, last_name, profile_image, timezone }) =>
-      updateUser({ first_name, last_name, profile_image, timezone }),
-    onSuccess: () => {
+    mutationFn: ({ first_name, last_name, profile_image }) =>
+      updateUser({ first_name, last_name, profile_image }),
+    onSuccess: (data) => {
       queryClient.invalidateQueries("user");
+      useAuthStore.getState().updateProfile({
+        first_name: data.user.first_name,
+        last_name: data.user.last_name,
+        profile_image: data.user.profile_image,
+      });
     },
   });
 };
