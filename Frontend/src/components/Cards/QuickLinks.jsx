@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const links = [
   { name: "Expenses List", path: "/expenses", icon: PaidOutlined },
-  { name: "Global", path: "/global", icon: PublicIcon },
+  { name: "Category List", path: "/category", icon: PublicIcon },
 ];
 
 const QuickLinks = () => {

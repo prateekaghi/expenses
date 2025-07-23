@@ -13,8 +13,8 @@ const CategoryList = () => {
         title={"Category list"}
         actions={[
           <Button
-            variant="contained"
-            color="success"
+            variant="outlined"
+            color="primary"
             onClick={() => {
               navigate("add");
             }}

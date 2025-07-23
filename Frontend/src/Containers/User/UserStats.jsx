@@ -77,7 +77,7 @@ const UserStats = () => {
         <Grid size={{ xs: 12, md: 3 }}>
           <CategorySummary
             title={"Supported Currencies"}
-            totalRecords={currencyData.totalRecords}
+            totalRecords={currencyData.totalRecords || 0}
             subtitle={"Multi-currency support"}
             icon={<LanguageRounded />}
           />
@@ -85,7 +85,7 @@ const UserStats = () => {
         <Grid size={{ xs: 12, md: 3 }}>
           <CategorySummary
             title="Total Categories"
-            totalRecords={categoryData.totalRecords}
+            totalRecords={categoryData.totalRecords || 0}
             subtitle={"Active spending categories"}
             icon={<SellOutlined />}
           />
