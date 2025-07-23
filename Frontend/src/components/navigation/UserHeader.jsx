@@ -59,7 +59,7 @@ const UserHeader = () => {
             size="small"
             startIcon={<AddIcon fontSize="small" />}
             onClick={() => {
-              navigate("/expenses/add");
+              navigate("/transactions/add");
             }}
           >
             Add Transaction
