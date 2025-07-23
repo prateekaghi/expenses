@@ -9,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const links = [
-  { name: "Expenses", path: "/expenses", icon: PaidOutlined },
+  { name: "Transactions", path: "/transactions", icon: PaidOutlined },
   { name: "Category", path: "/categories", icon: ViewModule },
   { name: "Timezones", path: "/timezones", icon: Public },
   { name: "Currencies", path: "/currencies", icon: CurrencyExchange },
