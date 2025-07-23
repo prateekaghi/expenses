@@ -1,12 +1,18 @@
 import React from "react";
 import { Card, Typography, Grid, Box, Button } from "@mui/material";
-import { PaidOutlined } from "@mui/icons-material";
-import PublicIcon from "@mui/icons-material/Public";
+import {
+  PaidOutlined,
+  CurrencyExchange,
+  Public,
+  ViewModule,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const links = [
-  { name: "Expenses List", path: "/expenses", icon: PaidOutlined },
-  { name: "Category List", path: "/category", icon: PublicIcon },
+  { name: "Expenses", path: "/expenses", icon: PaidOutlined },
+  { name: "Category", path: "/categories", icon: ViewModule },
+  { name: "Timezones", path: "/timezones", icon: Public },
+  { name: "Currencies", path: "/currencies", icon: CurrencyExchange },
 ];
 
 const QuickLinks = () => {
@@ -23,7 +29,7 @@ const QuickLinks = () => {
         {links.map((link, index) => {
           const IconComponent = link.icon;
           return (
-            <Grid size={{ xs: 12, md: 4 }} key={index}>
+            <Grid size={{ xs: 12, md: 3 }} key={index}>
               <Button
                 variant="contained"
                 fullWidth

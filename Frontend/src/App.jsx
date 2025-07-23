@@ -22,6 +22,8 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 //Utility pages
 import NotFound from "./pages/NotFound";
 import AuthExpiryWatcher from "./components/Utility/AutoExpiryWatcher";
+import CurrencyList from "./pages/Currency/CurrencyList";
+import TimezoneList from "./pages/Timezone/TimezoneList";
 
 const App = () => {
   return (
@@ -41,9 +43,15 @@ const App = () => {
                 <Route index element={<ExpenseList />} />
                 <Route path="add" element={<AddExpensePage />} />
               </Route>
-              <Route path="/category">
+              <Route path="/categories">
                 <Route index element={<CategoryList />} />
                 <Route path="add" element={<AddCategoryPage />} />
+              </Route>
+              <Route path="/timezones">
+                <Route index element={<TimezoneList />} />
+              </Route>
+              <Route path="/currencies">
+                <Route index element={<CurrencyList />} />
               </Route>
             </Route>
           </Route>
