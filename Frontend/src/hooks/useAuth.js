@@ -8,8 +8,8 @@ export const useLoginAuth = () => {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      const { token, id } = data.data;
-      setAuth({ token, id });
+      const { token, id, first_name, last_name, email } = data.data;
+      setAuth({ token, id, first_name, last_name, email });
     },
   });
 };
@@ -20,8 +20,8 @@ export const useSignupAuth = () => {
   return useMutation({
     mutationFn: signupUser,
     onSuccess: (data) => {
-      const { token, id } = data.data;
-      setAuth({ token, id });
+      const { token, id, first_name, last_name, email } = data.data;
+      setAuth({ token, id, first_name, last_name, email });
     },
   });
 };

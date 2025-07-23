@@ -19,8 +19,10 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
 
 const UserHeader = () => {
+  const auth = useAuthStore.getState();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -88,10 +90,10 @@ const UserHeader = () => {
             <MenuList dense>
               <Box px={2} py={1}>
                 <Typography variant="body1" fontWeight="medium">
-                  John Doe
+                  {auth.first_name} {auth.last_name}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  john@example.com
+                  {auth.email}
                 </Typography>
               </Box>
               <Divider />
@@ -101,7 +103,13 @@ const UserHeader = () => {
                 </ListItemIcon>
                 <ListItemText>Settings</ListItemText>
               </MenuItem>
-              <MenuItem>Log out</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  auth.clearAuth();
+                }}
+              >
+                Log out
+              </MenuItem>
             </MenuList>
           </Menu>
         </Box>

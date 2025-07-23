@@ -6,12 +6,27 @@ export const useAuthStore = create(
     (set) => ({
       id: null,
       token: null,
+      first_name: null,
+      last_name: null,
+      email: null,
 
-      setAuth: ({ id, token }) => {
-        set({ token: token, id: id });
+      setAuth: ({ id, token, first_name, last_name, email }) => {
+        set({
+          token: token,
+          id: id,
+          first_name: first_name,
+          last_name: last_name,
+          email: email,
+        });
       },
       clearAuth: () => {
-        set({ token: null, id: null });
+        set({
+          token: null,
+          id: null,
+          first_name: null,
+          last_name: null,
+          email: null,
+        });
       },
     }),
     {
