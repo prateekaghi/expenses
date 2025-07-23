@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import AuthExpiryWatcher from "./components/Utility/AutoExpiryWatcher";
 import CurrencyList from "./pages/Currency/CurrencyList";
 import TimezoneList from "./pages/Timezone/TimezoneList";
+import EditCategoryPage from "./pages/Category/EditCategoryPage";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="/categories">
                 <Route index element={<CategoryList />} />
                 <Route path="add" element={<AddCategoryPage />} />
+                <Route path="edit" element={<EditCategoryPage />} />
               </Route>
               <Route path="/timezones">
                 <Route index element={<TimezoneList />} />

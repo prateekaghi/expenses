@@ -4,6 +4,8 @@ import {
   getUserCategory,
   addCategory,
   deleteCategory,
+  getCategoryById,
+  updateCategory,
 } from "../api/categoryApi";
 
 export const useGetCategories = ({ page, limit }) => {
@@ -21,6 +23,28 @@ export const useGetUserCategories = ({ page, limit }) => {
     queryFn: () => getUserCategory({ page, limit }),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetCategoryById = ({ categoryId }) => {
+  return useQuery({
+    queryKey: ["singleCategory", { categoryId }],
+    queryFn: () => getCategoryById({ categoryId }),
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateCategory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ categoryId, payload }) =>
+      updateCategory({ categoryId, payload }),
+    onSuccess: () => {
+      queryClient.invalidateQueries("categories");
+      queryClient.invalidateQueries("userCategories");
+    },
   });
 };
 

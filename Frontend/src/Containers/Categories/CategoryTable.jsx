@@ -6,8 +6,10 @@ import {
 } from "../../hooks/useCategories";
 import { Box, IconButton } from "@mui/material";
 import { DeleteOutlineOutlined, EditOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const CategoryTable = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(25);
   const { data, isLoading, isError, error, isFetching } = useGetUserCategories({
@@ -55,7 +57,7 @@ const CategoryTable = () => {
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <IconButton
           disabled={isPending || isLoading}
-          onClick={() => deleteHandler(row)}
+          onClick={() => navigate(`/categories/edit?categoryId=${row.id}`)}
         >
           <EditOutlined />
         </IconButton>

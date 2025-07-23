@@ -48,8 +48,8 @@ const GenericForm = ({
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    setButtonDisabled(true);
     setSuccess("");
     setErrors({});
 
@@ -59,20 +59,17 @@ const GenericForm = ({
       await onSubmit(formValues);
       setSuccess("Submitted successfully.");
       setFormValues(initialState);
-      setButtonDisabled(true);
-      setTimeout(() => {
-        navigate(redirectUrl);
-        setButtonDisabled(false);
-      }, 1500);
+      navigate(redirectUrl);
     } catch (err) {
       const apiMessage =
         err?.response?.data?.message || err?.message || "Submission failed.";
       setErrors({ form: apiMessage });
     }
+    setButtonDisabled(false);
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
+    <Box>
       <Paper
         sx={{
           // maxWidth: 500,
@@ -137,13 +134,23 @@ const GenericForm = ({
           );
         })}
 
-        <Button
-          variant="contained"
-          type="submit"
-          disabled={isLoading || buttonDisabled}
-        >
-          {isLoading ? "Submitting..." : submitLabel}
-        </Button>
+        <Box sx={{ display: "flex", gap: 5 }}>
+          <Button
+            variant="outlined"
+            onClick={() => setFormValues(initialState)}
+            fullWidth
+          >
+            Reset
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            disabled={isLoading || buttonDisabled}
+            onClick={handleSubmit}
+          >
+            {isLoading ? "Submitting..." : submitLabel}
+          </Button>
+        </Box>
 
         {errors.form && <Alert severity="error">{errors.form}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
