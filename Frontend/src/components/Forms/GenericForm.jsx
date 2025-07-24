@@ -46,15 +46,24 @@ const GenericForm = ({
     const { name, value, files, type } = e.target;
 
     if (type === "file" && files.length > 0) {
+      const MAX_FILE_SIZE_MB = 2;
       const file = files[0];
-      const base64 = await fileToBase64(file);
-      setFormValues((prev) => ({ ...prev, [name]: base64 }));
-      setImagePreviews((prev) => ({ ...prev, [name]: base64 }));
+      const fileSizeInMB = file?.size / (1024 * 1024);
+      if (fileSizeInMB < MAX_FILE_SIZE_MB) {
+        const base64 = await fileToBase64(file);
+        setFormValues((prev) => ({ ...prev, [name]: base64 }));
+        setImagePreviews((prev) => ({ ...prev, [name]: base64 }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: `File size exceeds ${MAX_FILE_SIZE_MB}MB. Choose a smaller file.`,
+        }));
+      }
     } else {
       setFormValues((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-
-    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async () => {
