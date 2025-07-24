@@ -132,7 +132,8 @@ const updateUser = async (req, res, next) => {
       });
       profileImageUrl = result.secure_url;
     } catch (error) {
-      return next(new ErrorModel("Failed to upload profile image.", 500));
+      const err = new ErrorModel("Failed to upload profile image.", 500);
+      return next(err);
     }
   }
 
@@ -150,7 +151,7 @@ const updateUser = async (req, res, next) => {
     return next(err);
   }
 
-  res.json({ message: "User updated successfully.", user });
+  res.json({ message: "User updated successfully.", data: user });
 };
 
 const toggleUserStatus = async (req, res, next) => {
