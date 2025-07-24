@@ -96,7 +96,7 @@ const getUserCategories = async (req, res, next) => {
     return next(err);
   }
   if (userCategories.length < 1) {
-    res.json({
+    return res.json({
       message: "No user categories found",
       data: userCategories,
     });
