@@ -128,10 +128,10 @@ const updateUser = async (req, res, next) => {
     try {
       const result = await cloudinary.uploader.upload(profile_image, {
         folder: "profile_images",
+        public_id: user.id,
       });
       profileImageUrl = result.secure_url;
     } catch (error) {
-      console.error("Cloudinary error:", error);
       return next(new ErrorModel("Failed to upload profile image.", 500));
     }
   }
