@@ -40,9 +40,9 @@ export const useUpdateUser = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries("user");
       useAuthStore.getState().updateProfile({
-        first_name: data.user.first_name,
-        last_name: data.user.last_name,
-        profile_image: data.user.profile_image,
+        first_name: data.data.first_name,
+        last_name: data.data.last_name,
+        profile_image: data.data.profile_image,
       });
     },
   });
