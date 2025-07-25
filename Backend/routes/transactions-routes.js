@@ -6,7 +6,11 @@ const checkAuth = require("../middleware/check-auth");
 
 router.get("/", transactionsController.getAllTransactions);
 
-router.get("/:userid", checkAuth, transactionsController.getUserTransactions);
+router.get(
+  "/user/:userid",
+  checkAuth,
+  transactionsController.getUserTransactions
+);
 router.get(
   "/:userid/summary",
   checkAuth,
@@ -20,8 +24,21 @@ router.get(
 
 router.post("/", checkAuth, transactionsController.addTransaction);
 
-router.patch("/:eid", checkAuth, transactionsController.updateTransaction);
+router.get(
+  "/:transactionId",
+  checkAuth,
+  transactionsController.getSingleTransaction
+);
+router.patch(
+  "/:transactionId",
+  checkAuth,
+  transactionsController.updateTransaction
+);
 
-router.delete("/:eid", checkAuth, transactionsController.deleteTransaction);
+router.delete(
+  "/:transactionId",
+  checkAuth,
+  transactionsController.deleteTransaction
+);
 
 module.exports = router;

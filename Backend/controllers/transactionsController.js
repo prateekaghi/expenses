@@ -53,6 +53,35 @@ const getAllTransactions = async (req, res, next) => {
   });
 };
 
+const getSingleTransaction = async (req, res, next) => {
+  const transactionId = req.params.transactionId;
+  const loggedUserId = req.userData.userid;
+  let transaction;
+  try {
+    transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      const err = new ErrorModel("Something went wrong!", 500);
+      return next(err);
+    }
+    if (!transaction.user.equals(loggedUserId)) {
+      const err = new ErrorModel(
+        "Transaction does not belong to the logged user.",
+        500
+      );
+      return next(err);
+    }
+  } catch (error) {
+    const err = new ErrorModel("Error fetching transactions.", 500);
+    return next(err);
+  }
+
+  res.json({
+    message: "Transaction fetched successfully.",
+    data: transaction,
+  });
+};
+
 const getUserTransactions = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
@@ -526,13 +555,13 @@ const updateTransaction = async (req, res, next) => {
 };
 
 const deleteTransaction = async (req, res, next) => {
-  const { eid } = req.params;
+  const { transactionId } = req.params;
   const loggedUserId = req.userData.userid;
-  console.log(eid, loggedUserId);
+
   let transaction;
   //Find expense by id
   try {
-    transaction = await Transaction.findById(eid);
+    transaction = await Transaction.findById(transactionId);
   } catch (error) {
     const err = new ErrorModel("Error finding the expense.", 500);
     return next(err);
@@ -597,4 +626,5 @@ module.exports = {
   updateTransaction,
   deleteTransaction,
   getUserTransactionsCategorySummary,
+  getSingleTransaction,
 };

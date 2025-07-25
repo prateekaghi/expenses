@@ -880,7 +880,7 @@
         }
       }
     },
-    "/api/transactions/{userid}": {
+    "/api/transactions/user/{userid}": {
       "get": {
         "summary": "Get transactions by user ID",
         "tags": ["Transactions"],
@@ -1062,7 +1062,44 @@
         }
       }
     },
-    "/api/transactions/{eid}": {
+    "/api/transactions/{transactionId}": {
+      "get": {
+        "summary": "Get transaction by ID",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "description": "Transaction ID",
+            "schema": {
+              "type": "string",
+              "example": "686ae1de5486c3d973702bc6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction fetched.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Expense or category not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
       "patch": {
         "summary": "Update expense",
         "tags": ["Transactions"],
