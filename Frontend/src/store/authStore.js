@@ -12,13 +12,14 @@ export const useAuthStore = create(
       profile_image: null,
       timezone: null,
 
-      setAuth: ({ id, token, first_name, last_name, email }) => {
+      setAuth: ({ id, token, first_name, last_name, email, profile_image }) => {
         set({
           token: token,
           id: id,
           first_name: first_name,
           last_name: last_name,
           email: email,
+          profile_image: profile_image,
         });
       },
       clearAuth: () => {

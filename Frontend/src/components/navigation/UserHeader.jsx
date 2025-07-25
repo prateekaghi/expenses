@@ -23,6 +23,7 @@ import { useAuthStore } from "../../store/authStore";
 
 const UserHeader = () => {
   const auth = useAuthStore.getState();
+  console.log("auth", auth);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -65,15 +66,11 @@ const UserHeader = () => {
             Add Transaction
           </Button>
 
-          <IconButton size="small">
-            <NotificationsIcon fontSize="small" />
-          </IconButton>
-
           {/* Avatar & Menu */}
           <IconButton onClick={handleAvatarClick} sx={{ p: 0 }}>
             <Avatar
               alt="User"
-              src="/placeholder.svg?height=32&width=32"
+              src={auth.profile_image}
               sx={{ width: 32, height: 32 }}
             />
           </IconButton>

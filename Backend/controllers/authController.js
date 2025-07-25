@@ -70,6 +70,7 @@ const login = async (req, res, next) => {
       first_name: existingUser.first_name,
       last_name: existingUser.last_name,
       token: token,
+      profile_image: existingUser.profile_image,
     },
   });
 };
@@ -129,6 +130,7 @@ const signup = async (req, res, next) => {
     categories: [],
     timezone: "UTC",
     currency: "USD",
+    profile_image: null,
   });
   let token;
   try {
@@ -162,6 +164,7 @@ const signup = async (req, res, next) => {
       first_name: createdUser.first_name,
       last_name: createdUser.last_name,
       token: token,
+      profile_image: createdUser.profile_image,
     },
   });
 };
