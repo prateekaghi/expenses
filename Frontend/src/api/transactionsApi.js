@@ -31,6 +31,16 @@ export const getUserTransactions = async ({ page, limit }) => {
     throw new Error(error);
   }
 };
+export const getSingleTransaction = async ({ transactionId }) => {
+  try {
+    const data = await apiClient.get(`/transactions/${transactionId}}`);
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 export const getUserTransactionsSummary = async () => {
   const userId = useAuthStore.getState().id;
