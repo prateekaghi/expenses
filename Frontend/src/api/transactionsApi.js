@@ -21,7 +21,7 @@ export const getUserTransactions = async ({ page, limit }) => {
     throw new Error("Missing User ID.");
   }
   try {
-    const data = await apiClient.get(`/transactions/${userId}`, {
+    const data = await apiClient.get(`/transactions/user/${userId}`, {
       params: { page, limit },
     });
     if (data.status === 200) {
