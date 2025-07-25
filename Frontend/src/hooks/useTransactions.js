@@ -74,14 +74,13 @@ export const useUpdateTransaction = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ transactionId, payload }) => {
-      updateTransaction({ transactionId, data: payload });
-    },
+    mutationFn: ({ transactionId, payload }) =>
+      updateTransaction({ transactionId, payload }),
+
     onSuccess: () => {
-      // queryClient.invalidateQueries("user_transaction_category_summary");
-      // queryClient.invalidateQueries("user_transaction_summary");
-      // queryClient.invalidateQueries("user_transactions");
+      queryClient.invalidateQueries("user_transactions");
       queryClient.invalidateQueries("transactions");
+      queryClient.invalidateQueries("single_transaction");
     },
   });
 };

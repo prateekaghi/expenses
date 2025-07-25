@@ -494,7 +494,7 @@ const addTransaction = async (req, res, next) => {
 
 const updateTransaction = async (req, res, next) => {
   const { transactionId } = req.params;
-  const { title, category, amount, currency } = req.body;
+  const { title, category, amount, currency, date, type } = req.body;
   const user_id = req.userData.userid;
   let transaction;
 
@@ -541,6 +541,8 @@ const updateTransaction = async (req, res, next) => {
   transaction.category = category || transaction.category;
   transaction.amount = amount || transaction.amount;
   transaction.currency = currency || transaction.currency;
+  transaction.type = type || transaction.type;
+  transaction.date = date || transaction.date;
 
   //save expense
 

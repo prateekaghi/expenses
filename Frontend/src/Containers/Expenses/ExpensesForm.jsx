@@ -139,8 +139,8 @@ const ExpensesForm = ({ submitLabel, editing }) => {
           fieldConfigs={fieldConfigs}
           onSubmit={handleSubmit}
           submitLabel={submitLabel}
-          isLoading={isPending}
-          redirectUrl="/dashboard"
+          isLoading={isPending || transactionUpdatePending}
+          redirectUrl={editing ? "/transactions" : "/dashboard"}
         />
       ) : (
         <LoadingComponent size="large" type="dots" color="black" text="" />
