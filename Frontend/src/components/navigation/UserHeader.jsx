@@ -23,7 +23,6 @@ import { useAuthStore } from "../../store/authStore";
 
 const UserHeader = () => {
   const auth = useAuthStore.getState();
-  console.log("auth", auth);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

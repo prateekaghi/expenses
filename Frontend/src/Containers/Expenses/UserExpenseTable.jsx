@@ -7,7 +7,7 @@ import {
 } from "../../hooks/useTransactions";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Add, DeleteOutlineOutlined } from "@mui/icons-material";
+import { Add, DeleteOutlineOutlined, EditOutlined } from "@mui/icons-material";
 import { IconButton, Box } from "@mui/material";
 
 const UserExpenseTable = () => {
@@ -54,6 +54,12 @@ const UserExpenseTable = () => {
   const tableActions = (row) => {
     return (
       <Box sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          disabled={isLoading}
+          onClick={() => navigate(`/transactions/edit?transactionId=${row.id}`)}
+        >
+          <EditOutlined />
+        </IconButton>
         <IconButton disabled={isLoading} onClick={() => deleteHandler(row)}>
           <DeleteOutlineOutlined />
         </IconButton>

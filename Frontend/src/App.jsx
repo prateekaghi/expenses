@@ -14,18 +14,19 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ExpenseList from "./pages/Expenses/ExpenseList";
 import AddCategoryPage from "./pages/Category/AddCategoryPage";
-import AddExpensePage from "./pages/Expenses/AddExpensePage";
+import AddTransactionPage from "./pages/Expenses/AddTransactionPage";
 import CategoryList from "./pages/Category/CategoryList";
 import UserDashboard from "./pages/Dashboard/UserDashboard";
-import ProtectedRoute from "./pages/ProtectedRoute";
-
-//Utility pages
-import NotFound from "./pages/NotFound";
-import AuthExpiryWatcher from "./components/Utility/AutoExpiryWatcher";
 import CurrencyList from "./pages/Currency/CurrencyList";
 import TimezoneList from "./pages/Timezone/TimezoneList";
 import EditCategoryPage from "./pages/Category/EditCategoryPage";
+import EditTransactionPage from "./pages/Expenses/EditTransactionPage";
 import UserProfile from "./pages/Profile/UserProfile";
+
+//Utility pages
+import ProtectedRoute from "./pages/ProtectedRoute";
+import NotFound from "./pages/NotFound";
+import AuthExpiryWatcher from "./components/Utility/AutoExpiryWatcher";
 
 const App = () => {
   return (
@@ -46,7 +47,8 @@ const App = () => {
               </Route>
               <Route path="/transactions">
                 <Route index element={<ExpenseList />} />
-                <Route path="add" element={<AddExpensePage />} />
+                <Route path="add" element={<AddTransactionPage />} />
+                <Route path="edit" element={<EditTransactionPage />} />
               </Route>
               <Route path="/categories">
                 <Route index element={<CategoryList />} />

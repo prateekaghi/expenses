@@ -13,3 +13,13 @@ export const formatDate = (isoDateString) => {
     year: "numeric", // 2025
   });
 };
+
+export const isoToDateInputFormat = (isoString) => {
+  if (!isoString) return "";
+  try {
+    const date = new Date(isoString);
+    return date.toISOString().split("T")[0]; // returns "YYYY-MM-DD"
+  } catch (e) {
+    return "";
+  }
+};

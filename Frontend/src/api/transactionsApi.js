@@ -33,7 +33,7 @@ export const getUserTransactions = async ({ page, limit }) => {
 };
 export const getSingleTransaction = async ({ transactionId }) => {
   try {
-    const data = await apiClient.get(`/transactions/${transactionId}}`);
+    const data = await apiClient.get(`/transactions/${transactionId}`);
     if (data.status === 200) {
       return data.data;
     }

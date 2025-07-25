@@ -6,12 +6,23 @@ import {
   getUserTransactionsSummary,
   getUserTransactionCatgorySummary,
   deleteTransaction,
+  getSingleTransaction,
 } from "../api/transactionsApi";
 
 export const useTransactions = ({ page, limit }) => {
   return useQuery({
     queryKey: ["transactions", { page, limit }],
     queryFn: () => getAllTransactions({ page, limit }),
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useSingleTransaction = ({ transactionId, enabled = false }) => {
+  return useQuery({
+    queryKey: ["single_transaction"],
+    queryFn: ({}) => getSingleTransaction({ transactionId }),
+    enabled,
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
   });
