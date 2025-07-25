@@ -12,6 +12,12 @@ router.get("/:userid", checkAuth, categoryController.getUserCategories);
 
 router.patch("/:id", checkAuth, categoryController.updateCategory);
 
+router.get(
+  "/detail/:categoryId",
+  checkAuth,
+  categoryController.getCategoryById
+);
+
 router.delete("/:categoryId", checkAuth, categoryController.deleteCategory);
 
 module.exports = router;

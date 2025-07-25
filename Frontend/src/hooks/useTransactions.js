@@ -4,12 +4,26 @@ import {
   addTransaction,
   getUserTransactions,
   getUserTransactionsSummary,
+  getUserTransactionCatgorySummary,
+  deleteTransaction,
+  getSingleTransaction,
+  updateTransaction,
 } from "../api/transactionsApi";
 
 export const useTransactions = ({ page, limit }) => {
   return useQuery({
     queryKey: ["transactions", { page, limit }],
     queryFn: () => getAllTransactions({ page, limit }),
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useSingleTransaction = ({ transactionId, enabled = false }) => {
+  return useQuery({
+    queryKey: ["single_transaction"],
+    queryFn: ({}) => getSingleTransaction({ transactionId }),
+    enabled,
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
   });
@@ -33,13 +47,51 @@ export const useUserTransactionSummary = () => {
   });
 };
 
+export const useUserTransactionCategorySummary = () => {
+  return useQuery({
+    queryKey: ["user_transaction_category_summary"],
+    queryFn: getUserTransactionCatgorySummary,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+  });
+};
 export const useAddTransaction = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ date, title, category, amount, currency }) =>
-      addTransaction({ date, title, category, amount, currency }),
+    mutationFn: ({ date, title, category, amount, type, currency }) =>
+      addTransaction({ date, title, category, amount, type, currency }),
     onSuccess: () => {
+      queryClient.invalidateQueries("user_transaction_category_summary");
+      queryClient.invalidateQueries("user_transaction_summary");
+      queryClient.invalidateQueries("user_transactions");
+      queryClient.invalidateQueries("transactions");
+    },
+  });
+};
+
+export const useUpdateTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ transactionId, payload }) =>
+      updateTransaction({ transactionId, payload }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries("user_transactions");
+      queryClient.invalidateQueries("transactions");
+      queryClient.invalidateQueries("single_transaction");
+    },
+  });
+};
+
+export const useDeleteTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ transactionId }) => deleteTransaction({ transactionId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries("user_transaction_category_summary");
       queryClient.invalidateQueries("user_transaction_summary");
       queryClient.invalidateQueries("user_transactions");
       queryClient.invalidateQueries("transactions");

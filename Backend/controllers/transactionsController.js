@@ -53,6 +53,35 @@ const getAllTransactions = async (req, res, next) => {
   });
 };
 
+const getSingleTransaction = async (req, res, next) => {
+  const transactionId = req.params.transactionId;
+  const loggedUserId = req.userData.userid;
+  let transaction;
+  try {
+    transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      const err = new ErrorModel("Something went wrong!", 500);
+      return next(err);
+    }
+    if (!transaction.user.equals(loggedUserId)) {
+      const err = new ErrorModel(
+        "Transaction does not belong to the logged user.",
+        500
+      );
+      return next(err);
+    }
+  } catch (error) {
+    const err = new ErrorModel("Error fetching transactions.", 500);
+    return next(err);
+  }
+
+  res.json({
+    message: "Transaction fetched successfully.",
+    data: transaction,
+  });
+};
+
 const getUserTransactions = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
@@ -318,6 +347,95 @@ const getUserTransactionSummary = async (req, res, next) => {
   res.json({ message: "User summary fetched.", data: summary });
 };
 
+const getUserTransactionsCategorySummary = async (req, res, next) => {
+  const requestUserId = req.params.userid;
+  const loggedUserId = req.userData.userid;
+  let categorySummary = [];
+  if (requestUserId !== loggedUserId) {
+    const err = new ErrorModel("Access Denied.", 403);
+    return next(err);
+  }
+
+  try {
+    const total = await Transaction.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(requestUserId),
+          type: "expense",
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          total: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
+      {
+        $unwind: "$categoryInfo",
+      },
+      {
+        $project: {
+          _id: 0,
+          category: "$categoryInfo.name",
+          total: 1,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          categories: { $push: "$$ROOT" },
+          grandTotal: { $sum: "$total" },
+        },
+      },
+      { $unwind: "$categories" },
+      {
+        $project: {
+          category: "$categories.category",
+          amount: "$categories.total",
+          total: "$grandTotal",
+          percentage: {
+            $round: [
+              {
+                $multiply: [
+                  {
+                    $divide: ["$categories.total", "$grandTotal"],
+                  },
+                  100,
+                ],
+              },
+              2,
+            ],
+          },
+        },
+      },
+    ]);
+    total.forEach((cat) => {
+      categorySummary.push({
+        category: cat.category,
+        percentage: cat.percentage,
+        amount: cat.amount,
+        total: cat.total,
+      });
+    });
+  } catch (error) {
+    const err = new ErrorModel("Something went wrong.", 500);
+    return next(err);
+  }
+
+  res.json({
+    message: "Categorised user data fetched.",
+    data: categorySummary,
+  });
+};
+
 const addTransaction = async (req, res, next) => {
   const { amount, category, date, title, currency, type } = req.body;
   const user = req.userData.userid;
@@ -375,14 +493,14 @@ const addTransaction = async (req, res, next) => {
 };
 
 const updateTransaction = async (req, res, next) => {
-  const { eid } = req.params;
-  const { title, category, amount, currency } = req.body;
+  const { transactionId } = req.params;
+  const { title, category, amount, currency, date, type } = req.body;
   const user_id = req.userData.userid;
   let transaction;
 
   //find transaction
   try {
-    transaction = await Transaction.findById(eid).populate("user");
+    transaction = await Transaction.findById(transactionId).populate("user");
   } catch (error) {
     const err = new ErrorModel("Error finding the transaction.", 500);
     return next(err);
@@ -423,6 +541,8 @@ const updateTransaction = async (req, res, next) => {
   transaction.category = category || transaction.category;
   transaction.amount = amount || transaction.amount;
   transaction.currency = currency || transaction.currency;
+  transaction.type = type || transaction.type;
+  transaction.date = date || transaction.date;
 
   //save expense
 
@@ -433,16 +553,20 @@ const updateTransaction = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(transaction.toObject({ getters: true }));
+  res.json({
+    message: "Transaction updated",
+    data: transaction.toObject({ getters: true }),
+  });
 };
 
 const deleteTransaction = async (req, res, next) => {
-  const { eid } = req.params;
+  const { transactionId } = req.params;
   const loggedUserId = req.userData.userid;
+
   let transaction;
   //Find expense by id
   try {
-    transaction = await Transaction.findById(eid);
+    transaction = await Transaction.findById(transactionId);
   } catch (error) {
     const err = new ErrorModel("Error finding the expense.", 500);
     return next(err);
@@ -506,4 +630,6 @@ module.exports = {
   getUserTransactions,
   updateTransaction,
   deleteTransaction,
+  getUserTransactionsCategorySummary,
+  getSingleTransaction,
 };

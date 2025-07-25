@@ -37,7 +37,7 @@ app.use("/api/currency", currencyRoutes);
 
 //error handling middleware
 app.use((error, req, res, next) => {
-  if (res.headerSent) {
+  if (res.headersSent) {
     return next(error);
   }
   res

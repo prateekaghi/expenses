@@ -96,7 +96,7 @@ const getUserCategories = async (req, res, next) => {
     return next(err);
   }
   if (userCategories.length < 1) {
-    res.json({
+    return res.json({
       message: "No user categories found",
       data: userCategories,
     });
@@ -113,6 +113,24 @@ const getUserCategories = async (req, res, next) => {
       return category.toObject({ getters: true });
     }),
   });
+};
+
+const getCategoryById = async (req, res, next) => {
+  const categoryId = req.params.categoryId;
+  const loggedUserId = req.userData.userid;
+  let category;
+  try {
+    category = await Category.findById(categoryId);
+  } catch (error) {
+    const err = new ErrorModel("Something went wrong.", 403);
+    return next(err);
+  }
+
+  if (!category.user.equals(loggedUserId)) {
+    const err = new ErrorModel("Category does not belong to the user.", 403);
+    return next(err);
+  }
+  res.json({ message: "Category by ID fetched.", data: category });
 };
 
 const addCategory = async (req, res, next) => {
@@ -266,4 +284,5 @@ module.exports = {
   addCategory,
   updateCategory,
   deleteCategory,
+  getCategoryById,
 };

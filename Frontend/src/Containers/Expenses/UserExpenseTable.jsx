@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import CustomTable from "../../components/Tables/CustomTable";
 import PageHeader from "../../components/navigation/PageHeader";
-import { useUserTransactions } from "../../hooks/useTransactions";
+import {
+  useUserTransactions,
+  useDeleteTransaction,
+} from "../../hooks/useTransactions";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Add, DeleteOutlineOutlined, EditOutlined } from "@mui/icons-material";
+import { IconButton, Box } from "@mui/material";
 
 const UserExpenseTable = () => {
   const navigate = useNavigate();
@@ -13,6 +18,18 @@ const UserExpenseTable = () => {
     page: page + 1,
     limit,
   });
+
+  const { mutateAsync, isSuccess } = useDeleteTransaction();
+
+  const deleteHandler = async (data) => {
+    try {
+      const response = await mutateAsync({ transactionId: data.id });
+      console.log("res", response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const columns = [
     {
       id: "date",
@@ -25,10 +42,30 @@ const UserExpenseTable = () => {
         }),
     },
     { id: "title", label: "Title" },
-    { id: "category", label: "Category" },
+    {
+      id: "category",
+      label: "Category",
+      render: (row) => row.category.name,
+    },
     { id: "currency", label: "Currency" },
     { id: "amount", label: "Amount" },
   ];
+
+  const tableActions = (row) => {
+    return (
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          disabled={isLoading}
+          onClick={() => navigate(`/transactions/edit?transactionId=${row.id}`)}
+        >
+          <EditOutlined />
+        </IconButton>
+        <IconButton disabled={isLoading} onClick={() => deleteHandler(row)}>
+          <DeleteOutlineOutlined />
+        </IconButton>
+      </Box>
+    );
+  };
 
   if (isLoading) return <p>Loading User Expenses</p>;
   if (isError) return <p>Error: {error.message}</p>;
@@ -36,16 +73,18 @@ const UserExpenseTable = () => {
     <>
       <PageHeader
         backTo={"/dashboard"}
-        title={"Expense List"}
+        title={"Transactions List"}
         actions={[
           <Button
-            variant="contained"
-            color="success"
+            startIcon={<Add />}
+            variant="outlined"
+            size="small"
+            color="primary"
             onClick={() => {
               navigate("add");
             }}
           >
-            Add Expense
+            Add Transaction
           </Button>,
           ,
         ]}
@@ -62,6 +101,8 @@ const UserExpenseTable = () => {
           setLimit(newLimit);
           setPage(0);
         }}
+        renderActions={tableActions}
+        tableSize={"80vh"}
       />
     </>
   );

@@ -29,7 +29,7 @@ const AddCategoryPage = () => {
   };
   return (
     <Box>
-      <PageHeader backTo={"/category"} title={"Add Category"}></PageHeader>
+      <PageHeader backTo={"/categories"} title={"Add Category"}></PageHeader>
       <GenericForm
         title="Add New Category"
         initialState={initialState}
@@ -38,7 +38,7 @@ const AddCategoryPage = () => {
         onSubmit={handleSubmit}
         submitLabel="Add Category"
         isLoading={isPending}
-        redirectUrl="/category"
+        redirectUrl="/categories"
       />
     </Box>
   );

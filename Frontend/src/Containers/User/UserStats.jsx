@@ -17,16 +17,16 @@ const UserStats = () => {
   const {
     data: currencyData,
     isLoading: currencyLoading,
-    isError: currency,
+    isError: currencyError,
     error: currencyErrorMessage,
   } = useCurrencies({ page: 1, limit: 10000 });
 
-  if (isLoading || categoryLoading) {
-    return <p>Loading user summary...</p>;
+  if (isLoading || categoryLoading || currencyLoading) {
+    return <p>Loading Data...</p>;
   }
 
-  if (isError || categoryError) {
-    return <p>{error || categoryErrorMessage}</p>;
+  if (isError || categoryError || currencyError) {
+    return <p>{error || categoryErrorMessage || currencyErrorMessage}</p>;
   }
 
   return (
@@ -77,7 +77,7 @@ const UserStats = () => {
         <Grid size={{ xs: 12, md: 3 }}>
           <CategorySummary
             title={"Supported Currencies"}
-            totalRecords={currencyData.totalRecords}
+            totalRecords={currencyData.totalRecords || 0}
             subtitle={"Multi-currency support"}
             icon={<LanguageRounded />}
           />
@@ -85,7 +85,7 @@ const UserStats = () => {
         <Grid size={{ xs: 12, md: 3 }}>
           <CategorySummary
             title="Total Categories"
-            totalRecords={categoryData.totalRecords}
+            totalRecords={categoryData.totalRecords || 0}
             subtitle={"Active spending categories"}
             icon={<SellOutlined />}
           />

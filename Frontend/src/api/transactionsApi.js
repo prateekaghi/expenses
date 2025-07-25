@@ -21,9 +21,19 @@ export const getUserTransactions = async ({ page, limit }) => {
     throw new Error("Missing User ID.");
   }
   try {
-    const data = await apiClient.get(`/transactions/${userId}`, {
+    const data = await apiClient.get(`/transactions/user/${userId}`, {
       params: { page, limit },
     });
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+export const getSingleTransaction = async ({ transactionId }) => {
+  try {
+    const data = await apiClient.get(`/transactions/${transactionId}`);
     if (data.status === 200) {
       return data.data;
     }
@@ -54,6 +64,7 @@ export const addTransaction = async ({
   category,
   amount,
   currency,
+  type,
 }) => {
   try {
     const data = await apiClient.post("/transactions", {
@@ -62,8 +73,55 @@ export const addTransaction = async ({
       category,
       amount,
       currency,
+      type,
     });
     if (data.status === 203) {
+      return data.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getUserTransactionCatgorySummary = async () => {
+  const userId = useAuthStore.getState().id;
+
+  if (!userId) {
+    throw new Error("Missing User ID.");
+  }
+  try {
+    const data = await apiClient.get(`/transactions/${userId}/categorised`);
+    if (data.status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const updateTransaction = async ({ transactionId, payload }) => {
+  try {
+    const data = await apiClient.patch(
+      `/transactions/${transactionId}`,
+      payload
+    );
+    if (data.status === 203) {
+      return response.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const deleteTransaction = async ({ transactionId }) => {
+  const userId = useAuthStore.getState().id;
+
+  if (!userId) {
+    throw new Error("Missing User ID.");
+  }
+  try {
+    const data = await apiClient.delete(`/transactions/${transactionId}`);
+    if (data.status === 200) {
       return data.data;
     }
   } catch (error) {
