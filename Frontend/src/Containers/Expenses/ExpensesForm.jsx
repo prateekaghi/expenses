@@ -3,6 +3,7 @@ import GenericForm from "../../components/Forms/GenericForm";
 import {
   useAddTransaction,
   useSingleTransaction,
+  useUpdateTransaction,
 } from "../../hooks/useTransactions";
 import { useGetUserCategories } from "../../hooks/useCategories";
 import { useCurrencies } from "../../hooks/useCurrencies";
@@ -23,6 +24,11 @@ const ExpensesForm = ({ submitLabel, editing }) => {
     transactionId,
     enabled: editing && Boolean(transactionId),
   });
+
+  const {
+    mutateAsync: updateTransactionFn,
+    isPending: transactionUpdatePending,
+  } = useUpdateTransaction();
   const [initialState, setInitialState] = useState({
     date: "",
     title: "",
@@ -91,6 +97,10 @@ const ExpensesForm = ({ submitLabel, editing }) => {
 
   const handleSubmit = async (data) => {
     if (editing) {
+      await updateTransactionFn({
+        transactionId: transactionId,
+        payload: data,
+      });
     } else {
       await mutateAsync(data);
     }

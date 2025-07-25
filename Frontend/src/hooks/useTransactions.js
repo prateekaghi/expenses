@@ -7,6 +7,7 @@ import {
   getUserTransactionCatgorySummary,
   deleteTransaction,
   getSingleTransaction,
+  updateTransaction,
 } from "../api/transactionsApi";
 
 export const useTransactions = ({ page, limit }) => {
@@ -64,6 +65,22 @@ export const useAddTransaction = () => {
       queryClient.invalidateQueries("user_transaction_category_summary");
       queryClient.invalidateQueries("user_transaction_summary");
       queryClient.invalidateQueries("user_transactions");
+      queryClient.invalidateQueries("transactions");
+    },
+  });
+};
+
+export const useUpdateTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ transactionId, payload }) => {
+      updateTransaction({ transactionId, data: payload });
+    },
+    onSuccess: () => {
+      // queryClient.invalidateQueries("user_transaction_category_summary");
+      // queryClient.invalidateQueries("user_transaction_summary");
+      // queryClient.invalidateQueries("user_transactions");
       queryClient.invalidateQueries("transactions");
     },
   });

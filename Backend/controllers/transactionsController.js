@@ -493,14 +493,14 @@ const addTransaction = async (req, res, next) => {
 };
 
 const updateTransaction = async (req, res, next) => {
-  const { eid } = req.params;
+  const { transactionId } = req.params;
   const { title, category, amount, currency } = req.body;
   const user_id = req.userData.userid;
   let transaction;
 
   //find transaction
   try {
-    transaction = await Transaction.findById(eid).populate("user");
+    transaction = await Transaction.findById(transactionId).populate("user");
   } catch (error) {
     const err = new ErrorModel("Error finding the transaction.", 500);
     return next(err);
@@ -551,7 +551,10 @@ const updateTransaction = async (req, res, next) => {
     return next(err);
   }
 
-  res.json(transaction.toObject({ getters: true }));
+  res.json({
+    message: "Transaction updated",
+    data: transaction.toObject({ getters: true }),
+  });
 };
 
 const deleteTransaction = async (req, res, next) => {

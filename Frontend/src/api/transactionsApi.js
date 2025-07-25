@@ -99,6 +99,20 @@ export const getUserTransactionCatgorySummary = async () => {
   }
 };
 
+export const updateTransaction = async ({ transactionId, payload }) => {
+  try {
+    const data = await apiClient.patch(
+      `/transactions/${transactionId}`,
+      payload
+    );
+    if (data.status === 203) {
+      return response.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const deleteTransaction = async ({ transactionId }) => {
   const userId = useAuthStore.getState().id;
 
