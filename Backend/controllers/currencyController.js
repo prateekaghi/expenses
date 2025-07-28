@@ -49,7 +49,7 @@ const getCurrencies = async (req, res, next) => {
 
 const addCurrency = async (req, res, next) => {
   const { name, value, symbol } = req.body;
-  if (!name || !value || symbol) {
+  if (!name || !value || !symbol) {
     const err = new ErrorModel("Missing payload.", 500);
     return next(err);
   }
