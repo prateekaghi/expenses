@@ -182,7 +182,8 @@ const getUserTransactionSummary = async (req, res, next) => {
     const currencyData = await Currency.findOne({ value: currency });
     currencySymbol = currencyData.symbol;
   } catch (error) {
-    const err = new ErrorModel("Access Denied.", 403);
+    console.log("this is the error", error);
+    const err = new ErrorModel("Something went wrong", 500);
     return next(err);
   }
   const now = new Date();
