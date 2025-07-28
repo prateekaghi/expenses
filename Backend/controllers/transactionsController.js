@@ -85,7 +85,6 @@ const getSingleTransaction = async (req, res, next) => {
 const getUserTransactions = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
-  console.log("this", requestUserId, loggedUserId);
 
   if (requestUserId !== loggedUserId) {
     const err = new ErrorModel("Access Denied.", 403);
@@ -163,13 +162,6 @@ const getUserTransactionSummary = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
 
-  console.log(
-    "summary",
-    requestUserId,
-    loggedUserId,
-    requestUserId === loggedUserId
-  );
-
   if (requestUserId !== loggedUserId) {
     const err = new ErrorModel("Access Denied.", 403);
     return next(err);
@@ -180,9 +172,10 @@ const getUserTransactionSummary = async (req, res, next) => {
     const userData = await User.findById(requestUserId, "currency");
     currency = userData.currency;
     const currencyData = await Currency.findOne({ value: currency });
-    currencySymbol = currencyData.symbol;
+    if (currency) {
+      currencySymbol = currencyData?.symbol;
+    }
   } catch (error) {
-    console.log("this is the error", error);
     const err = new ErrorModel("Something went wrong", 500);
     return next(err);
   }
