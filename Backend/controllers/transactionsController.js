@@ -351,6 +351,9 @@ const getUserTransactionsCategorySummary = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
   let categorySummary = [];
+
+  console.log(requestUserId, loggedUserId);
+
   if (requestUserId !== loggedUserId) {
     const err = new ErrorModel("Access Denied.", 403);
     return next(err);
