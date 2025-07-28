@@ -85,6 +85,7 @@ const getSingleTransaction = async (req, res, next) => {
 const getUserTransactions = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
+  console.log("this", requestUserId, loggedUserId);
 
   if (requestUserId !== loggedUserId) {
     const err = new ErrorModel("Access Denied.", 403);
@@ -161,6 +162,8 @@ const getUserTransactions = async (req, res, next) => {
 const getUserTransactionSummary = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
+
+  console.log("this", requestUserId, loggedUserId);
 
   if (requestUserId !== loggedUserId) {
     const err = new ErrorModel("Access Denied.", 403);
