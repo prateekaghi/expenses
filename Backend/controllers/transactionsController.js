@@ -163,7 +163,12 @@ const getUserTransactionSummary = async (req, res, next) => {
   const requestUserId = req.params.userid;
   const loggedUserId = req.userData.userid;
 
-  console.log("this", requestUserId, loggedUserId);
+  console.log(
+    "summary",
+    requestUserId,
+    loggedUserId,
+    requestUserId === loggedUserId
+  );
 
   if (requestUserId !== loggedUserId) {
     const err = new ErrorModel("Access Denied.", 403);
